@@ -53,6 +53,9 @@ jobs:
       - name: Typecheck
         run: pnpm typecheck
 
+      - name: Unit tests
+        run: pnpm test
+
       - name: Migrations apply cleanly
         run: pnpm db:migrate && pnpm db:seed
 

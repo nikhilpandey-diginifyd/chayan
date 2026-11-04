@@ -158,3 +158,35 @@ export const INDIAN_STATES = [
   "West Bengal",
 ] as const;
 export type IndianState = (typeof INDIAN_STATES)[number];
+
+/** What a mentor can help with. Shown as filters and on profiles. */
+export const FOCUS_AREAS = [
+  "strategy",
+  "answer_writing",
+  "optional_subject",
+  "interview_daf",
+  "current_affairs",
+  "quant",
+  "reasoning",
+  "english",
+  "general_awareness",
+  "hindi_medium",
+  "working_professionals",
+  "repeaters",
+] as const;
+export type FocusArea = (typeof FOCUS_AREAS)[number];
+
+export const FOCUS_AREA_LABELS: Record<FocusArea, string> = {
+  strategy: "Overall strategy",
+  answer_writing: "Answer writing",
+  optional_subject: "Optional subject",
+  interview_daf: "Interview and DAF",
+  current_affairs: "Current affairs",
+  quant: "Quantitative aptitude",
+  reasoning: "Reasoning",
+  english: "English",
+  general_awareness: "General awareness",
+  hindi_medium: "Hindi medium",
+  working_professionals: "Preparing while working",
+  repeaters: "Repeat attempts",
+};

@@ -19,10 +19,10 @@ export function SiteHeader() {
         </Link>
         <nav aria-label="Main" className="flex items-center gap-1 sm:gap-2">
           <Link
-            href="/#how-it-works"
-            className="text-ink-muted hover:text-ink hidden rounded-md px-3 py-2 sm:block"
+            href="/mentors"
+            className="text-ink hover:text-pen rounded-md px-3 py-2 font-semibold"
           >
-            How it works
+            Find a mentor
           </Link>
           <Link
             href="/#pricing"

@@ -2,6 +2,8 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { AuthCard } from "@/components/auth/auth-card";
 import { ResendVerification } from "@/components/auth/resend-verification";
+import { FormMessage } from "@/components/ui/field";
+import { lastEmailFailed } from "@/lib/email";
 import { safeRedirectPath } from "@/lib/redirects";
 
 export const metadata: Metadata = { title: "Confirm your email" };
@@ -12,6 +14,7 @@ export default async function VerifyEmailPage({ searchParams }: Props) {
   const params = await searchParams;
   const email = typeof params.email === "string" ? params.email : "";
   const next = safeRedirectPath(params.next, "/onboarding");
+  const sendFailed = email ? await lastEmailFailed(email) : false;
 
   return (
     <AuthCard
@@ -32,6 +35,14 @@ export default async function VerifyEmailPage({ searchParams }: Props) {
         </Link>
       }
     >
+      {sendFailed ? (
+        <div className="mb-4">
+          <FormMessage tone="error">
+            We couldn&apos;t send the email to {email}. Check the address is right and try again
+            below. If it keeps failing, write to us from the contact page.
+          </FormMessage>
+        </div>
+      ) : null}
       <p className="text-ink-muted text-sm">
         Can&apos;t find it? Check your spam or promotions folder. The link works for 24 hours.
       </p>

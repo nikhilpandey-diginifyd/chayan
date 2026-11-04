@@ -26,7 +26,7 @@ Working brand name: Chayan (change in `apps/web/src/config/site.ts`).
 - [x] Phase 1: Foundation (monorepo, DB + exam taxonomy, landing page, legal pages, health check, Docker, CI)
 - [x] Phase 2: Auth (email/password + Google), email verification, password reset, roles, onboarding, dashboard, basic admin
 - [x] Phase 3: Mentor application (details, private document upload, declaration) + admin review queue (approve with badge, request changes, reject), emails, audit log, mentor dashboard
-- [ ] Phase 4: Mentor profiles, services, availability, discovery
+- [x] Phase 4: Mentor profile editor (photo, headline, topics), session prices, weekly availability, publish flow, public mentor list with filters, public profile with slot picker, admin pause/restore, email delivery log
 - [ ] Phase 5: Booking + Razorpay payments + refunds
 - [ ] Phase 6: 100ms video calls + no-show logic
 - [ ] Phase 7: Dashboards, reviews, notes, reminders
@@ -55,6 +55,18 @@ Working brand name: Chayan (change in `apps/web/src/config/site.ts`).
 - Files: `src/lib/storage.ts` (R2 via aws4fetch, or local `.uploads`); type checked from file
   bytes, 5 MB max, 10 per application; served only via `/api/documents/[id]`
 - Mentor area `/mentor` is gated by the `mentor_profiles` row, not the cached session role
+
+## Phase 4 details
+
+- Slot engine in `packages/shared/src/slots.ts` (IST, 15-min grid, buffer, notice, window,
+  days off), unit-tested with Vitest. Phase 5 passes existing bookings as `busy`
+- Tables: `mentor_services` (15/30/60, ₹99–₹9,999 in paise), `mentor_availability_rules`,
+  `mentor_blocked_dates`, `email_deliveries`; new columns on `mentor_profiles` (slug,
+  headline, photo_key, focus_areas, stage_codes, is_published, buffer/notice/window)
+- A mentor is public only if active + published + has a slug, an active service and hours
+- Photos: re-encoded to 400×400 WebP with sharp, served at `/api/mentor-photos/...` with
+  long cache; old photo deleted on change
+- Pages: `/mentor` (overview, profile, sessions, availability), `/mentors`, `/mentors/[slug]`
 
 ## Notes
 

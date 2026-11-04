@@ -166,3 +166,36 @@ export async function reviewMentorApplication(
   revalidatePath("/admin");
   redirect(`/admin/mentors?status=submitted&done=${input.decision}`);
 }
+
+/** Pause or restore an approved mentor. Paused mentors disappear from the listing. */
+export async function setMentorStatus(formData: FormData): Promise<void> {
+  const admin = await requireRole(["admin"], "/admin/mentors");
+  const applicationId = z.uuid().safeParse(formData.get("applicationId"));
+  const status = z.enum(["active", "suspended"]).safeParse(formData.get("status"));
+  if (!applicationId.success || !status.success) return;
+
+  const db = getDb();
+  const application = await db.query.mentorApplications.findFirst({
+    where: eq(mentorApplications.id, applicationId.data),
+    columns: { userId: true },
+  });
+  if (!application) return;
+
+  await db.transaction(async (tx) => {
+    const [row] = await tx
+      .update(mentorProfiles)
+      .set({ status: status.data })
+      .where(eq(mentorProfiles.userId, application.userId))
+      .returning({ slug: mentorProfiles.slug });
+    if (!row) return;
+    await writeAuditLog(tx, {
+      actorUserId: admin.id,
+      action: status.data === "suspended" ? "mentor.suspended" : "mentor.reactivated",
+      entityType: "mentor_profile",
+      entityId: application.userId,
+    });
+  });
+
+  revalidatePath(`/admin/mentors/${applicationId.data}`);
+  revalidatePath("/mentors");
+}

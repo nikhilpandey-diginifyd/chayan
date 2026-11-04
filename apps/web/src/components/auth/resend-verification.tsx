@@ -1,5 +1,6 @@
 "use client";
 
+import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { FormMessage } from "@/components/ui/field";
@@ -13,6 +14,7 @@ export function ResendVerification({
   email: string;
   callbackPath: string;
 }) {
+  const router = useRouter();
   const [state, setState] = useState<"idle" | "sending" | "sent">("idle");
   const [error, setError] = useState<string | null>(null);
 
@@ -29,6 +31,7 @@ export function ResendVerification({
       return;
     }
     setState("sent");
+    router.refresh();
   }
 
   return (

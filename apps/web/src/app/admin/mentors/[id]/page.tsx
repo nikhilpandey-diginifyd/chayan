@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { FileText } from "lucide-react";
-import { asc, eq, mentorApplications, mentorDocuments } from "@chayan/db";
+import { asc, eq, mentorApplications, mentorDocuments, mentorProfiles } from "@chayan/db";
 import {
   badgesForExamBody,
   MENTOR_APPLICATION_STATUS_LABELS,
@@ -11,6 +11,8 @@ import {
   PREP_LANGUAGE_LABELS,
 } from "@chayan/shared";
 import { ReviewForm } from "@/components/admin/review-form";
+import { Button } from "@/components/ui/button";
+import { setMentorStatus } from "./actions";
 import { getDb } from "@/lib/db";
 import { requireRole } from "@/lib/session";
 
@@ -44,6 +46,14 @@ export default async function ReviewApplicationPage({ params }: Props) {
     },
   });
   if (!application) notFound();
+
+  const mentorProfile =
+    application.status === "approved"
+      ? await getDb().query.mentorProfiles.findFirst({
+          where: eq(mentorProfiles.userId, application.userId),
+          columns: { status: true, slug: true, isPublished: true },
+        })
+      : undefined;
 
   const claimed = application.claimedBadge ? MENTOR_BADGE_INFO[application.claimedBadge] : null;
   const badgeOptions = application.exam ? badgesForExamBody(application.exam.body) : [];
@@ -185,6 +195,42 @@ export default async function ReviewApplicationPage({ params }: Props) {
                   <p>
                     Note: <span className="text-ink">{application.reviewNote}</span>
                   </p>
+                ) : null}
+                {mentorProfile ? (
+                  <div className="border-line mt-4 space-y-3 border-t pt-4">
+                    <p>
+                      Mentor profile:{" "}
+                      <span className="text-ink font-semibold">
+                        {mentorProfile.status === "suspended"
+                          ? "paused"
+                          : mentorProfile.isPublished
+                            ? "live"
+                            : "not published yet"}
+                      </span>
+                      {mentorProfile.slug ? (
+                        <>
+                          {" "}
+                          <Link
+                            href={`/mentors/${mentorProfile.slug}`}
+                            className="text-pen font-semibold"
+                          >
+                            View
+                          </Link>
+                        </>
+                      ) : null}
+                    </p>
+                    <form action={setMentorStatus}>
+                      <input type="hidden" name="applicationId" value={application.id} />
+                      <input
+                        type="hidden"
+                        name="status"
+                        value={mentorProfile.status === "suspended" ? "active" : "suspended"}
+                      />
+                      <Button type="submit" variant="secondary" size="sm">
+                        {mentorProfile.status === "suspended" ? "Restore mentor" : "Pause mentor"}
+                      </Button>
+                    </form>
+                  </div>
                 ) : null}
               </div>
             )}

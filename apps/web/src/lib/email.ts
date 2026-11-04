@@ -1,5 +1,7 @@
 import "server-only";
+import { and, desc, emailDeliveries, eq, gte } from "@chayan/db";
 import { getServerEnv } from "@/env";
+import { getDb } from "@/lib/db";
 
 type Email = {
   to: string;
@@ -16,6 +18,18 @@ type Email = {
 export async function sendEmail(email: Email): Promise<void> {
   const env = getServerEnv();
 
+  const record = (status: "sent" | "failed" | "logged", extra: { id?: string; error?: string }) =>
+    getDb()
+      .insert(emailDeliveries)
+      .values({
+        toEmail: email.to.toLowerCase(),
+        subject: email.subject,
+        status,
+        providerMessageId: extra.id ?? null,
+        error: extra.error?.slice(0, 1000) ?? null,
+      })
+      .catch((error: unknown) => console.error("Could not record email delivery", error));
+
   if (!env.RESEND_API_KEY) {
     console.info(
       [
@@ -29,29 +43,56 @@ export async function sendEmail(email: Email): Promise<void> {
         "",
       ].join("\n"),
     );
+    await record("logged", {});
     return;
   }
 
-  const response = await fetch("https://api.resend.com/emails", {
-    method: "POST",
-    headers: {
-      Authorization: `Bearer ${env.RESEND_API_KEY}`,
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({
-      from: env.EMAIL_FROM,
-      to: [email.to],
-      subject: email.subject,
-      text: email.text,
-      html: email.html,
-    }),
-    signal: AbortSignal.timeout(10_000),
-  });
+  let response: Response;
+  try {
+    response = await fetch("https://api.resend.com/emails", {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${env.RESEND_API_KEY}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        from: env.EMAIL_FROM,
+        to: [email.to],
+        subject: email.subject,
+        text: email.text,
+        html: email.html,
+      }),
+      signal: AbortSignal.timeout(10_000),
+    });
+  } catch (error) {
+    await record("failed", { error: `Network error: ${String(error)}` });
+    throw error;
+  }
 
   if (!response.ok) {
     const body = await response.text().catch(() => "");
+    await record("failed", { error: `${response.status}: ${body}` });
     throw new Error(`Resend rejected the email (${response.status}): ${body}`);
   }
+
+  const data = (await response.json().catch(() => null)) as { id?: string } | null;
+  await record("sent", { id: data?.id });
+}
+
+/** True if the latest email to this address in the last few minutes failed to send. */
+export async function lastEmailFailed(to: string, withinMinutes = 15): Promise<boolean> {
+  const [latest] = await getDb()
+    .select({ status: emailDeliveries.status })
+    .from(emailDeliveries)
+    .where(
+      and(
+        eq(emailDeliveries.toEmail, to.toLowerCase()),
+        gte(emailDeliveries.createdAt, new Date(Date.now() - withinMinutes * 60_000)),
+      ),
+    )
+    .orderBy(desc(emailDeliveries.createdAt))
+    .limit(1);
+  return latest?.status === "failed";
 }
 
 function escapeHtml(value: string): string {

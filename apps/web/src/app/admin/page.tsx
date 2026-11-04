@@ -1,6 +1,16 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { aspirantProfiles, count, desc, eq, mentorApplications, users } from "@chayan/db";
+import {
+  and,
+  aspirantProfiles,
+  count,
+  desc,
+  emailDeliveries,
+  eq,
+  gte,
+  mentorApplications,
+  users,
+} from "@chayan/db";
 import { getDb } from "@/lib/db";
 import { requireRole } from "@/lib/session";
 
@@ -12,17 +22,26 @@ const dateFormat = new Intl.DateTimeFormat("en-IN", {
   timeZone: "Asia/Kolkata",
 });
 
+function hoursAgo(hours: number) {
+  return new Date(Date.now() - hours * 60 * 60 * 1000);
+}
+
 export default async function AdminPage() {
   await requireRole(["admin"], "/admin");
   const db = getDb();
 
-  const [roleCounts, [onboarded], [pending], recentUsers] = await Promise.all([
+  const since = hoursAgo(24);
+  const [roleCounts, [onboarded], [pending], [failedEmails], recentUsers] = await Promise.all([
     db.select({ role: users.role, total: count() }).from(users).groupBy(users.role),
     db.select({ total: count() }).from(aspirantProfiles),
     db
       .select({ total: count() })
       .from(mentorApplications)
       .where(eq(mentorApplications.status, "submitted")),
+    db
+      .select({ total: count() })
+      .from(emailDeliveries)
+      .where(and(eq(emailDeliveries.status, "failed"), gte(emailDeliveries.createdAt, since))),
     db
       .select({
         id: users.id,
@@ -56,6 +75,14 @@ export default async function AdminPage() {
           <Link href="/admin/mentors" className="text-pen font-semibold">
             Review now
           </Link>
+        </p>
+      ) : null}
+
+      {(failedEmails?.total ?? 0) > 0 ? (
+        <p className="border-omr/40 bg-omr-soft mt-4 rounded-[var(--radius-control)] border px-4 py-3">
+          <strong>{failedEmails?.total}</strong> email{failedEmails?.total === 1 ? "" : "s"} failed
+          to send in the last 24 hours. Check the <code>email_deliveries</code> table and your
+          Resend settings.
         </p>
       ) : null}
 

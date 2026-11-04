@@ -39,8 +39,8 @@ export default function HomePage() {
             English or Hinglish, with sessions starting at ₹199.
           </p>
           <div className="mt-8 flex flex-wrap gap-3">
-            <ButtonLink href="/sign-up" size="lg">
-              Create a free account
+            <ButtonLink href="/mentors" size="lg">
+              Find a mentor
             </ButtonLink>
             <ButtonLink href="/mentor/apply" variant="secondary" size="lg">
               Become a mentor
