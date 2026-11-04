@@ -24,7 +24,7 @@ Working brand name: Chayan (change in `apps/web/src/config/site.ts`).
 ## Phases
 
 - [x] Phase 1: Foundation (monorepo, DB + exam taxonomy, landing page, legal pages, health check, Docker, CI)
-- [ ] Phase 2: Auth, roles, aspirant onboarding
+- [x] Phase 2: Auth (email/password + Google), email verification, password reset, roles, onboarding, dashboard, basic admin
 - [ ] Phase 3: Mentor application + admin verification
 - [ ] Phase 4: Mentor profiles, services, availability, discovery
 - [ ] Phase 5: Booking + Razorpay payments + refunds
@@ -34,6 +34,16 @@ Working brand name: Chayan (change in `apps/web/src/config/site.ts`).
 - [ ] Phase 9: Manual payouts + finance reports
 - [ ] Phase 10: Testing + hardening
 - [ ] Phase 11: Launch prep + soft launch
+
+## Phase 2 details
+
+- Better Auth with Drizzle adapter; tables `users`, `sessions`, `accounts`, `verifications`,
+  `rate_limits` (uuid ids, cookie prefix `chayan`)
+- Roles on `users.role`: aspirant (default), mentor, admin. Admins via `pnpm db:make-admin`
+- `aspirant_profiles` (exam, stage, target year, language, attempt) and append-only `consents`
+- `src/proxy.ts` redirects to sign-in when there is no session cookie; pages check the real
+  session with `requireUser` / `requireRole` in `src/lib/session.ts`
+- Emails print to the terminal when `RESEND_API_KEY` is empty
 
 ## Notes
 

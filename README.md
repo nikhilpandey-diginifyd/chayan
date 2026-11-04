@@ -20,6 +20,8 @@ docker compose up -d
 # Environment files
 cp .env.example apps/web/.env.local
 cp .env.example packages/db/.env
+# Then set BETTER_AUTH_SECRET in apps/web/.env.local to the output of:
+#   openssl rand -base64 32
 
 # Create tables and reference data
 pnpm db:migrate
@@ -44,6 +46,17 @@ Check the database connection at http://localhost:3000/api/health.
 | `pnpm db:seed`                 | Upsert reference data (exams and stages)                   |
 | `pnpm db:studio`               | Browse the database in Drizzle Studio                      |
 
+## Accounts and sign-in
+
+- Email and password sign-up needs a confirmed email address before the first sign-in.
+- Without `RESEND_API_KEY`, emails are printed in the terminal running `pnpm dev`. Copy the link
+  from there to confirm an account or reset a password.
+- Google sign-in appears only when `GOOGLE_CLIENT_ID` and `GOOGLE_CLIENT_SECRET` are both set.
+  In Google Cloud, the OAuth client needs the redirect URI
+  `<NEXT_PUBLIC_SITE_URL>/api/auth/callback/google`.
+- After signing up, run `pnpm db:make-admin your@email.com`, then sign out and in again to open
+  `/admin`.
+
 ## Changing the database
 
 1. Edit or add files in `packages/db/src/schema/`.
@@ -66,7 +79,9 @@ Dockerfile         Production image (runs migrations, then starts the app)
 2. Create an application from this GitHub repository with build pack **Dockerfile**
    (path `/Dockerfile`, port `3000`).
 3. Build variable: `NEXT_PUBLIC_SITE_URL=https://your-domain`.
-4. Runtime variable: `DATABASE_URL=<internal Postgres URL>`.
+4. Runtime variables: `DATABASE_URL=<internal Postgres URL>`, `BETTER_AUTH_SECRET` (new value
+   from `openssl rand -base64 32`), `RESEND_API_KEY`, `EMAIL_FROM` (an address on a domain
+   verified in Resend), and `GOOGLE_CLIENT_ID` / `GOOGLE_CLIENT_SECRET`.
 5. Health check path: `/api/health`.
 6. Deploy. Each container start applies migrations and refreshes reference data.
 

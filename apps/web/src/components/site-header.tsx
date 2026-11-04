@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { siteConfig } from "@/config/site";
-import { ButtonLink } from "@/components/ui/button";
+import { HeaderAccount } from "@/components/header-account";
 
 export function SiteHeader() {
   return (
@@ -30,9 +30,7 @@ export function SiteHeader() {
           >
             Pricing
           </Link>
-          <ButtonLink href="/#become-a-mentor" variant="secondary" size="sm">
-            Become a mentor
-          </ButtonLink>
+          <HeaderAccount />
         </nav>
       </div>
     </header>

@@ -1,25 +1,9 @@
 import { relations } from "drizzle-orm";
-import {
-  boolean,
-  integer,
-  pgEnum,
-  pgTable,
-  text,
-  timestamp,
-  uniqueIndex,
-  uuid,
-} from "drizzle-orm/pg-core";
+import { boolean, integer, pgEnum, pgTable, text, uniqueIndex, uuid } from "drizzle-orm/pg-core";
 import { EXAM_BODIES } from "@chayan/shared";
+import { timestamps } from "./_shared";
 
 export const examBodyEnum = pgEnum("exam_body", EXAM_BODIES);
-
-const timestamps = {
-  createdAt: timestamp({ withTimezone: true }).notNull().defaultNow(),
-  updatedAt: timestamp({ withTimezone: true })
-    .notNull()
-    .defaultNow()
-    .$onUpdate(() => new Date()),
-};
 
 export const exams = pgTable("exams", {
   id: uuid().primaryKey().defaultRandom(),

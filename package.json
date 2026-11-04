@@ -15,7 +15,8 @@
     "db:generate": "pnpm --filter @chayan/db db:generate",
     "db:migrate": "pnpm --filter @chayan/db db:migrate",
     "db:seed": "pnpm --filter @chayan/db db:seed",
-    "db:studio": "pnpm --filter @chayan/db db:studio"
+    "db:studio": "pnpm --filter @chayan/db db:studio",
+    "db:make-admin": "pnpm --filter @chayan/db db:make-admin"
   },
   "devDependencies": {
     "prettier": "3.9.10",
