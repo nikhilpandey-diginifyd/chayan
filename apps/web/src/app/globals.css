@@ -1,0 +1,141 @@
+@import "tailwindcss";
+
+/*
+ * Design tokens
+ * Paper and ink of an exam answer sheet: blue-black ink, ballpoint blue,
+ * the red of OMR sheet guides (used sparingly) and a green "verified" seal.
+ */
+@theme {
+  --color-paper: #fafbfd;
+  --color-surface: #ffffff;
+  --color-ink: #18233f;
+  --color-ink-muted: #4b5675;
+  --color-pen: #2b4fc7;
+  --color-pen-dark: #1f3a99;
+  --color-omr: #cc3651;
+  --color-omr-soft: #fbe9ed;
+  --color-seal: #1f7a50;
+  --color-seal-soft: #e5f3ec;
+  --color-line: #d9deea;
+
+  --font-display: "Martel", "Noto Serif Devanagari", Georgia, serif;
+  --font-sans: "Mukta", "Noto Sans Devanagari", system-ui, -apple-system, "Segoe UI", sans-serif;
+
+  --radius-control: 0.5rem;
+  --radius-panel: 1rem;
+}
+
+@layer base {
+  html {
+    -webkit-text-size-adjust: 100%;
+    text-rendering: optimizeLegibility;
+  }
+
+  body {
+    background-color: var(--color-paper);
+    color: var(--color-ink);
+    font-family: var(--font-sans);
+    font-size: 1.0625rem;
+    line-height: 1.6;
+  }
+
+  h1,
+  h2,
+  h3 {
+    font-family: var(--font-display);
+    line-height: 1.2;
+    letter-spacing: -0.01em;
+    text-wrap: balance;
+  }
+
+  p {
+    text-wrap: pretty;
+  }
+
+  :focus-visible {
+    outline: 3px solid var(--color-pen);
+    outline-offset: 2px;
+    border-radius: 4px;
+  }
+
+  ::selection {
+    background-color: #dbe3fb;
+  }
+}
+
+/* Long-form text on policy pages */
+@layer components {
+  .prose-legal {
+    max-width: 68ch;
+  }
+  .prose-legal h2 {
+    margin-top: 2.5rem;
+    margin-bottom: 0.75rem;
+    font-size: 1.375rem;
+    font-weight: 700;
+  }
+  .prose-legal h3 {
+    margin-top: 1.5rem;
+    margin-bottom: 0.5rem;
+    font-size: 1.125rem;
+    font-weight: 700;
+  }
+  .prose-legal p,
+  .prose-legal ul,
+  .prose-legal ol {
+    margin-bottom: 1rem;
+    color: var(--color-ink-muted);
+  }
+  .prose-legal ul {
+    list-style: disc;
+    padding-left: 1.25rem;
+  }
+  .prose-legal ol {
+    list-style: decimal;
+    padding-left: 1.25rem;
+  }
+  .prose-legal li {
+    margin-bottom: 0.375rem;
+  }
+  .prose-legal a {
+    color: var(--color-pen);
+    text-decoration: underline;
+    text-underline-offset: 3px;
+  }
+  .prose-legal table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 1.25rem;
+    font-size: 0.975rem;
+  }
+  .prose-legal th,
+  .prose-legal td {
+    border: 1px solid var(--color-line);
+    padding: 0.5rem 0.75rem;
+    text-align: left;
+    vertical-align: top;
+  }
+  .prose-legal th {
+    background: var(--color-surface);
+    color: var(--color-ink);
+    font-weight: 600;
+  }
+}
+
+/* The single animated moment: the chosen OMR bubble fills in on load */
+@keyframes bubble-fill {
+  from {
+    transform: scale(0);
+  }
+  to {
+    transform: scale(1);
+  }
+}
+.animate-bubble-fill {
+  animation: bubble-fill 420ms cubic-bezier(0.2, 0.8, 0.2, 1) 500ms both;
+}
+@media (prefers-reduced-motion: reduce) {
+  .animate-bubble-fill {
+    animation: none;
+  }
+}

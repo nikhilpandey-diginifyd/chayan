@@ -1,0 +1,69 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    services:
+      postgres:
+        image: postgres:16-alpine
+        env:
+          POSTGRES_USER: chayan
+          POSTGRES_PASSWORD: chayan
+          POSTGRES_DB: chayan
+        ports: ["5432:5432"]
+        options: >-
+          --health-cmd "pg_isready -U chayan -d chayan"
+          --health-interval 5s --health-timeout 5s --health-retries 10
+
+    env:
+      DATABASE_URL: postgres://chayan:chayan@localhost:5432/chayan
+      NEXT_PUBLIC_SITE_URL: http://localhost:3000
+      NEXT_TELEMETRY_DISABLED: 1
+      TURBO_TELEMETRY_DISABLED: 1
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: pnpm/action-setup@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+          cache: pnpm
+
+      - run: pnpm install --frozen-lockfile
+
+      - name: Format
+        run: pnpm format:check
+
+      - name: Lint
+        run: pnpm lint
+
+      - name: Typecheck
+        run: pnpm typecheck
+
+      - name: Migrations apply cleanly
+        run: pnpm db:migrate && pnpm db:seed
+
+      - name: Migrations match schema
+        run: |
+          pnpm db:generate
+          if [ -n "$(git status --porcelain packages/db/migrations)" ]; then
+            echo "Schema changed without a committed migration. Run pnpm db:generate and commit it."
+            git status --porcelain packages/db/migrations
+            exit 1
+          fi
+
+      - name: Build
+        run: pnpm build

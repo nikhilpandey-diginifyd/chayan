@@ -1,0 +1,40 @@
+# Progress
+
+Paste this file at the start of every new chat so the assistant knows the current state.
+
+## Product
+
+Marketplace for UPSC and SSC aspirants: one-to-one paid video sessions with verified
+selected candidates (Topmate-style), short prep videos, downloadable previous year papers.
+Working brand name: Chayan (change in `apps/web/src/config/site.ts`).
+
+## Decisions
+
+- Web first, Android app (Expo) after a 1-month market test, iOS later
+- Monorepo: pnpm + Turborepo (`apps/web`, `packages/db`, `packages/shared`)
+- Next.js 16 App Router, one app for web + API routes + admin
+- PostgreSQL + Drizzle ORM (snake_case columns), migrations in `packages/db/migrations`
+- Auth: Better Auth (Google + email/password)
+- Payments: Razorpay; fixed-slot sessions (15/30/60 min) in MVP, no wallet
+- Video: 100ms, video calls, camera optional for both, screen share on desktop
+- Jobs: pg-boss (no Redis in MVP)
+- Hosting: VPS + Coolify + Cloudflare; files on Cloudflare R2
+- Email: Resend; monitoring: Sentry + PostHog
+
+## Phases
+
+- [x] Phase 1: Foundation (monorepo, DB + exam taxonomy, landing page, legal pages, health check, Docker, CI)
+- [ ] Phase 2: Auth, roles, aspirant onboarding
+- [ ] Phase 3: Mentor application + admin verification
+- [ ] Phase 4: Mentor profiles, services, availability, discovery
+- [ ] Phase 5: Booking + Razorpay payments + refunds
+- [ ] Phase 6: 100ms video calls + no-show logic
+- [ ] Phase 7: Dashboards, reviews, notes, reminders
+- [ ] Phase 8: PYQ library + short videos
+- [ ] Phase 9: Manual payouts + finance reports
+- [ ] Phase 10: Testing + hardening
+- [ ] Phase 11: Launch prep + soft launch
+
+## Notes
+
+- Legal pages are drafts. Get them reviewed by a lawyer before taking payments.
