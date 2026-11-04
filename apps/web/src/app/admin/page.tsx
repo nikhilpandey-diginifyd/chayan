@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
-import { aspirantProfiles, count, desc, users } from "@chayan/db";
+import Link from "next/link";
+import { aspirantProfiles, count, desc, eq, mentorApplications, users } from "@chayan/db";
 import { getDb } from "@/lib/db";
 import { requireRole } from "@/lib/session";
 
@@ -15,9 +16,13 @@ export default async function AdminPage() {
   await requireRole(["admin"], "/admin");
   const db = getDb();
 
-  const [roleCounts, [onboarded], recentUsers] = await Promise.all([
+  const [roleCounts, [onboarded], [pending], recentUsers] = await Promise.all([
     db.select({ role: users.role, total: count() }).from(users).groupBy(users.role),
     db.select({ total: count() }).from(aspirantProfiles),
+    db
+      .select({ total: count() })
+      .from(mentorApplications)
+      .where(eq(mentorApplications.status, "submitted")),
     db
       .select({
         id: users.id,
@@ -41,8 +46,18 @@ export default async function AdminPage() {
   ];
 
   return (
-    <div className="mx-auto max-w-6xl px-4 py-12 sm:px-6 sm:py-16">
+    <div className="py-10">
       <h1 className="text-3xl font-extrabold">Admin</h1>
+
+      {(pending?.total ?? 0) > 0 ? (
+        <p className="border-pen/30 bg-surface mt-6 rounded-[var(--radius-control)] border px-4 py-3">
+          <strong>{pending?.total}</strong> mentor{" "}
+          {pending?.total === 1 ? "application is" : "applications are"} waiting for review.{" "}
+          <Link href="/admin/mentors" className="text-pen font-semibold">
+            Review now
+          </Link>
+        </p>
+      ) : null}
 
       <dl className="mt-8 grid grid-cols-2 gap-4 md:grid-cols-4">
         {stats.map((stat) => (

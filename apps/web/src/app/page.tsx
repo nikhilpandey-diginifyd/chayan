@@ -42,7 +42,7 @@ export default function HomePage() {
             <ButtonLink href="/sign-up" size="lg">
               Create a free account
             </ButtonLink>
-            <ButtonLink href="#become-a-mentor" variant="secondary" size="lg">
+            <ButtonLink href="/mentor/apply" variant="secondary" size="lg">
               Become a mentor
             </ButtonLink>
           </div>
@@ -151,15 +151,15 @@ export default function HomePage() {
             Cleared UPSC or SSC? Help the next batch and get paid for your time.
           </h2>
           <p className="mt-4 max-w-xl text-white/80">
-            Set your own price and hours. We handle bookings, payments and video calls. Mentor
-            applications open soon. Write to us to join the first group of mentors.
+            Set your own price and hours. We handle bookings, payments and video calls. Applying
+            takes about 10 minutes: your result, a photo ID and a short note about how you prepared.
           </p>
-          <a
-            href={`mailto:${siteConfig.business.email}?subject=Mentor%20application`}
+          <Link
+            href="/mentor/apply"
             className="text-ink hover:bg-paper mt-8 inline-flex h-12 items-center rounded-[var(--radius-control)] bg-white px-6 text-lg font-semibold"
           >
-            Email us to apply
-          </a>
+            Apply as a mentor
+          </Link>
         </div>
       </section>
     </>

@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { AuthCard } from "@/components/auth/auth-card";
 import { ResendVerification } from "@/components/auth/resend-verification";
+import { safeRedirectPath } from "@/lib/redirects";
 
 export const metadata: Metadata = { title: "Confirm your email" };
 
@@ -10,6 +11,7 @@ type Props = { searchParams: Promise<Record<string, string | string[] | undefine
 export default async function VerifyEmailPage({ searchParams }: Props) {
   const params = await searchParams;
   const email = typeof params.email === "string" ? params.email : "";
+  const next = safeRedirectPath(params.next, "/onboarding");
 
   return (
     <AuthCard
@@ -33,7 +35,7 @@ export default async function VerifyEmailPage({ searchParams }: Props) {
       <p className="text-ink-muted text-sm">
         Can&apos;t find it? Check your spam or promotions folder. The link works for 24 hours.
       </p>
-      {email ? <ResendVerification email={email} /> : null}
+      {email ? <ResendVerification email={email} callbackPath={next} /> : null}
     </AuthCard>
   );
 }

@@ -3,15 +3,19 @@ import Link from "next/link";
 import { redirect } from "next/navigation";
 import { PREP_LANGUAGE_LABELS } from "@chayan/shared";
 import { ButtonLink } from "@/components/ui/button";
+import { getApplicationForUser, getMentorProfile } from "@/lib/mentor-applications";
 import { getAspirantProfile, requireUser } from "@/lib/session";
 
 export const metadata: Metadata = { title: "Dashboard", robots: { index: false } };
 
 export default async function DashboardPage() {
   const user = await requireUser("/dashboard");
-  const profile = await getAspirantProfile(user.id);
+  if (await getMentorProfile(user.id)) redirect("/mentor");
 
-  if (!profile) redirect("/onboarding");
+  const profile = await getAspirantProfile(user.id);
+  if (!profile) {
+    redirect((await getApplicationForUser(user.id)) ? "/mentor/apply" : "/onboarding");
+  }
 
   const firstName = user.name.split(" ")[0] ?? user.name;
 

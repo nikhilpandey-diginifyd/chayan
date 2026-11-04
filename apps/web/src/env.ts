@@ -25,6 +25,11 @@ const serverSchema = z
     GOOGLE_CLIENT_SECRET: optionalString,
     RESEND_API_KEY: optionalString,
     EMAIL_FROM: z.string().min(3).default("Chayan <onboarding@resend.dev>"),
+    ADMIN_NOTIFY_EMAIL: optionalString.pipe(z.email().optional()),
+    R2_ACCOUNT_ID: optionalString,
+    R2_ACCESS_KEY_ID: optionalString,
+    R2_SECRET_ACCESS_KEY: optionalString,
+    R2_BUCKET: optionalString,
   })
   .superRefine((env, ctx) => {
     if (Boolean(env.GOOGLE_CLIENT_ID) !== Boolean(env.GOOGLE_CLIENT_SECRET)) {
@@ -39,6 +44,28 @@ const serverSchema = z
         code: "custom",
         path: ["BETTER_AUTH_SECRET"],
         message: "Use a real secret in production: openssl rand -base64 32",
+      });
+    }
+    const r2Values = [
+      env.R2_ACCOUNT_ID,
+      env.R2_ACCESS_KEY_ID,
+      env.R2_SECRET_ACCESS_KEY,
+      env.R2_BUCKET,
+    ];
+    const r2Count = r2Values.filter(Boolean).length;
+    if (r2Count !== 0 && r2Count !== r2Values.length) {
+      ctx.addIssue({
+        code: "custom",
+        path: ["R2_BUCKET"],
+        message: "Set all four R2_* variables, or none to store files on disk locally",
+      });
+    }
+    if (env.NODE_ENV === "production" && r2Count === 0) {
+      ctx.addIssue({
+        code: "custom",
+        path: ["R2_BUCKET"],
+        message:
+          "R2_* variables are required in production. Files on the server disk are lost on redeploy",
       });
     }
     if (env.NODE_ENV === "production" && !env.RESEND_API_KEY) {
@@ -87,6 +114,11 @@ export function getServerEnv(): ServerEnv {
     GOOGLE_CLIENT_SECRET: process.env.GOOGLE_CLIENT_SECRET,
     RESEND_API_KEY: process.env.RESEND_API_KEY,
     EMAIL_FROM: process.env.EMAIL_FROM,
+    ADMIN_NOTIFY_EMAIL: process.env.ADMIN_NOTIFY_EMAIL,
+    R2_ACCOUNT_ID: process.env.R2_ACCOUNT_ID,
+    R2_ACCESS_KEY_ID: process.env.R2_ACCESS_KEY_ID,
+    R2_SECRET_ACCESS_KEY: process.env.R2_SECRET_ACCESS_KEY,
+    R2_BUCKET: process.env.R2_BUCKET,
   });
   return cachedServerEnv;
 }

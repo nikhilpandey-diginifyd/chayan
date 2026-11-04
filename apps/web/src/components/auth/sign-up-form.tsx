@@ -7,7 +7,7 @@ import { Field, FormMessage, Input } from "@/components/ui/field";
 import { authClient } from "@/lib/auth-client";
 import { authErrorMessage } from "@/lib/auth-errors";
 
-export function SignUpForm() {
+export function SignUpForm({ callbackPath }: { callbackPath: string }) {
   const router = useRouter();
   const [pending, setPending] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -23,7 +23,7 @@ export function SignUpForm() {
       name: String(form.get("name") ?? "").trim(),
       email,
       password: String(form.get("password") ?? ""),
-      callbackURL: "/onboarding",
+      callbackURL: callbackPath,
     });
 
     if (error) {
@@ -32,7 +32,9 @@ export function SignUpForm() {
       return;
     }
 
-    router.push(`/verify-email?email=${encodeURIComponent(email)}`);
+    router.push(
+      `/verify-email?email=${encodeURIComponent(email)}&next=${encodeURIComponent(callbackPath)}`,
+    );
   }
 
   return (

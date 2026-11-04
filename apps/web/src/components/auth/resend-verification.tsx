@@ -6,7 +6,13 @@ import { FormMessage } from "@/components/ui/field";
 import { authClient } from "@/lib/auth-client";
 import { authErrorMessage } from "@/lib/auth-errors";
 
-export function ResendVerification({ email }: { email: string }) {
+export function ResendVerification({
+  email,
+  callbackPath,
+}: {
+  email: string;
+  callbackPath: string;
+}) {
   const [state, setState] = useState<"idle" | "sending" | "sent">("idle");
   const [error, setError] = useState<string | null>(null);
 
@@ -15,7 +21,7 @@ export function ResendVerification({ email }: { email: string }) {
     setError(null);
     const { error } = await authClient.sendVerificationEmail({
       email,
-      callbackURL: "/onboarding",
+      callbackURL: callbackPath,
     });
     if (error) {
       setError(authErrorMessage(error));

@@ -25,7 +25,7 @@ Working brand name: Chayan (change in `apps/web/src/config/site.ts`).
 
 - [x] Phase 1: Foundation (monorepo, DB + exam taxonomy, landing page, legal pages, health check, Docker, CI)
 - [x] Phase 2: Auth (email/password + Google), email verification, password reset, roles, onboarding, dashboard, basic admin
-- [ ] Phase 3: Mentor application + admin verification
+- [x] Phase 3: Mentor application (details, private document upload, declaration) + admin review queue (approve with badge, request changes, reject), emails, audit log, mentor dashboard
 - [ ] Phase 4: Mentor profiles, services, availability, discovery
 - [ ] Phase 5: Booking + Razorpay payments + refunds
 - [ ] Phase 6: 100ms video calls + no-show logic
@@ -44,6 +44,17 @@ Working brand name: Chayan (change in `apps/web/src/config/site.ts`).
 - `src/proxy.ts` redirects to sign-in when there is no session cookie; pages check the real
   session with `requireUser` / `requireRole` in `src/lib/session.ts`
 - Emails print to the terminal when `RESEND_API_KEY` is empty
+
+## Phase 3 details
+
+- Tables: `mentor_applications` (one per user; statuses draft, submitted, changes_requested,
+  approved, rejected), `mentor_documents`, `mentor_profiles` (created on approval),
+  `audit_logs`
+- Badges: selected, interview_appeared, mains_qualified (UPSC), tier2_qualified (SSC),
+  subject_expert. Admin can grant a lower badge than claimed
+- Files: `src/lib/storage.ts` (R2 via aws4fetch, or local `.uploads`); type checked from file
+  bytes, 5 MB max, 10 per application; served only via `/api/documents/[id]`
+- Mentor area `/mentor` is gated by the `mentor_profiles` row, not the cached session role
 
 ## Notes
 

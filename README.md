@@ -57,6 +57,16 @@ Check the database connection at http://localhost:3000/api/health.
 - After signing up, run `pnpm db:make-admin your@email.com`, then sign out and in again to open
   `/admin`.
 
+## Mentor applications
+
+- Anyone signed in can apply at `/mentor/apply`: details, documents, then submit.
+- Admins review at `/admin/mentors`. Approving creates the mentor profile and changes the user's
+  role to `mentor`. Every decision is written to the `audit_logs` table.
+- An admin can't review their own application. Test with a second account.
+- Documents are private. Without R2 settings they're saved in `apps/web/.uploads` (ignored by
+  git); with R2 they go to your bucket. Either way they're only served through
+  `/api/documents/<id>` to the applicant and admins.
+
 ## Changing the database
 
 1. Edit or add files in `packages/db/src/schema/`.
@@ -81,7 +91,8 @@ Dockerfile         Production image (runs migrations, then starts the app)
 3. Build variable: `NEXT_PUBLIC_SITE_URL=https://your-domain`.
 4. Runtime variables: `DATABASE_URL=<internal Postgres URL>`, `BETTER_AUTH_SECRET` (new value
    from `openssl rand -base64 32`), `RESEND_API_KEY`, `EMAIL_FROM` (an address on a domain
-   verified in Resend), and `GOOGLE_CLIENT_ID` / `GOOGLE_CLIENT_SECRET`.
+   verified in Resend), `GOOGLE_CLIENT_ID` / `GOOGLE_CLIENT_SECRET`, the four `R2_*` values
+   and optionally `ADMIN_NOTIFY_EMAIL`.
 5. Health check path: `/api/health`.
 6. Deploy. Each container start applies migrations and refreshes reference data.
 

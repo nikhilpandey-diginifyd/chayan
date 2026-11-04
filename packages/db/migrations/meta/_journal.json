@@ -15,6 +15,13 @@
       "when": 1793790543832,
       "tag": "0001_auth_and_profiles",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1793796271950,
+      "tag": "0002_mentor_applications",
+      "breakpoints": true
     }
   ]
 }

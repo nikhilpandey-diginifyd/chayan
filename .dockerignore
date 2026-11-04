@@ -8,3 +8,5 @@
 .git
 .github
 *.md
+
+.uploads
