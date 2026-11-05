@@ -1,14 +1,33 @@
 "use client";
 
-import { useMemo, useState } from "react";
-import { formatRupees, groupSlotsByIstDate, formatMinuteOfDay } from "@chayan/shared";
-import { Button } from "@/components/ui/button";
+import Link from "next/link";
+import { useActionState, useMemo, useState } from "react";
+import {
+  BOOKING_POLICY,
+  formatRupees,
+  groupSlotsByIstDate,
+  formatMinuteOfDay,
+} from "@chayan/shared";
+import { bookSession, type BookState } from "@/app/mentors/[slug]/actions";
+import { Button, ButtonLink } from "@/components/ui/button";
+import { FormMessage, inputClassName } from "@/components/ui/field";
 import { cn } from "@/lib/utils";
 import { formatIstDay, minuteOfIstDay } from "./format";
 
 type Option = { durationMinutes: number; pricePaise: number; slots: string[] };
+type Viewer = "signed_out" | "self" | "preview" | "aspirant";
 
-export function SlotPicker({ options }: { options: Option[] }) {
+export function SlotPicker({
+  options,
+  slug,
+  viewer,
+}: {
+  options: Option[];
+  slug: string;
+  viewer: Viewer;
+}) {
+  const [state, formAction, pending] = useActionState<BookState, FormData>(bookSession, {});
+  const [note, setNote] = useState("");
   const [duration, setDuration] = useState(options[0]?.durationMinutes ?? 30);
   const selected = options.find((option) => option.durationMinutes === duration) ?? options[0];
 
@@ -129,12 +148,64 @@ export function SlotPicker({ options }: { options: Option[] }) {
         </>
       )}
 
-      <div>
-        <Button type="button" className="w-full" disabled>
-          {slot ? `Book for ${formatRupees(selected.pricePaise)}` : "Choose a time"}
-        </Button>
-        <p className="text-ink-muted mt-2 text-center text-sm">Online booking opens very soon.</p>
-      </div>
+      {viewer === "aspirant" ? (
+        <form action={formAction} className="space-y-4">
+          <input type="hidden" name="slug" value={slug} />
+          <input type="hidden" name="durationMinutes" value={selected.durationMinutes} />
+          <input type="hidden" name="startsAt" value={slot ?? ""} />
+          <div>
+            <label htmlFor="note" className="text-sm font-semibold">
+              What do you want help with? (optional)
+            </label>
+            <textarea
+              id="note"
+              name="note"
+              rows={3}
+              maxLength={BOOKING_POLICY.noteMaxLength}
+              value={note}
+              onChange={(event) => setNote(event.target.value)}
+              placeholder="For example: my GS answers score low, I want a plan for the next 3 months"
+              className={cn(inputClassName, "mt-1 h-auto py-2 text-sm")}
+            />
+          </div>
+          {state.error ? <FormMessage tone="error">{state.error}</FormMessage> : null}
+          <Button type="submit" className="w-full" disabled={!slot || pending}>
+            {pending
+              ? "Reserving your slot…"
+              : slot
+                ? `Continue to pay ${formatRupees(selected.pricePaise)}`
+                : "Choose a time"}
+          </Button>
+          <p className="text-ink-muted text-center text-sm">
+            We hold the slot for {BOOKING_POLICY.holdMinutes} minutes while you pay. Full refund if
+            you cancel 12 hours or more before.
+          </p>
+        </form>
+      ) : viewer === "signed_out" ? (
+        <div className="space-y-2">
+          <ButtonLink
+            href={`/sign-in?next=${encodeURIComponent(`/mentors/${slug}`)}`}
+            className="w-full"
+          >
+            Sign in to book
+          </ButtonLink>
+          <p className="text-ink-muted text-center text-sm">
+            New here?{" "}
+            <Link
+              href={`/sign-up?next=${encodeURIComponent(`/mentors/${slug}`)}`}
+              className="text-pen font-semibold"
+            >
+              Create a free account
+            </Link>
+          </p>
+        </div>
+      ) : (
+        <p className="border-line bg-paper text-ink-muted rounded-[var(--radius-control)] border px-4 py-3 text-sm">
+          {viewer === "self"
+            ? "This is how aspirants see your booking panel. You can't book yourself."
+            : "Booking opens once this profile is published."}
+        </p>
+      )}
     </div>
   );
 }

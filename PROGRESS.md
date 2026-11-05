@@ -27,7 +27,7 @@ Working brand name: Chayan (change in `apps/web/src/config/site.ts`).
 - [x] Phase 2: Auth (email/password + Google), email verification, password reset, roles, onboarding, dashboard, basic admin
 - [x] Phase 3: Mentor application (details, private document upload, declaration) + admin review queue (approve with badge, request changes, reject), emails, audit log, mentor dashboard
 - [x] Phase 4: Mentor profile editor (photo, headline, topics), session prices, weekly availability, publish flow, public mentor list with filters, public profile with slot picker, admin pause/restore, email delivery log
-- [ ] Phase 5: Booking + Razorpay payments + refunds
+- [x] Phase 5: Booking with 10-min slot hold, Razorpay Checkout (test mode without keys), webhook, cancellations and refunds per policy, one reschedule, booking pages for aspirant/mentor/admin
 - [ ] Phase 6: 100ms video calls + no-show logic
 - [ ] Phase 7: Dashboards, reviews, notes, reminders
 - [ ] Phase 8: PYQ library + short videos
@@ -67,6 +67,19 @@ Working brand name: Chayan (change in `apps/web/src/config/site.ts`).
 - Photos: re-encoded to 400×400 WebP with sharp, served at `/api/mentor-photos/...` with
   long cache; old photo deleted on change
 - Pages: `/mentor` (overview, profile, sessions, availability), `/mentors`, `/mentors/[slug]`
+
+## Phase 5 details
+
+- Tables: `bookings` (price/fee/earnings snapshot, hold expiry, reschedule count),
+  `payments`, `refunds`, `webhook_events`. Migration 0005 adds a Postgres exclusion
+  constraint (btree_gist) so active bookings for one mentor can never overlap
+- `src/lib/bookings.ts`: create (mentor row lock + slot re-check), confirmPayment
+  (idempotent; auto-refund if paid after the slot was taken), cancel, reschedule, refunds
+- Payments: `src/lib/payments/provider.ts` uses Razorpay when keys are set, otherwise
+  test mode (blocked in production). Checkout callback verified at
+  `/api/payments/razorpay/verify`; webhook at `/api/webhooks/razorpay`
+- Policy (`packages/shared/src/money.ts`): full refund 12h+ before, 50% inside 12h,
+  mentor/admin cancel = full refund, one reschedule 12h+ before
 
 ## Notes
 

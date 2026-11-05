@@ -7,6 +7,7 @@ import { cn } from "@/lib/utils";
 const links = [
   { href: "/admin", label: "Overview", exact: true },
   { href: "/admin/mentors", label: "Mentor applications", exact: false },
+  { href: "/admin/bookings", label: "Bookings", exact: false },
 ] as const;
 
 export function AdminNav() {

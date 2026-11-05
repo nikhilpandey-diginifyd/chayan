@@ -28,6 +28,7 @@ import {
   type MentorBadge,
   type PrepLanguage,
 } from "@chayan/shared";
+import { getBusyIntervals } from "@/lib/bookings";
 import { getDb } from "@/lib/db";
 
 export const PAGE_SIZE = 12;
@@ -172,7 +173,7 @@ async function nextAvailableSlots(
   const db = getDb();
   const ids = mentors.map((mentor) => mentor.userId);
 
-  const [rules, blocked, services] = await Promise.all([
+  const [rules, blocked, services, busy] = await Promise.all([
     db
       .select()
       .from(mentorAvailabilityRules)
@@ -185,6 +186,7 @@ async function nextAvailableSlots(
       })
       .from(mentorServices)
       .where(and(inArray(mentorServices.mentorUserId, ids), eq(mentorServices.isActive, true))),
+    getBusyIntervals(ids),
   ]);
 
   const now = new Date();
@@ -198,6 +200,7 @@ async function nextAvailableSlots(
       blockedDates: blocked
         .filter((row) => row.mentorUserId === mentor.userId)
         .map((row) => row.date),
+      busy: busy.get(mentor.userId) ?? [],
       durationMinutes: Math.min(...durations),
       bufferMinutes: mentor.bufferMinutes,
       minNoticeHours: mentor.minNoticeHours,
@@ -237,7 +240,8 @@ export async function getPublicMentor(
     profile.availabilityRules.length > 0;
   if (!isPublic && !options.includeUnpublished) return null;
 
-  return { ...profile, isPublic };
+  const busy = (await getBusyIntervals([profile.userId])).get(profile.userId) ?? [];
+  return { ...profile, isPublic, busy };
 }
 
 export async function listPublishedSlugs() {

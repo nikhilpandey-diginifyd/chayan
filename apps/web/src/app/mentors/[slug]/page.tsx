@@ -52,6 +52,7 @@ export default async function MentorProfilePage({ params }: Props) {
     slots: generateSlots({
       rules: mentor.availabilityRules,
       blockedDates: mentor.blockedDates.map((row) => row.date),
+      busy: mentor.busy,
       durationMinutes: service.durationMinutes,
       bufferMinutes: mentor.bufferMinutes,
       minNoticeHours: mentor.minNoticeHours,
@@ -140,7 +141,19 @@ export default async function MentorProfilePage({ params }: Props) {
         <aside className="min-w-0">
           <div className="border-line bg-surface rounded-[var(--radius-panel)] border p-5 sm:p-6 lg:sticky lg:top-6">
             <h2 className="text-xl font-bold">Book a session</h2>
-            <SlotPicker options={slotsByDuration} />
+            <SlotPicker
+              options={slotsByDuration}
+              slug={slug}
+              viewer={
+                !session
+                  ? "signed_out"
+                  : session.user.id === mentor.userId
+                    ? "self"
+                    : previewing
+                      ? "preview"
+                      : "aspirant"
+              }
+            />
           </div>
         </aside>
       </div>

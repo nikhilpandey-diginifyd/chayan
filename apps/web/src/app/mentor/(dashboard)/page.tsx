@@ -4,6 +4,8 @@ import { BadgeCheck, CheckCircle2, Circle, ExternalLink } from "lucide-react";
 import { formatRupees, MENTOR_BADGE_INFO } from "@chayan/shared";
 import { setProfilePublished } from "./actions";
 import { Button } from "@/components/ui/button";
+import { BookingList } from "@/components/bookings/booking-list";
+import { listBookingsFor } from "@/lib/booking-queries";
 import { canPublish, publishChecklist, requireMentor } from "@/lib/mentor-profile";
 
 export const metadata: Metadata = { title: "Mentor dashboard", robots: { index: false } };
@@ -15,6 +17,12 @@ export default async function MentorOverviewPage() {
   const checklist = publishChecklist(mentor);
   const ready = canPublish(mentor);
   const activeServices = mentor.services.filter((service) => service.isActive);
+  const upcoming = await listBookingsFor({
+    role: "mentor",
+    userId: user.id,
+    when: "upcoming",
+    limit: 5,
+  });
 
   return (
     <div className="py-10">
@@ -42,7 +50,7 @@ export default async function MentorOverviewPage() {
           </h2>
           <p className="text-ink-muted mt-2">
             {mentor.isPublished
-              ? "Aspirants can find you in the mentor list. Booking opens shortly."
+              ? "Aspirants can find and book you from the mentor list."
               : "Finish these steps, then publish your profile so aspirants can find you."}
           </p>
           <ul className="mt-6 space-y-3">
@@ -102,9 +110,18 @@ export default async function MentorOverviewPage() {
               ))}
             </ul>
           )}
-          <p className="text-ink-muted mt-6 text-sm">
-            Upcoming bookings and earnings will appear here once booking opens.
-          </p>
+          <h3 className="mt-8 font-bold">Upcoming bookings</h3>
+          <BookingList
+            items={upcoming.filter((item) => item.status === "confirmed")}
+            perspective="mentor"
+            empty="No bookings yet."
+          />
+          <Link
+            href="/mentor/bookings"
+            className="text-pen mt-2 inline-block text-sm font-semibold"
+          >
+            All bookings
+          </Link>
         </section>
       </div>
     </div>

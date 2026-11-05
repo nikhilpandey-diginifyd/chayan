@@ -2,7 +2,9 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import { PREP_LANGUAGE_LABELS } from "@chayan/shared";
+import { BookingList } from "@/components/bookings/booking-list";
 import { ButtonLink } from "@/components/ui/button";
+import { listBookingsFor } from "@/lib/booking-queries";
 import { getApplicationForUser, getMentorProfile } from "@/lib/mentor-applications";
 import { getAspirantProfile, requireUser } from "@/lib/session";
 
@@ -18,6 +20,12 @@ export default async function DashboardPage() {
   }
 
   const firstName = user.name.split(" ")[0] ?? user.name;
+  const upcoming = await listBookingsFor({
+    role: "aspirant",
+    userId: user.id,
+    when: "upcoming",
+    limit: 5,
+  });
 
   return (
     <div className="mx-auto max-w-6xl px-4 py-12 sm:px-6 sm:py-16">
@@ -31,10 +39,21 @@ export default async function DashboardPage() {
           <h2 id="sessions-heading" className="text-xl font-bold">
             Your sessions
           </h2>
-          <p className="text-ink-muted mt-3 max-w-prose">
-            You haven&apos;t booked a session yet. Mentor booking opens soon. We&apos;ll email you
-            when verified {profile.exam.shortName} mentors are available.
-          </p>
+          <div className="mt-2">
+            <BookingList
+              items={upcoming}
+              perspective="aspirant"
+              empty={`No sessions booked yet. Find a verified ${profile.exam.shortName} mentor to get started.`}
+            />
+          </div>
+          <div className="mt-4 flex flex-wrap gap-3">
+            <ButtonLink href={`/mentors?exam=${profile.exam.code}`} size="sm">
+              Find a mentor
+            </ButtonLink>
+            <ButtonLink href="/bookings" variant="secondary" size="sm">
+              All my sessions
+            </ButtonLink>
+          </div>
         </section>
 
         <section

@@ -21,3 +21,4 @@ export {
   arrayContains,
   arrayOverlaps,
 } from "drizzle-orm";
+export { aliasedTable } from "drizzle-orm";

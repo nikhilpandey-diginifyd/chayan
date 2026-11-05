@@ -12,6 +12,7 @@ import {
 } from "@chayan/shared";
 import { ReviewForm } from "@/components/admin/review-form";
 import { Button } from "@/components/ui/button";
+import { getMentorWorkspace, publishChecklist } from "@/lib/mentor-profile";
 import { setMentorStatus } from "./actions";
 import { getDb } from "@/lib/db";
 import { requireRole } from "@/lib/session";
@@ -54,6 +55,12 @@ export default async function ReviewApplicationPage({ params }: Props) {
           columns: { status: true, slug: true, isPublished: true },
         })
       : undefined;
+  const workspace = mentorProfile ? await getMentorWorkspace(application.userId) : null;
+  const missingSetup = workspace
+    ? publishChecklist(workspace)
+        .filter((item) => !item.done)
+        .map((item) => item.label.toLowerCase())
+    : [];
 
   const claimed = application.claimedBadge ? MENTOR_BADGE_INFO[application.claimedBadge] : null;
   const badgeOptions = application.exam ? badgesForExamBody(application.exam.body) : [];
@@ -219,6 +226,16 @@ export default async function ReviewApplicationPage({ params }: Props) {
                         </>
                       ) : null}
                     </p>
+                    {!mentorProfile.isPublished && missingSetup.length > 0 ? (
+                      <p className="text-sm">
+                        Still to do before they can publish: {missingSetup.join("; ")}.
+                      </p>
+                    ) : null}
+                    {!mentorProfile.isPublished && missingSetup.length === 0 ? (
+                      <p className="text-sm">
+                        Setup is complete. Waiting for them to click Publish.
+                      </p>
+                    ) : null}
                     <form action={setMentorStatus}>
                       <input type="hidden" name="applicationId" value={application.id} />
                       <input

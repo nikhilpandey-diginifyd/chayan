@@ -67,6 +67,17 @@ Check the database connection at http://localhost:3000/api/health.
   git); with R2 they go to your bucket. Either way they're only served through
   `/api/documents/<id>` to the applicant and admins.
 
+## Bookings and payments
+
+- Without `RAZORPAY_KEY_ID` / `RAZORPAY_KEY_SECRET`, the pay page shows a test-mode button
+  that simulates a successful payment. Refunds are simulated too.
+- With Razorpay test keys, the real Razorpay Checkout opens. Use Razorpay's test cards or
+  test UPI ID from their docs.
+- Webhooks can't reach localhost. Locally the browser callback confirms the booking. In
+  production, add the webhook in Razorpay (URL `<site>/api/webhooks/razorpay`, events
+  `payment.captured`, `payment.failed`, `refund.processed`, `refund.failed`) and set
+  `RAZORPAY_WEBHOOK_SECRET`.
+
 ## Changing the database
 
 1. Edit or add files in `packages/db/src/schema/`.

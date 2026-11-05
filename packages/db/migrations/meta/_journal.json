@@ -29,6 +29,20 @@
       "when": 1793817907468,
       "tag": "0003_mentor_profiles_and_availability",
       "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "7",
+      "when": 1793820404468,
+      "tag": "0004_bookings_and_payments",
+      "breakpoints": true
+    },
+    {
+      "idx": 5,
+      "version": "7",
+      "when": 1793820405792,
+      "tag": "0005_booking_overlap_guard",
+      "breakpoints": true
     }
   ]
 }

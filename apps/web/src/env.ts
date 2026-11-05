@@ -30,6 +30,9 @@ const serverSchema = z
     R2_ACCESS_KEY_ID: optionalString,
     R2_SECRET_ACCESS_KEY: optionalString,
     R2_BUCKET: optionalString,
+    RAZORPAY_KEY_ID: optionalString,
+    RAZORPAY_KEY_SECRET: optionalString,
+    RAZORPAY_WEBHOOK_SECRET: optionalString,
   })
   .superRefine((env, ctx) => {
     if (Boolean(env.GOOGLE_CLIENT_ID) !== Boolean(env.GOOGLE_CLIENT_SECRET)) {
@@ -66,6 +69,23 @@ const serverSchema = z
         path: ["R2_BUCKET"],
         message:
           "R2_* variables are required in production. Files on the server disk are lost on redeploy",
+      });
+    }
+    if (Boolean(env.RAZORPAY_KEY_ID) !== Boolean(env.RAZORPAY_KEY_SECRET)) {
+      ctx.addIssue({
+        code: "custom",
+        path: ["RAZORPAY_KEY_SECRET"],
+        message: "Set both RAZORPAY_KEY_ID and RAZORPAY_KEY_SECRET, or neither for test payments",
+      });
+    }
+    if (
+      env.NODE_ENV === "production" &&
+      (!env.RAZORPAY_KEY_ID || !env.RAZORPAY_KEY_SECRET || !env.RAZORPAY_WEBHOOK_SECRET)
+    ) {
+      ctx.addIssue({
+        code: "custom",
+        path: ["RAZORPAY_KEY_ID"],
+        message: "Razorpay keys and webhook secret are required in production",
       });
     }
     if (env.NODE_ENV === "production" && !env.RESEND_API_KEY) {
@@ -119,6 +139,9 @@ export function getServerEnv(): ServerEnv {
     R2_ACCESS_KEY_ID: process.env.R2_ACCESS_KEY_ID,
     R2_SECRET_ACCESS_KEY: process.env.R2_SECRET_ACCESS_KEY,
     R2_BUCKET: process.env.R2_BUCKET,
+    RAZORPAY_KEY_ID: process.env.RAZORPAY_KEY_ID,
+    RAZORPAY_KEY_SECRET: process.env.RAZORPAY_KEY_SECRET,
+    RAZORPAY_WEBHOOK_SECRET: process.env.RAZORPAY_WEBHOOK_SECRET,
   });
   return cachedServerEnv;
 }

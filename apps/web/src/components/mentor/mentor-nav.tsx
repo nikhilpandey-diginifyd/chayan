@@ -6,6 +6,7 @@ import { cn } from "@/lib/utils";
 
 const links = [
   { href: "/mentor", label: "Overview" },
+  { href: "/mentor/bookings", label: "Bookings" },
   { href: "/mentor/profile", label: "Profile" },
   { href: "/mentor/sessions", label: "Sessions and prices" },
   { href: "/mentor/availability", label: "Availability" },
