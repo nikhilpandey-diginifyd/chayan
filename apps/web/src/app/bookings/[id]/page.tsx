@@ -1,8 +1,16 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { canReschedule, formatRupees, generateSlots } from "@chayan/shared";
+import {
+  canReschedule,
+  formatRupees,
+  generateSlots,
+  REVIEW_TAG_LABELS,
+  type ReviewTag,
+} from "@chayan/shared";
 import { CancelBookingForm, RescheduleForm } from "@/components/bookings/booking-actions";
+import { NotesForm } from "@/components/bookings/notes-form";
+import { ReviewForm } from "@/components/bookings/review-form";
 import { BookingStatusBadge } from "@/components/bookings/status-badge";
 import { ButtonLink } from "@/components/ui/button";
 import { FormMessage } from "@/components/ui/field";
@@ -10,6 +18,7 @@ import { formatSessionTime } from "@/lib/booking-emails";
 import { getBookingDetail } from "@/lib/booking-queries";
 import { getBusyIntervals, refundForCancellation } from "@/lib/bookings";
 import { getMentorWorkspace } from "@/lib/mentor-profile";
+import { reviewWindowOpen } from "@/lib/reviews";
 import { isJoinOpen, joinWindow } from "@/lib/sessions";
 import { requireUser } from "@/lib/session";
 
@@ -224,6 +233,106 @@ export default async function BookingPage({ params, searchParams }: Props) {
           <p className="text-ink-muted mt-4 text-xs">Booking ID {booking.id.slice(0, 8)}</p>
         </section>
       </div>
+
+      {(perspective === "mentor" || perspective === "admin") &&
+      ["confirmed", "completed"].includes(booking.status) &&
+      booking.startsAt.getTime() <= currentTime() ? (
+        <section
+          id="notes"
+          className="border-line bg-surface mt-6 scroll-mt-6 rounded-[var(--radius-panel)] border p-6"
+        >
+          <h2 className="text-xl font-bold">Notes for {booking.aspirant.name}</h2>
+          <p className="text-ink-muted mt-1 text-sm">
+            The aspirant sees these on this page. Clear next steps make the session stick.
+          </p>
+          <div className="mt-4">
+            <NotesForm
+              bookingId={booking.id}
+              initial={{
+                sessionSummary: booking.sessionSummary ?? "",
+                nextSteps: booking.nextSteps ?? "",
+              }}
+            />
+          </div>
+        </section>
+      ) : null}
+
+      {perspective === "aspirant" && booking.status === "completed" ? (
+        <section
+          id="notes"
+          className="border-line bg-surface mt-6 scroll-mt-6 rounded-[var(--radius-panel)] border p-6"
+        >
+          <h2 className="text-xl font-bold">Notes from {booking.mentor.user.name}</h2>
+          {booking.sessionSummary || booking.nextSteps ? (
+            <div className="mt-3 space-y-4">
+              {booking.sessionSummary ? (
+                <div>
+                  <h3 className="text-sm font-semibold">What you discussed</h3>
+                  <p className="text-ink-muted mt-1 whitespace-pre-line">
+                    {booking.sessionSummary}
+                  </p>
+                </div>
+              ) : null}
+              {booking.nextSteps ? (
+                <div>
+                  <h3 className="text-sm font-semibold">Your next steps</h3>
+                  <p className="mt-1 whitespace-pre-line">{booking.nextSteps}</p>
+                </div>
+              ) : null}
+            </div>
+          ) : (
+            <p className="text-ink-muted mt-2">
+              Your mentor hasn&apos;t added notes yet. We&apos;ll keep them here.
+            </p>
+          )}
+        </section>
+      ) : null}
+
+      {perspective === "aspirant" && booking.status === "completed" ? (
+        <section
+          id="review"
+          className="border-line bg-surface mt-6 scroll-mt-6 rounded-[var(--radius-panel)] border p-6"
+        >
+          <h2 className="text-xl font-bold">Your review</h2>
+          {reviewWindowOpen(booking.endsAt) ? (
+            <div className="mt-4">
+              <ReviewForm
+                bookingId={booking.id}
+                mentorName={booking.mentor.user.name}
+                initial={
+                  booking.review
+                    ? {
+                        rating: booking.review.rating,
+                        tags: booking.review.tags,
+                        comment: booking.review.comment,
+                        mentorOnCamera: booking.review.mentorOnCamera,
+                      }
+                    : undefined
+                }
+              />
+            </div>
+          ) : booking.review ? (
+            <p className="text-ink-muted mt-2">
+              You rated this session {booking.review.rating} out of 5.
+              {booking.review.tags.length > 0
+                ? ` ${booking.review.tags.map((tag) => REVIEW_TAG_LABELS[tag as ReviewTag] ?? tag).join(", ")}.`
+                : ""}
+            </p>
+          ) : (
+            <p className="text-ink-muted mt-2">The review window for this session has closed.</p>
+          )}
+        </section>
+      ) : null}
+
+      {perspective !== "aspirant" && booking.review && !booking.review.isHidden ? (
+        <section className="border-line bg-surface mt-6 rounded-[var(--radius-panel)] border p-6">
+          <h2 className="text-xl font-bold">Aspirant&apos;s review</h2>
+          <p className="mt-2 font-semibold">{booking.review.rating} out of 5</p>
+          {booking.review.comment ? (
+            <p className="text-ink-muted mt-1 whitespace-pre-line">{booking.review.comment}</p>
+          ) : null}
+        </section>
+      ) : null}
     </div>
   );
 }

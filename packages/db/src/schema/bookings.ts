@@ -1,5 +1,7 @@
-import { relations } from "drizzle-orm";
+import { relations, sql } from "drizzle-orm";
 import {
+  boolean,
+  check,
   index,
   integer,
   jsonb,
@@ -71,6 +73,17 @@ export const bookings = pgTable(
     aspirantLastSeenAt: timestamp({ withTimezone: true }),
     roomEndedAt: timestamp({ withTimezone: true }),
     finalizedAt: timestamp({ withTimezone: true }),
+
+    // Reminders and follow-up (Phase 7)
+    reminder24hSentAt: timestamp({ withTimezone: true }),
+    reminder1hSentAt: timestamp({ withTimezone: true }),
+    reminder10mSentAt: timestamp({ withTimezone: true }),
+    reviewRequestSentAt: timestamp({ withTimezone: true }),
+
+    // Mentor's notes for the aspirant after the session
+    sessionSummary: text(),
+    nextSteps: text(),
+    notesUpdatedAt: timestamp({ withTimezone: true }),
     rescheduleCount: integer().notNull().default(0),
     cancelledAt: timestamp({ withTimezone: true }),
     cancelReason: text(),
@@ -136,6 +149,35 @@ export const webhookEvents = pgTable("webhook_events", {
   receivedAt: timestamp({ withTimezone: true }).notNull().defaultNow(),
 });
 
+/** One review per completed booking, written by the aspirant. */
+export const reviews = pgTable(
+  "reviews",
+  {
+    id: uuid().primaryKey().defaultRandom(),
+    bookingId: uuid()
+      .notNull()
+      .unique()
+      .references(() => bookings.id, { onDelete: "cascade" }),
+    mentorUserId: uuid()
+      .notNull()
+      .references(() => mentorProfiles.userId, { onDelete: "cascade" }),
+    aspirantUserId: uuid()
+      .notNull()
+      .references(() => users.id, { onDelete: "cascade" }),
+    rating: integer().notNull(),
+    tags: text().array().notNull().default([]),
+    comment: text(),
+    mentorOnCamera: text(),
+    isHidden: boolean().notNull().default(false),
+    hiddenReason: text(),
+    ...timestamps,
+  },
+  (t) => [
+    index("reviews_mentor_idx").on(t.mentorUserId, t.createdAt),
+    check("reviews_rating_ck", sql`${t.rating} between 1 and 5`),
+  ],
+);
+
 /** Files shared during a session, such as photos of answer copies. */
 export const bookingAttachments = pgTable(
   "booking_attachments",
@@ -171,6 +213,12 @@ export const bookingsRelations = relations(bookings, ({ one, many }) => ({
   }),
   payments: many(payments),
   attachments: many(bookingAttachments),
+  review: one(reviews, { fields: [bookings.id], references: [reviews.bookingId] }),
+}));
+
+export const reviewsRelations = relations(reviews, ({ one }) => ({
+  booking: one(bookings, { fields: [reviews.bookingId], references: [bookings.id] }),
+  aspirant: one(users, { fields: [reviews.aspirantUserId], references: [users.id] }),
 }));
 
 export const bookingAttachmentsRelations = relations(bookingAttachments, ({ one }) => ({

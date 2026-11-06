@@ -15,7 +15,7 @@ import {
 import { BOOKING_POLICY, SESSION_POLICY } from "@chayan/shared";
 import { getServerEnv } from "@/env";
 import { writeAuditLog } from "@/lib/audit";
-import { notifyNoShow } from "@/lib/booking-emails";
+import { notifyNoShow, notifyReminder, notifyReviewRequest } from "@/lib/booking-emails";
 import { executeRefund } from "@/lib/bookings";
 import { getDb } from "@/lib/db";
 import { createRoom, endRoom, isVideoConfigured } from "@/lib/video/hms";
@@ -205,9 +205,82 @@ async function closeRoom(bookingId: string, roomId: string | null) {
   await getDb().update(bookings).set({ roomEndedAt: new Date() }).where(eq(bookings.id, bookingId));
 }
 
+/**
+ * Claims bookings that are due a reminder by stamping them first, so a
+ * reminder is never sent twice even if two servers run at the same moment.
+ */
+async function claimReminders(
+  column: "reminder24hSentAt" | "reminder1hSentAt" | "reminder10mSentAt",
+  windowMinutes: number,
+  minLeadMinutes: number,
+  now: Date,
+) {
+  const db = getDb();
+  const columnSql = {
+    reminder24hSentAt: sql`reminder24h_sent_at`,
+    reminder1hSentAt: sql`reminder1h_sent_at`,
+    reminder10mSentAt: sql`reminder10m_sent_at`,
+  }[column];
+  const rows = await db.execute<{ id: string }>(sql`
+    update ${bookings} set ${columnSql} = ${now.toISOString()}::timestamptz
+    where status = 'confirmed'
+      and ${columnSql} is null
+      and starts_at <= ${now.toISOString()}::timestamptz + make_interval(mins => ${windowMinutes})
+      and starts_at > ${now.toISOString()}::timestamptz + make_interval(mins => ${minLeadMinutes})
+      and created_at < starts_at - make_interval(mins => ${windowMinutes})
+    returning id`);
+  return [...rows].map((row) => row.id);
+}
+
+async function sendReminders(now: Date) {
+  let sent = 0;
+  const plan = [
+    { column: "reminder24hSentAt", window: 24 * 60, minLead: 60, kind: "24h" },
+    { column: "reminder1hSentAt", window: 60, minLead: 10, kind: "1h" },
+    {
+      column: "reminder10mSentAt",
+      window: 11,
+      minLead: -SESSION_POLICY.noShowGraceMinutes,
+      kind: "10m",
+    },
+  ] as const;
+  for (const step of plan) {
+    const ids = await claimReminders(step.column, step.window, step.minLead, now);
+    for (const id of ids) {
+      await notifyReminder(id, step.kind);
+      sent++;
+    }
+  }
+  return sent;
+}
+
+async function sendReviewRequests(now: Date) {
+  const db = getDb();
+  const rows = await db
+    .update(bookings)
+    .set({ reviewRequestSentAt: now })
+    .where(
+      and(
+        eq(bookings.status, "completed"),
+        isNull(bookings.reviewRequestSentAt),
+        gte(bookings.endsAt, new Date(now.getTime() - 3 * 24 * 60 * MINUTE)),
+      ),
+    )
+    .returning({ id: bookings.id });
+  for (const row of rows) await notifyReviewRequest(row.id);
+  return rows.length;
+}
+
 export async function runSessionHousekeeping(now = new Date()) {
   const db = getDb();
-  const summary = { expiredHolds: 0, noShows: 0, completed: 0, roomsClosed: 0 };
+  const summary = {
+    expiredHolds: 0,
+    noShows: 0,
+    completed: 0,
+    roomsClosed: 0,
+    reminders: 0,
+    reviewRequests: 0,
+  };
 
   const expired = await db
     .update(bookings)
@@ -267,6 +340,9 @@ export async function runSessionHousekeeping(now = new Date()) {
     await closeRoom(row.id, row.roomId);
     summary.roomsClosed++;
   }
+
+  summary.reminders = await sendReminders(now);
+  summary.reviewRequests = await sendReviewRequests(now);
 
   return summary;
 }

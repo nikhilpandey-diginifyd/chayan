@@ -50,6 +50,13 @@
       "when": 1793863888064,
       "tag": "0006_video_sessions",
       "breakpoints": true
+    },
+    {
+      "idx": 7,
+      "version": "7",
+      "when": 1793941970025,
+      "tag": "0007_reviews_notes_reminders",
+      "breakpoints": true
     }
   ]
 }

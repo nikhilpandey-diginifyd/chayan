@@ -170,6 +170,7 @@ export default async function MentorsPage({ searchParams }: Props) {
               </label>
               <Select id="sort" name="sort" defaultValue={filters.sort} className="mt-1">
                 <option value="recommended">Recommended</option>
+                <option value="top_rated">Top rated</option>
                 <option value="price_low">Price: low to high</option>
                 <option value="price_high">Price: high to low</option>
                 <option value="newest">Newest mentors</option>

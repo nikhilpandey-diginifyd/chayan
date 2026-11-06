@@ -36,6 +36,7 @@ export async function getBookingDetail(bookingId: string) {
         },
       },
       aspirant: { columns: { id: true, name: true, email: true } },
+      review: true,
     },
   });
   return booking ?? null;

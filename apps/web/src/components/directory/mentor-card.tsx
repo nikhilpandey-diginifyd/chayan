@@ -10,6 +10,7 @@ import {
   type PrepLanguage,
 } from "@chayan/shared";
 import { Avatar } from "@/components/mentor/avatar";
+import { RatingBadge } from "@/components/rating";
 import { photoUrl } from "@/lib/mentor-profile";
 import { formatSlotShort } from "./format";
 
@@ -26,6 +27,8 @@ export type MentorCardData = {
   focusAreas: FocusArea[];
   minPricePaise: number;
   nextSlot: Date | null;
+  ratingSum: number;
+  ratingCount: number;
 };
 
 export function MentorCard({ mentor }: { mentor: MentorCardData }) {
@@ -50,6 +53,10 @@ export function MentorCard({ mentor }: { mentor: MentorCardData }) {
             </span>
           </p>
         </div>
+      </div>
+
+      <div className="mt-3">
+        <RatingBadge sum={mentor.ratingSum} count={mentor.ratingCount} />
       </div>
 
       {mentor.headline ? <p className="mt-4 line-clamp-2">{mentor.headline}</p> : null}

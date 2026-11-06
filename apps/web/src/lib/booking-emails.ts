@@ -266,3 +266,75 @@ export async function notifyNoShow(
     );
   }
 }
+
+export async function notifyReminder(bookingId: string, kind: "24h" | "1h" | "10m") {
+  const data = await loadBooking(bookingId);
+  if (!data) return;
+  const { booking, aspirant, mentor } = data;
+  const when = formatSessionTime(booking.startsAt);
+  const lead = kind === "24h" ? "Tomorrow" : kind === "1h" ? "In one hour" : "In 10 minutes";
+  const joinLine =
+    kind === "10m"
+      ? "The call is open now. Join from the booking page."
+      : "The join button appears on the booking page 10 minutes before the start.";
+
+  for (const [person, other] of [
+    [aspirant, mentor],
+    [mentor, aspirant],
+  ] as const) {
+    await safely(
+      () =>
+        sendEmail({
+          to: person.email,
+          subject: `${lead}: session with ${other.name}`,
+          ...actionEmail({
+            brand: siteConfig.name,
+            greetingName: firstName(person.name),
+            intro: `${lead}, ${when}, you have a ${booking.durationMinutes}-minute session with ${other.name}. ${joinLine}`,
+            actionLabel: kind === "10m" ? "Join the call" : "View the booking",
+            actionUrl: kind === "10m" ? `${bookingUrl(booking.id)}/call` : bookingUrl(booking.id),
+            footer: "Join within 10 minutes of the start, or the session counts as missed.",
+          }),
+        }),
+      `reminder ${kind}`,
+    );
+  }
+}
+
+export async function notifyReviewRequest(bookingId: string) {
+  const data = await loadBooking(bookingId);
+  if (!data) return;
+  const { booking, aspirant, mentor } = data;
+  await safely(
+    () =>
+      sendEmail({
+        to: aspirant.email,
+        subject: `How was your session with ${mentor.name}?`,
+        ...actionEmail({
+          brand: siteConfig.name,
+          greetingName: firstName(aspirant.name),
+          intro: `Rate your session with ${mentor.name}. It takes 30 seconds and helps other aspirants choose the right mentor. ${mentor.name}'s notes and next steps will also appear on the booking page.`,
+          actionLabel: "Rate the session",
+          actionUrl: `${bookingUrl(booking.id)}#review`,
+          footer: "You can write or edit your review for 7 days after the session.",
+        }),
+      }),
+    "review request (aspirant)",
+  );
+  await safely(
+    () =>
+      sendEmail({
+        to: mentor.email,
+        subject: `Add notes for ${aspirant.name}`,
+        ...actionEmail({
+          brand: siteConfig.name,
+          greetingName: firstName(mentor.name),
+          intro: `Your session with ${aspirant.name} is complete. Add a short summary and next steps so they know exactly what to work on.`,
+          actionLabel: "Add session notes",
+          actionUrl: `${bookingUrl(booking.id)}#notes`,
+          footer: "Aspirants who get clear next steps are far more likely to book again.",
+        }),
+      }),
+    "notes request (mentor)",
+  );
+}

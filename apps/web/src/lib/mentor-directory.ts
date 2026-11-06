@@ -32,7 +32,7 @@ import { getBusyIntervals } from "@/lib/bookings";
 import { getDb } from "@/lib/db";
 
 export const PAGE_SIZE = 12;
-export const SORTS = ["recommended", "price_low", "price_high", "newest"] as const;
+export const SORTS = ["recommended", "top_rated", "price_low", "price_high", "newest"] as const;
 export type Sort = (typeof SORTS)[number];
 
 export type DirectoryFilters = {
@@ -103,13 +103,20 @@ export async function listMentors(filters: DirectoryFilters) {
       ? [asc(minPriceSql), desc(mentorProfiles.approvedAt)]
       : filters.sort === "price_high"
         ? [desc(minPriceSql), desc(mentorProfiles.approvedAt)]
-        : filters.sort === "newest"
-          ? [desc(mentorProfiles.approvedAt)]
-          : // Recommended: strongest verified result first, then most recent.
-            [
-              sql`case ${mentorProfiles.badge} when 'selected' then 0 when 'interview_appeared' then 1 when 'mains_qualified' then 2 when 'tier2_qualified' then 2 else 3 end`,
-              desc(mentorProfiles.approvedAt),
-            ];
+        : filters.sort === "top_rated"
+          ? [
+              desc(
+                sql`case when ${mentorProfiles.ratingCount} > 0 then ${mentorProfiles.ratingSum}::float / ${mentorProfiles.ratingCount} else 0 end`,
+              ),
+              desc(mentorProfiles.ratingCount),
+            ]
+          : filters.sort === "newest"
+            ? [desc(mentorProfiles.approvedAt)]
+            : // Recommended: strongest verified result first, then most recent.
+              [
+                sql`case ${mentorProfiles.badge} when 'selected' then 0 when 'interview_appeared' then 1 when 'mains_qualified' then 2 when 'tier2_qualified' then 2 else 3 end`,
+                desc(mentorProfiles.approvedAt),
+              ];
 
   const where = and(...conditions);
   const base = db
@@ -126,6 +133,8 @@ export async function listMentors(filters: DirectoryFilters) {
       languages: mentorProfiles.languages,
       focusAreas: mentorProfiles.focusAreas,
       minPricePaise: minPriceSql,
+      ratingSum: mentorProfiles.ratingSum,
+      ratingCount: mentorProfiles.ratingCount,
       bufferMinutes: mentorProfiles.bufferMinutes,
       minNoticeHours: mentorProfiles.minNoticeHours,
       bookingWindowDays: mentorProfiles.bookingWindowDays,

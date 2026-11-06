@@ -4,7 +4,9 @@ import { redirect } from "next/navigation";
 import { PREP_LANGUAGE_LABELS } from "@chayan/shared";
 import { BookingList } from "@/components/bookings/booking-list";
 import { ButtonLink } from "@/components/ui/button";
+import { formatSessionTime } from "@/lib/booking-emails";
 import { listBookingsFor } from "@/lib/booking-queries";
+import { getSessionsToReview } from "@/lib/dashboard-stats";
 import { getApplicationForUser, getMentorProfile } from "@/lib/mentor-applications";
 import { getAspirantProfile, requireUser } from "@/lib/session";
 
@@ -20,16 +22,34 @@ export default async function DashboardPage() {
   }
 
   const firstName = user.name.split(" ")[0] ?? user.name;
-  const upcoming = await listBookingsFor({
-    role: "aspirant",
-    userId: user.id,
-    when: "upcoming",
-    limit: 5,
-  });
+  const [upcoming, toReview] = await Promise.all([
+    listBookingsFor({
+      role: "aspirant",
+      userId: user.id,
+      when: "upcoming",
+      limit: 5,
+    }),
+    getSessionsToReview(user.id),
+  ]);
 
   return (
     <div className="mx-auto max-w-6xl px-4 py-12 sm:px-6 sm:py-16">
       <h1 className="text-3xl font-extrabold sm:text-4xl">Namaste, {firstName}</h1>
+
+      {toReview.length > 0 ? (
+        <section className="border-pen/30 bg-surface mt-8 rounded-[var(--radius-panel)] border p-5">
+          <h2 className="font-bold">Rate your recent sessions</h2>
+          <ul className="mt-2 space-y-1">
+            {toReview.map((item) => (
+              <li key={item.id}>
+                <Link href={`/bookings/${item.id}#review`} className="text-pen font-semibold">
+                  {item.mentorName}, {formatSessionTime(item.startsAt)}
+                </Link>
+              </li>
+            ))}
+          </ul>
+        </section>
+      ) : null}
 
       <div className="mt-10 grid gap-8 lg:grid-cols-[2fr_1fr]">
         <section

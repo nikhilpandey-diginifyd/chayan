@@ -190,3 +190,40 @@ export const FOCUS_AREA_LABELS: Record<FocusArea, string> = {
   working_professionals: "Preparing while working",
   repeaters: "Repeat attempts",
 };
+
+/** Quick tags an aspirant can pick when reviewing a session. */
+export const REVIEW_TAGS = [
+  "clear_strategy",
+  "practical_advice",
+  "answered_doubts",
+  "good_listener",
+  "worth_the_price",
+  "felt_generic",
+  "ran_out_of_time",
+] as const;
+export type ReviewTag = (typeof REVIEW_TAGS)[number];
+
+export const REVIEW_TAG_LABELS: Record<ReviewTag, string> = {
+  clear_strategy: "Clear strategy",
+  practical_advice: "Practical advice",
+  answered_doubts: "Answered my doubts",
+  good_listener: "Good listener",
+  worth_the_price: "Worth the price",
+  felt_generic: "Felt generic",
+  ran_out_of_time: "Ran out of time",
+};
+
+export const REVIEW_POLICY = {
+  /** Reviews can be written or edited for this many days after the session. */
+  editableDays: 7,
+  commentMaxLength: 1000,
+  notesMaxLength: 3000,
+} as const;
+
+/** "Ravi Kumar" → "Ravi K." for public reviews. */
+export function publicReviewerName(fullName: string): string {
+  const parts = fullName.trim().split(/\s+/);
+  const first = parts[0] ?? "Aspirant";
+  const last = parts.length > 1 ? parts[parts.length - 1]![0]?.toUpperCase() : "";
+  return last ? `${first} ${last}.` : first;
+}

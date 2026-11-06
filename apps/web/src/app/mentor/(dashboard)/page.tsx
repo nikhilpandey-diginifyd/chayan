@@ -5,7 +5,9 @@ import { formatRupees, MENTOR_BADGE_INFO } from "@chayan/shared";
 import { setProfilePublished } from "./actions";
 import { Button } from "@/components/ui/button";
 import { BookingList } from "@/components/bookings/booking-list";
+import { RatingBadge } from "@/components/rating";
 import { listBookingsFor } from "@/lib/booking-queries";
+import { getMentorStats } from "@/lib/dashboard-stats";
 import { canPublish, publishChecklist, requireMentor } from "@/lib/mentor-profile";
 
 export const metadata: Metadata = { title: "Mentor dashboard", robots: { index: false } };
@@ -17,12 +19,15 @@ export default async function MentorOverviewPage() {
   const checklist = publishChecklist(mentor);
   const ready = canPublish(mentor);
   const activeServices = mentor.services.filter((service) => service.isActive);
-  const upcoming = await listBookingsFor({
-    role: "mentor",
-    userId: user.id,
-    when: "upcoming",
-    limit: 5,
-  });
+  const [upcoming, stats] = await Promise.all([
+    listBookingsFor({
+      role: "mentor",
+      userId: user.id,
+      when: "upcoming",
+      limit: 5,
+    }),
+    getMentorStats(user.id),
+  ]);
 
   return (
     <div className="py-10">
@@ -40,6 +45,37 @@ export default async function MentorOverviewPage() {
         <p className="border-omr/40 bg-omr-soft mt-8 max-w-prose rounded-[var(--radius-control)] border px-4 py-3">
           Your mentor profile is paused by our team, so aspirants can&apos;t find or book you. Write
           to support to find out more.
+        </p>
+      ) : null}
+
+      <dl className="mt-8 grid grid-cols-2 gap-4 md:grid-cols-4">
+        <div className="border-line bg-surface rounded-[var(--radius-control)] border p-4">
+          <dt className="text-ink-muted text-sm">Rating</dt>
+          <dd className="mt-1">
+            <RatingBadge sum={mentor.ratingSum} count={mentor.ratingCount} />
+          </dd>
+        </div>
+        <div className="border-line bg-surface rounded-[var(--radius-control)] border p-4">
+          <dt className="text-ink-muted text-sm">Completed sessions</dt>
+          <dd className="mt-1 text-2xl font-bold">{stats.completed}</dd>
+        </div>
+        <div className="border-line bg-surface rounded-[var(--radius-control)] border p-4">
+          <dt className="text-ink-muted text-sm">Earned this month</dt>
+          <dd className="mt-1 text-2xl font-bold">{formatRupees(stats.earnedThisMonthPaise)}</dd>
+        </div>
+        <div className="border-line bg-surface rounded-[var(--radius-control)] border p-4">
+          <dt className="text-ink-muted text-sm">Earned in total</dt>
+          <dd className="mt-1 text-2xl font-bold">{formatRupees(stats.earnedPaise)}</dd>
+        </div>
+      </dl>
+      {stats.notesPending > 0 ? (
+        <p className="mt-4 text-sm">
+          <strong>{stats.notesPending}</strong> completed session
+          {stats.notesPending === 1 ? "" : "s"} {stats.notesPending === 1 ? "is" : "are"} waiting
+          for your notes.{" "}
+          <Link href="/mentor/bookings" className="text-pen font-semibold">
+            Add notes
+          </Link>
         </p>
       ) : null}
 

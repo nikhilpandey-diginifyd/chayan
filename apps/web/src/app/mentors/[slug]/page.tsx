@@ -4,6 +4,9 @@ import { notFound } from "next/navigation";
 import { BadgeCheck, ShieldCheck } from "lucide-react";
 import {
   FOCUS_AREA_LABELS,
+  publicReviewerName,
+  REVIEW_TAG_LABELS,
+  type ReviewTag,
   generateSlots,
   MENTOR_BADGE_INFO,
   PREP_LANGUAGE_LABELS,
@@ -13,6 +16,8 @@ import { Avatar } from "@/components/mentor/avatar";
 import { FormMessage } from "@/components/ui/field";
 import { getPublicMentor } from "@/lib/mentor-directory";
 import { photoUrl } from "@/lib/mentor-profile";
+import { RatingBadge } from "@/components/rating";
+import { listMentorReviews } from "@/lib/reviews";
 import { getSession } from "@/lib/session";
 
 type Props = { params: Promise<{ slug: string }> };
@@ -62,6 +67,7 @@ export default async function MentorProfilePage({ params }: Props) {
   }));
 
   const badge = MENTOR_BADGE_INFO[mentor.badge];
+  const recentReviews = await listMentorReviews(mentor.userId, 10);
 
   return (
     <div className="mx-auto max-w-6xl px-4 py-10 sm:px-6 sm:py-14">
@@ -99,6 +105,10 @@ export default async function MentorProfilePage({ params }: Props) {
             </div>
           </div>
 
+          <div className="mt-4">
+            <RatingBadge sum={mentor.ratingSum} count={mentor.ratingCount} size="lg" />
+          </div>
+
           {mentor.headline ? <p className="mt-6 text-xl">{mentor.headline}</p> : null}
 
           <h2 className="mt-10 text-xl font-bold">About</h2>
@@ -127,6 +137,45 @@ export default async function MentorProfilePage({ params }: Props) {
               </dd>
             </div>
           </dl>
+
+          <h2 className="mt-10 text-xl font-bold">Reviews</h2>
+          {recentReviews.length === 0 ? (
+            <p className="text-ink-muted mt-3">
+              No reviews yet. Reviews come only from completed sessions.
+            </p>
+          ) : (
+            <ul className="mt-4 space-y-4">
+              {recentReviews.map((review) => (
+                <li
+                  key={review.id}
+                  className="border-line bg-surface rounded-[var(--radius-control)] border p-4"
+                >
+                  <p className="flex flex-wrap items-center justify-between gap-2">
+                    <span className="font-semibold">{publicReviewerName(review.reviewerName)}</span>
+                    <span className="text-omr text-sm" aria-label={`${review.rating} out of 5`}>
+                      {"★".repeat(review.rating)}
+                      <span className="text-line">{"★".repeat(5 - review.rating)}</span>
+                    </span>
+                  </p>
+                  {review.tags.length > 0 ? (
+                    <p className="mt-2 flex flex-wrap gap-1.5">
+                      {review.tags.map((tag) => (
+                        <span
+                          key={tag}
+                          className="bg-paper text-ink-muted rounded-full px-2.5 py-0.5 text-xs"
+                        >
+                          {REVIEW_TAG_LABELS[tag as ReviewTag] ?? tag}
+                        </span>
+                      ))}
+                    </p>
+                  ) : null}
+                  {review.comment ? (
+                    <p className="text-ink-muted mt-2 whitespace-pre-line">{review.comment}</p>
+                  ) : null}
+                </li>
+              ))}
+            </ul>
+          )}
 
           <div className="border-line bg-surface mt-10 flex gap-3 rounded-[var(--radius-panel)] border p-5">
             <ShieldCheck aria-hidden="true" className="text-seal mt-0.5 size-6 shrink-0" />

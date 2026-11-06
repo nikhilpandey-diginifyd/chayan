@@ -29,7 +29,7 @@ Working brand name: Chayan (change in `apps/web/src/config/site.ts`).
 - [x] Phase 4: Mentor profile editor (photo, headline, topics), session prices, weekly availability, publish flow, public mentor list with filters, public profile with slot picker, admin pause/restore, email delivery log
 - [x] Phase 5: Booking with 10-min slot hold, Razorpay Checkout (test mode without keys), webhook, cancellations and refunds per policy, one reschedule, booking pages for aspirant/mentor/admin
 - [x] Phase 6: 100ms video calls (test-call fallback), join window, presence, session file sharing, scheduler for no-shows/completion/room closing, mentor no-show strikes, existing-account sign-up email, Razorpay live/test key guards
-- [ ] Phase 7: Dashboards, reviews, notes, reminders
+- [x] Phase 7: Reviews (stars, tags, camera question, 7-day edit window, admin hide), mentor session notes, 24h/1h/10-min reminders, review/notes request emails, ratings on profiles and list, dashboard stats
 - [ ] Phase 8: PYQ library + short videos
 - [ ] Phase 9: Manual payouts + finance reports
 - [ ] Phase 10: Testing + hardening
@@ -92,6 +92,16 @@ Working brand name: Chayan (change in `apps/web/src/config/site.ts`).
   (started from `src/instrumentation.ts`)
 - `booking_attachments`: photos/PDFs shared in a session, served via `/api/booking-files/[id]`
 - Sign-up with an existing email emails the account owner instead of revealing it on screen
+
+## Phase 7 details
+
+- `reviews` (one per completed booking); mentor rating stored as `rating_sum`/`rating_count`
+  on `mentor_profiles`, recalculated from visible reviews on every change (`src/lib/reviews.ts`)
+- Session notes on `bookings` (`session_summary`, `next_steps`), written by the mentor
+- Reminder stamps on `bookings` (`reminder24h/1h/10m_sent_at`, `review_request_sent_at`);
+  bookings are stamped before emails go out so nothing is sent twice
+- 100ms needs a card on file to create an account: real-video testing is deferred to the
+  launch phase; the test-call fallback covers everything else
 
 ## Notes
 
