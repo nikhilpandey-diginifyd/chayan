@@ -52,3 +52,15 @@ export function canReschedule(startsAt: Date, rescheduleCount: number, now: Date
     hoursBefore >= BOOKING_POLICY.rescheduleHoursBefore
   );
 }
+
+/** Video session timing rules. */
+export const SESSION_POLICY = {
+  /** The call opens this many minutes before the start. */
+  joinOpensMinutesBefore: 10,
+  /** Joining later than this after the start counts as a no-show. */
+  noShowGraceMinutes: 10,
+  /** The room closes this many minutes after the scheduled end. */
+  closeAfterEndMinutes: 5,
+  /** Mentor no-shows within 30 days that pause the mentor automatically. */
+  mentorNoShowLimit: 3,
+} as const;

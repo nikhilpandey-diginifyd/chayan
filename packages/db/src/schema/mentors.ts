@@ -116,6 +116,7 @@ export const mentorProfiles = pgTable(
     bufferMinutes: integer().notNull().default(10),
     minNoticeHours: integer().notNull().default(6),
     bookingWindowDays: integer().notNull().default(14),
+    noShowCount: integer().notNull().default(0),
     approvedAt: timestamp({ withTimezone: true }).notNull().defaultNow(),
     approvedBy: uuid().references(() => users.id, { onDelete: "set null" }),
     ...timestamps,

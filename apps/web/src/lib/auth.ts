@@ -1,8 +1,9 @@
 import "server-only";
 import { betterAuth } from "better-auth";
+import { createAuthMiddleware } from "better-auth/api";
 import { drizzleAdapter } from "better-auth/adapters/drizzle";
 import { nextCookies } from "better-auth/next-js";
-import { accounts, rateLimits, sessions, users, verifications } from "@chayan/db";
+import { accounts, eq, rateLimits, sessions, users, verifications } from "@chayan/db";
 import { siteConfig } from "@/config/site";
 import { clientEnv, getServerEnv } from "@/env";
 import { getDb } from "@/lib/db";
@@ -119,6 +120,39 @@ function createAuth() {
         "/request-password-reset": { window: 60 * 10, max: 3 },
         "/send-verification-email": { window: 60 * 10, max: 3 },
       },
+    },
+
+    hooks: {
+      /**
+       * Sign-up never says "this email already exists", so nobody can probe who
+       * uses the site. Instead the real owner of an existing account gets an
+       * email telling them to sign in or reset their password.
+       */
+      before: createAuthMiddleware(async (ctx) => {
+        if (ctx.path !== "/sign-up/email" && ctx.path !== "/send-verification-email") return;
+        const email =
+          typeof ctx.body?.email === "string" ? ctx.body.email.trim().toLowerCase() : "";
+        if (!email) return;
+        const existing = await getDb().query.users.findFirst({
+          where: eq(users.email, email),
+          columns: { name: true, email: true, emailVerified: true },
+        });
+        const shouldNotify = existing && (ctx.path === "/sign-up/email" || existing.emailVerified);
+        if (!shouldNotify) return;
+        await sendEmail({
+          to: existing.email,
+          subject: `You already have a ${siteConfig.name} account`,
+          ...actionEmail({
+            brand: siteConfig.name,
+            greetingName: existing.name.split(" ")[0] || existing.name,
+            intro:
+              "Someone (hopefully you) tried to create an account or confirm this email, but you already have an account with us. Sign in with your password, or reset it if you've forgotten it.",
+            actionLabel: "Sign in",
+            actionUrl: `${clientEnv.NEXT_PUBLIC_SITE_URL}/sign-in`,
+            footer: `Forgot your password? Reset it at ${clientEnv.NEXT_PUBLIC_SITE_URL}/forgot-password. If this wasn't you, you can ignore this email.`,
+          }),
+        }).catch((error: unknown) => console.error("Existing-account email failed", error));
+      }),
     },
 
     plugins: [nextCookies()],

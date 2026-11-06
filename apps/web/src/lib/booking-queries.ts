@@ -63,7 +63,13 @@ export async function listBookingsFor(options: {
       ? and(gte(bookings.endsAt, now), inArray(bookings.status, ["confirmed", "pending_payment"]))
       : or(
           lt(bookings.endsAt, now),
-          inArray(bookings.status, ["cancelled_by_aspirant", "cancelled_by_mentor", "completed"]),
+          inArray(bookings.status, [
+            "cancelled_by_aspirant",
+            "cancelled_by_mentor",
+            "completed",
+            "no_show_mentor",
+            "no_show_aspirant",
+          ]),
         );
 
   return db

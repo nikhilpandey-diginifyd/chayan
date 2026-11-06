@@ -7,6 +7,8 @@ const labels: Record<string, { text: string; tone: string }> = {
   cancelled_by_mentor: { text: "Cancelled by mentor", tone: "border-omr/30 bg-omr-soft text-omr" },
   expired: { text: "Not paid", tone: "border-line bg-paper text-ink-muted" },
   completed: { text: "Completed", tone: "border-line bg-paper text-ink" },
+  no_show_mentor: { text: "Mentor didn't join", tone: "border-omr/30 bg-omr-soft text-omr" },
+  no_show_aspirant: { text: "Missed by aspirant", tone: "border-line bg-paper text-ink-muted" },
 };
 
 export function BookingStatusBadge({ status }: { status: string }) {

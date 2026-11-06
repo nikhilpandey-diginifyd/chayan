@@ -21,6 +21,8 @@ export const bookingStatusEnum = pgEnum("booking_status", [
   "cancelled_by_mentor",
   "expired",
   "completed",
+  "no_show_mentor",
+  "no_show_aspirant",
 ]);
 
 export const paymentProviderEnum = pgEnum("payment_provider", ["razorpay", "mock"]);
@@ -60,6 +62,15 @@ export const bookings = pgTable(
     mentorEarningsPaise: integer().notNull(),
 
     aspirantNote: text(),
+
+    // Video session (Phase 6)
+    videoRoomId: text(),
+    mentorFirstJoinedAt: timestamp({ withTimezone: true }),
+    aspirantFirstJoinedAt: timestamp({ withTimezone: true }),
+    mentorLastSeenAt: timestamp({ withTimezone: true }),
+    aspirantLastSeenAt: timestamp({ withTimezone: true }),
+    roomEndedAt: timestamp({ withTimezone: true }),
+    finalizedAt: timestamp({ withTimezone: true }),
     rescheduleCount: integer().notNull().default(0),
     cancelledAt: timestamp({ withTimezone: true }),
     cancelReason: text(),
@@ -125,6 +136,33 @@ export const webhookEvents = pgTable("webhook_events", {
   receivedAt: timestamp({ withTimezone: true }).notNull().defaultNow(),
 });
 
+/** Files shared during a session, such as photos of answer copies. */
+export const bookingAttachments = pgTable(
+  "booking_attachments",
+  {
+    id: uuid().primaryKey().defaultRandom(),
+    bookingId: uuid()
+      .notNull()
+      .references(() => bookings.id, { onDelete: "cascade" }),
+    uploadedBy: uuid()
+      .notNull()
+      .references(() => users.id, { onDelete: "cascade" }),
+    storageKey: text().notNull().unique(),
+    fileName: text().notNull(),
+    contentType: text().notNull(),
+    sizeBytes: integer().notNull(),
+    createdAt: timestamp({ withTimezone: true }).notNull().defaultNow(),
+  },
+  (t) => [index("booking_attachments_booking_idx").on(t.bookingId, t.createdAt)],
+);
+
+/** Lease-based lock so only one server runs scheduled work at a time. */
+export const jobLocks = pgTable("job_locks", {
+  name: text().primaryKey(),
+  lockedUntil: timestamp({ withTimezone: true }).notNull(),
+  lastRunAt: timestamp({ withTimezone: true }),
+});
+
 export const bookingsRelations = relations(bookings, ({ one, many }) => ({
   aspirant: one(users, { fields: [bookings.aspirantUserId], references: [users.id] }),
   mentor: one(mentorProfiles, {
@@ -132,6 +170,11 @@ export const bookingsRelations = relations(bookings, ({ one, many }) => ({
     references: [mentorProfiles.userId],
   }),
   payments: many(payments),
+  attachments: many(bookingAttachments),
+}));
+
+export const bookingAttachmentsRelations = relations(bookingAttachments, ({ one }) => ({
+  booking: one(bookings, { fields: [bookingAttachments.bookingId], references: [bookings.id] }),
 }));
 
 export const paymentsRelations = relations(payments, ({ one, many }) => ({

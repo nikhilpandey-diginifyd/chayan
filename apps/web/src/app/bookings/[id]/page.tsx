@@ -10,6 +10,7 @@ import { formatSessionTime } from "@/lib/booking-emails";
 import { getBookingDetail } from "@/lib/booking-queries";
 import { getBusyIntervals, refundForCancellation } from "@/lib/bookings";
 import { getMentorWorkspace } from "@/lib/mentor-profile";
+import { isJoinOpen, joinWindow } from "@/lib/sessions";
 import { requireUser } from "@/lib/session";
 
 export const metadata: Metadata = { title: "Booking", robots: { index: false } };
@@ -127,9 +128,19 @@ export default async function BookingPage({ params, searchParams }: Props) {
       <div className="mt-8 grid gap-6 sm:grid-cols-[1.4fr_1fr]">
         <section className="border-line bg-surface rounded-[var(--radius-panel)] border p-6">
           <h2 className="text-xl font-bold">Session</h2>
-          {isConfirmed && isUpcoming ? (
+          {isJoinOpen(booking) ? (
+            <div className="mt-3 space-y-2">
+              <ButtonLink href={`/bookings/${booking.id}/call`} size="lg">
+                Join the call
+              </ButtonLink>
+              <p className="text-ink-muted text-sm">
+                Join within 10 minutes of the start. After that the session counts as missed.
+              </p>
+            </div>
+          ) : isConfirmed && joinWindow(booking).opensAt.getTime() > currentTime() ? (
             <p className="border-line bg-paper mt-3 rounded-[var(--radius-control)] border px-4 py-3 text-sm">
-              The video call opens here 10 minutes before the start.
+              The join button appears here 10 minutes before the start. Join within 10 minutes of
+              the start, or the session counts as missed.
             </p>
           ) : null}
           {booking.aspirantNote ? (

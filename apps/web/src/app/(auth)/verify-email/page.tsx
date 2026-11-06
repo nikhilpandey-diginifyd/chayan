@@ -47,6 +47,17 @@ export default async function VerifyEmailPage({ searchParams }: Props) {
         Can&apos;t find it? Check your spam or promotions folder. The link works for 24 hours.
       </p>
       {email ? <ResendVerification email={email} callbackPath={next} /> : null}
+      <p className="border-line text-ink-muted mt-6 border-t pt-4 text-sm">
+        Already have an account with this email?{" "}
+        <Link href="/sign-in" className="text-pen font-semibold">
+          Sign in
+        </Link>{" "}
+        or{" "}
+        <Link href="/forgot-password" className="text-pen font-semibold">
+          reset your password
+        </Link>
+        .
+      </p>
     </AuthCard>
   );
 }

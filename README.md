@@ -78,6 +78,23 @@ Check the database connection at http://localhost:3000/api/health.
   `payment.captured`, `payment.failed`, `refund.processed`, `refund.failed`) and set
   `RAZORPAY_WEBHOOK_SECRET`.
 
+## Video sessions
+
+- The call page is `/bookings/<id>/call`. It opens 10 minutes before the start and closes
+  5 minutes after the end. Camera and microphone are optional; screen sharing works on
+  computers, and anyone can share photos or PDFs from the side panel.
+- Without 100ms keys you get a test call with only your own camera, which is enough to test
+  attendance, file sharing and no-show handling.
+- 100ms setup: create a template with two roles named exactly `mentor` and `aspirant`, both
+  allowed to publish audio, video and screen. Put its ID in `HMS_TEMPLATE_ID`, and the app
+  access key and secret in `HMS_ACCESS_KEY` / `HMS_SECRET`.
+- Scheduled work (no-shows, completing sessions, closing rooms, expiring holds) runs every
+  minute inside the web server. Set `DISABLE_SCHEDULER=1` to turn it off. On extra servers
+  or for an external cron, `POST /api/cron/tick` with `Authorization: Bearer $CRON_SECRET`.
+- No-show rules: a participant must join within 10 minutes of the start. Mentor absent: full
+  refund to the aspirant and a strike; 3 strikes in 30 days pause the mentor. Aspirant
+  absent: 50% refund.
+
 ## Changing the database
 
 1. Edit or add files in `packages/db/src/schema/`.

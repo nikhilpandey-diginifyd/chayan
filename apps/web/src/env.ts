@@ -33,6 +33,12 @@ const serverSchema = z
     RAZORPAY_KEY_ID: optionalString,
     RAZORPAY_KEY_SECRET: optionalString,
     RAZORPAY_WEBHOOK_SECRET: optionalString,
+    RAZORPAY_ALLOW_TEST_KEYS: optionalString,
+    HMS_ACCESS_KEY: optionalString,
+    HMS_SECRET: optionalString,
+    HMS_TEMPLATE_ID: optionalString,
+    HMS_WEBHOOK_SECRET: optionalString,
+    CRON_SECRET: optionalString,
   })
   .superRefine((env, ctx) => {
     if (Boolean(env.GOOGLE_CLIENT_ID) !== Boolean(env.GOOGLE_CLIENT_SECRET)) {
@@ -76,6 +82,50 @@ const serverSchema = z
         code: "custom",
         path: ["RAZORPAY_KEY_SECRET"],
         message: "Set both RAZORPAY_KEY_ID and RAZORPAY_KEY_SECRET, or neither for test payments",
+      });
+    }
+    if (env.NODE_ENV !== "production" && env.RAZORPAY_KEY_ID?.startsWith("rzp_live_")) {
+      ctx.addIssue({
+        code: "custom",
+        path: ["RAZORPAY_KEY_ID"],
+        message:
+          "Live Razorpay keys are blocked outside production because they charge real money. Use rzp_test_ keys locally",
+      });
+    }
+    if (
+      env.NODE_ENV === "production" &&
+      env.RAZORPAY_KEY_ID?.startsWith("rzp_test_") &&
+      env.RAZORPAY_ALLOW_TEST_KEYS !== "1"
+    ) {
+      ctx.addIssue({
+        code: "custom",
+        path: ["RAZORPAY_KEY_ID"],
+        message:
+          "Test Razorpay keys in production collect no money. Use live keys, or set RAZORPAY_ALLOW_TEST_KEYS=1 on a staging server",
+      });
+    }
+    const hmsValues = [env.HMS_ACCESS_KEY, env.HMS_SECRET, env.HMS_TEMPLATE_ID];
+    const hmsCount = hmsValues.filter(Boolean).length;
+    if (hmsCount !== 0 && hmsCount !== hmsValues.length) {
+      ctx.addIssue({
+        code: "custom",
+        path: ["HMS_TEMPLATE_ID"],
+        message:
+          "Set HMS_ACCESS_KEY, HMS_SECRET and HMS_TEMPLATE_ID together, or none for test calls",
+      });
+    }
+    if (env.NODE_ENV === "production" && hmsCount === 0) {
+      ctx.addIssue({
+        code: "custom",
+        path: ["HMS_ACCESS_KEY"],
+        message: "100ms keys are required in production",
+      });
+    }
+    if (env.NODE_ENV === "production" && !env.CRON_SECRET) {
+      ctx.addIssue({
+        code: "custom",
+        path: ["CRON_SECRET"],
+        message: "CRON_SECRET is required in production. Generate one with: openssl rand -hex 32",
       });
     }
     if (
@@ -142,6 +192,12 @@ export function getServerEnv(): ServerEnv {
     RAZORPAY_KEY_ID: process.env.RAZORPAY_KEY_ID,
     RAZORPAY_KEY_SECRET: process.env.RAZORPAY_KEY_SECRET,
     RAZORPAY_WEBHOOK_SECRET: process.env.RAZORPAY_WEBHOOK_SECRET,
+    RAZORPAY_ALLOW_TEST_KEYS: process.env.RAZORPAY_ALLOW_TEST_KEYS,
+    HMS_ACCESS_KEY: process.env.HMS_ACCESS_KEY,
+    HMS_SECRET: process.env.HMS_SECRET,
+    HMS_TEMPLATE_ID: process.env.HMS_TEMPLATE_ID,
+    HMS_WEBHOOK_SECRET: process.env.HMS_WEBHOOK_SECRET,
+    CRON_SECRET: process.env.CRON_SECRET,
   });
   return cachedServerEnv;
 }

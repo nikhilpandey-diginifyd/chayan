@@ -194,3 +194,75 @@ export async function notifyBookingRescheduled(bookingId: string, previousStart:
     );
   }
 }
+
+export async function notifyNoShow(
+  bookingId: string,
+  who: "mentor" | "aspirant",
+  refundPaise: number,
+  suspendedMentor: boolean,
+) {
+  const data = await loadBooking(bookingId);
+  if (!data) return;
+  const { booking, aspirant, mentor } = data;
+  const when = formatSessionTime(booking.startsAt);
+  const refundLine =
+    refundPaise > 0
+      ? `A refund of ${formatRupees(refundPaise)} is on its way to your original payment method.`
+      : "";
+
+  if (who === "mentor") {
+    await safely(
+      () =>
+        sendEmail({
+          to: aspirant.email,
+          subject: `${mentor.name} didn't join. Full refund issued`,
+          ...actionEmail({
+            brand: siteConfig.name,
+            greetingName: firstName(aspirant.name),
+            intro: `We're sorry. ${mentor.name} didn't join your session on ${when}. ${refundLine}`,
+            actionLabel: "Book another mentor",
+            actionUrl: `${siteConfig.url}/mentors`,
+            footer: "We track mentor no-shows and pause mentors who miss sessions repeatedly.",
+          }),
+        }),
+      "no-show (aspirant notice)",
+    );
+    await safely(
+      () =>
+        sendEmail({
+          to: mentor.email,
+          subject: "You missed a session",
+          ...actionEmail({
+            brand: siteConfig.name,
+            greetingName: firstName(mentor.name),
+            intro: `You didn't join your session with ${aspirant.name} on ${when}, so they received a full refund. ${
+              suspendedMentor
+                ? "Because this is your third missed session in 30 days, your profile is paused. Write to support to restore it."
+                : "Three missed sessions in 30 days pause your profile automatically."
+            }`,
+            actionLabel: "Open your dashboard",
+            actionUrl: `${siteConfig.url}/mentor`,
+            footer: "If something went wrong on our side, reply from the contact page.",
+          }),
+        }),
+      "no-show (mentor notice)",
+    );
+  } else {
+    await safely(
+      () =>
+        sendEmail({
+          to: aspirant.email,
+          subject: "You missed your session",
+          ...actionEmail({
+            brand: siteConfig.name,
+            greetingName: firstName(aspirant.name),
+            intro: `You didn't join your session with ${mentor.name} on ${when} within 10 minutes of the start. ${mentor.name} waited for you. Under our policy, half the price is refunded. ${refundLine}`,
+            actionLabel: "Book another session",
+            actionUrl: `${siteConfig.url}/mentors`,
+            footer: "If you had a technical problem joining, write to us from the contact page.",
+          }),
+        }),
+      "no-show (aspirant missed)",
+    );
+  }
+}

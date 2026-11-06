@@ -28,7 +28,7 @@ Working brand name: Chayan (change in `apps/web/src/config/site.ts`).
 - [x] Phase 3: Mentor application (details, private document upload, declaration) + admin review queue (approve with badge, request changes, reject), emails, audit log, mentor dashboard
 - [x] Phase 4: Mentor profile editor (photo, headline, topics), session prices, weekly availability, publish flow, public mentor list with filters, public profile with slot picker, admin pause/restore, email delivery log
 - [x] Phase 5: Booking with 10-min slot hold, Razorpay Checkout (test mode without keys), webhook, cancellations and refunds per policy, one reschedule, booking pages for aspirant/mentor/admin
-- [ ] Phase 6: 100ms video calls + no-show logic
+- [x] Phase 6: 100ms video calls (test-call fallback), join window, presence, session file sharing, scheduler for no-shows/completion/room closing, mentor no-show strikes, existing-account sign-up email, Razorpay live/test key guards
 - [ ] Phase 7: Dashboards, reviews, notes, reminders
 - [ ] Phase 8: PYQ library + short videos
 - [ ] Phase 9: Manual payouts + finance reports
@@ -80,6 +80,18 @@ Working brand name: Chayan (change in `apps/web/src/config/site.ts`).
   `/api/payments/razorpay/verify`; webhook at `/api/webhooks/razorpay`
 - Policy (`packages/shared/src/money.ts`): full refund 12h+ before, 50% inside 12h,
   mentor/admin cancel = full refund, one reschedule 12h+ before
+
+## Phase 6 details
+
+- 100ms server API in `src/lib/video/hms.ts` (jose JWTs); one room per booking, saved on
+  `bookings.video_room_id`; token valid until the room closes
+- Attendance on `bookings` (mentor/aspirant first joined, last seen). Client heartbeats every
+  30s; with `HMS_WEBHOOK_SECRET` set only 100ms webhooks count
+- `src/lib/sessions.ts` settles no-shows 10 min after start and completes sessions 5 min
+  after end; `src/lib/jobs.ts` runs it every minute with a lease row in `job_locks`
+  (started from `src/instrumentation.ts`)
+- `booking_attachments`: photos/PDFs shared in a session, served via `/api/booking-files/[id]`
+- Sign-up with an existing email emails the account owner instead of revealing it on screen
 
 ## Notes
 

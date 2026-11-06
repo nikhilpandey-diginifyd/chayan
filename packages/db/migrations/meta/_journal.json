@@ -43,6 +43,13 @@
       "when": 1793820405792,
       "tag": "0005_booking_overlap_guard",
       "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "7",
+      "when": 1793863888064,
+      "tag": "0006_video_sessions",
+      "breakpoints": true
     }
   ]
 }
