@@ -30,7 +30,7 @@ Working brand name: Chayan (change in `apps/web/src/config/site.ts`).
 - [x] Phase 5: Booking with 10-min slot hold, Razorpay Checkout (test mode without keys), webhook, cancellations and refunds per policy, one reschedule, booking pages for aspirant/mentor/admin
 - [x] Phase 6: 100ms video calls (test-call fallback), join window, presence, session file sharing, scheduler for no-shows/completion/room closing, mentor no-show strikes, existing-account sign-up email, Razorpay live/test key guards
 - [x] Phase 7: Reviews (stars, tags, camera question, 7-day edit window, admin hide), mentor session notes, 24h/1h/10-min reminders, review/notes request emails, ratings on profiles and list, dashboard stats
-- [ ] Phase 8: PYQ library + short videos
+- [x] Phase 8: Previous year papers (admin upload with answer key, public SEO pages, sign-in to download, daily limit, download counts) and short prep videos (YouTube, privacy-friendly player); reviews/notes collapse after saving
 - [ ] Phase 9: Manual payouts + finance reports
 - [ ] Phase 10: Testing + hardening
 - [ ] Phase 11: Launch prep + soft launch
@@ -102,6 +102,15 @@ Working brand name: Chayan (change in `apps/web/src/config/site.ts`).
   bookings are stamped before emails go out so nothing is sent twice
 - 100ms needs a card on file to create an account: real-video testing is deferred to the
   launch phase; the test-call fallback covers everything else
+
+## Phase 8 details
+
+- Tables: `pyq_papers` (PDF + optional answer key in storage, slug, language, source link,
+  download count), `paper_downloads` (who downloaded what, 30/day limit), `prep_videos`
+  (YouTube ID, exam, topic, order)
+- Public: `/papers`, `/papers/[slug]`, `/videos`, `/videos/[slug]`; all in the sitemap
+- Admin: `/admin/papers` (upload via `/api/admin/papers`), `/admin/videos`
+- Downloads use plain links, not Next `<Link>`, so prefetching never triggers a download
 
 ## Notes
 

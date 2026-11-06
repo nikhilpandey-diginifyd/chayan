@@ -4,3 +4,4 @@ export * from "./profiles";
 export * from "./mentors";
 export * from "./email";
 export * from "./bookings";
+export * from "./content";

@@ -4,6 +4,7 @@ import { notFound } from "next/navigation";
 import { BadgeCheck, ShieldCheck } from "lucide-react";
 import {
   FOCUS_AREA_LABELS,
+  formatRank,
   publicReviewerName,
   REVIEW_TAG_LABELS,
   type ReviewTag,
@@ -99,7 +100,7 @@ export default async function MentorProfilePage({ params }: Props) {
                 </span>
                 <span className="text-ink-muted">
                   {mentor.exam.shortName} {mentor.examYear}
-                  {mentor.rank ? `, ${mentor.rank}` : ""}
+                  {mentor.rank ? `, ${formatRank(mentor.rank)}` : ""}
                 </span>
               </p>
             </div>

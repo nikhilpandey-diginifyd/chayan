@@ -9,8 +9,8 @@ import {
   type ReviewTag,
 } from "@chayan/shared";
 import { CancelBookingForm, RescheduleForm } from "@/components/bookings/booking-actions";
-import { NotesForm } from "@/components/bookings/notes-form";
-import { ReviewForm } from "@/components/bookings/review-form";
+import { NotesSection } from "@/components/bookings/notes-form";
+import { ReviewSection } from "@/components/bookings/review-form";
 import { BookingStatusBadge } from "@/components/bookings/status-badge";
 import { ButtonLink } from "@/components/ui/button";
 import { FormMessage } from "@/components/ui/field";
@@ -246,7 +246,7 @@ export default async function BookingPage({ params, searchParams }: Props) {
             The aspirant sees these on this page. Clear next steps make the session stick.
           </p>
           <div className="mt-4">
-            <NotesForm
+            <NotesSection
               bookingId={booking.id}
               initial={{
                 sessionSummary: booking.sessionSummary ?? "",
@@ -296,7 +296,7 @@ export default async function BookingPage({ params, searchParams }: Props) {
           <h2 className="text-xl font-bold">Your review</h2>
           {reviewWindowOpen(booking.endsAt) ? (
             <div className="mt-4">
-              <ReviewForm
+              <ReviewSection
                 bookingId={booking.id}
                 mentorName={booking.mentor.user.name}
                 initial={

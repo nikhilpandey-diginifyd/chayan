@@ -227,3 +227,10 @@ export function publicReviewerName(fullName: string): string {
   const last = parts.length > 1 ? parts[parts.length - 1]![0]?.toUpperCase() : "";
   return last ? `${first} ${last}.` : first;
 }
+
+/** "7" → "Rank 7"; anything already labelled ("AIR 245") is shown as typed. */
+export function formatRank(rank: string | null | undefined): string | null {
+  if (!rank) return null;
+  const trimmed = rank.trim();
+  return /^\d+$/.test(trimmed) ? `Rank ${trimmed}` : trimmed;
+}

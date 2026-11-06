@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { BadgeCheck, CheckCircle2, Circle, ExternalLink } from "lucide-react";
-import { formatRupees, MENTOR_BADGE_INFO } from "@chayan/shared";
+import { formatRank, formatRupees, MENTOR_BADGE_INFO } from "@chayan/shared";
 import { setProfilePublished } from "./actions";
 import { Button } from "@/components/ui/button";
 import { BookingList } from "@/components/bookings/booking-list";
@@ -38,7 +38,7 @@ export default async function MentorOverviewPage() {
           {badge.label}
         </span>
         {mentor.exam.shortName} {mentor.examYear}
-        {mentor.rank ? `, ${mentor.rank}` : null}
+        {mentor.rank ? `, ${formatRank(mentor.rank)}` : null}
       </p>
 
       {mentor.status === "suspended" ? (

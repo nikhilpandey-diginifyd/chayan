@@ -14,7 +14,7 @@ import {
 import { getDb } from "@/lib/db";
 import { requireUser, type SessionUser } from "@/lib/session";
 
-export function slugify(value: string): string {
+export function slugify(value: string, maxLength = 40): string {
   return (
     value
       .normalize("NFKD")
@@ -22,7 +22,8 @@ export function slugify(value: string): string {
       .toLowerCase()
       .replace(/[^a-z0-9]+/g, "-")
       .replace(/^-+|-+$/g, "")
-      .slice(0, 40) || "mentor"
+      .slice(0, maxLength)
+      .replace(/-+$/g, "") || "mentor"
   );
 }
 

@@ -10,22 +10,108 @@ import { cn } from "@/lib/utils";
 
 const ratingWords = ["", "Poor", "Below expectations", "Okay", "Good", "Excellent"];
 
-export function ReviewForm({
+type ReviewValues = {
+  rating: number;
+  tags: string[];
+  comment: string | null;
+  mentorOnCamera: string | null;
+};
+
+const cameraLabels: Record<string, string> = { yes: "Yes", partly: "Part of the time", no: "No" };
+
+/** Shows the saved review read-only, with an Edit button while the review window is open. */
+export function ReviewSection({
   bookingId,
   mentorName,
   initial,
 }: {
   bookingId: string;
   mentorName: string;
-  initial?: {
-    rating: number;
-    tags: string[];
-    comment: string | null;
-    mentorOnCamera: string | null;
-  };
+  initial?: ReviewValues;
+}) {
+  const [editing, setEditing] = useState(!initial);
+  const [justSaved, setJustSaved] = useState(false);
+
+  if (initial && !editing) {
+    return (
+      <div className="space-y-3">
+        {justSaved ? <FormMessage tone="success">Thanks! Your review is saved.</FormMessage> : null}
+        <p className="flex items-center gap-1" aria-label={`${initial.rating} out of 5 stars`}>
+          {[1, 2, 3, 4, 5].map((value) => (
+            <Star
+              key={value}
+              aria-hidden="true"
+              className={cn("size-6", value <= initial.rating ? "fill-omr text-omr" : "text-line")}
+            />
+          ))}
+          <span className="text-ink-muted ml-2 text-sm">{ratingWords[initial.rating]}</span>
+        </p>
+        {initial.tags.length > 0 ? (
+          <p className="flex flex-wrap gap-1.5">
+            {initial.tags.map((tag) => (
+              <span
+                key={tag}
+                className="bg-paper text-ink-muted rounded-full px-2.5 py-0.5 text-sm"
+              >
+                {REVIEW_TAG_LABELS[tag as ReviewTag] ?? tag}
+              </span>
+            ))}
+          </p>
+        ) : null}
+        {initial.mentorOnCamera ? (
+          <p className="text-ink-muted text-sm">
+            Mentor on camera: {cameraLabels[initial.mentorOnCamera] ?? initial.mentorOnCamera}
+          </p>
+        ) : null}
+        {initial.comment ? <p className="whitespace-pre-line">{initial.comment}</p> : null}
+        <Button
+          type="button"
+          variant="secondary"
+          size="sm"
+          onClick={() => {
+            setJustSaved(false);
+            setEditing(true);
+          }}
+        >
+          Edit review
+        </Button>
+      </div>
+    );
+  }
+
+  return (
+    <ReviewForm
+      bookingId={bookingId}
+      mentorName={mentorName}
+      initial={initial}
+      onSaved={() => {
+        setJustSaved(true);
+        setEditing(false);
+      }}
+      onCancel={initial ? () => setEditing(false) : undefined}
+    />
+  );
+}
+
+function ReviewForm({
+  bookingId,
+  mentorName,
+  initial,
+  onSaved,
+  onCancel,
+}: {
+  bookingId: string;
+  mentorName: string;
+  initial?: ReviewValues;
+  onSaved: () => void;
+  onCancel?: () => void;
 }) {
   const [state, formAction, pending] = useActionState<BookingActionState, FormData>(
-    saveReviewAction,
+    async (previous, formData) => {
+      const result = await saveReviewAction(previous, formData);
+      if (result.done) onSaved();
+      return result;
+    },
     {},
   );
   const [rating, setRating] = useState(initial?.rating ?? 0);
@@ -37,7 +123,6 @@ export function ReviewForm({
     <form action={formAction} className="space-y-5">
       <input type="hidden" name="bookingId" value={bookingId} />
       <input type="hidden" name="rating" value={rating} />
-      {state.done ? <FormMessage tone="success">Thanks! Your review is saved.</FormMessage> : null}
       {state.error ? <FormMessage tone="error">{state.error}</FormMessage> : null}
 
       <fieldset>
@@ -131,9 +216,16 @@ export function ReviewForm({
         />
       </div>
 
-      <Button type="submit" disabled={pending || rating === 0}>
-        {pending ? "Saving…" : initial ? "Update review" : "Submit review"}
-      </Button>
+      <div className="flex flex-wrap gap-2">
+        <Button type="submit" disabled={pending || rating === 0}>
+          {pending ? "Saving…" : initial ? "Save changes" : "Submit review"}
+        </Button>
+        {onCancel ? (
+          <Button type="button" variant="ghost" onClick={onCancel}>
+            Cancel
+          </Button>
+        ) : null}
+      </div>
     </form>
   );
 }

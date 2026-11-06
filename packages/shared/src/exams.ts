@@ -112,3 +112,42 @@ export function getExam(code: ExamCode): ExamDefinition {
   if (!exam) throw new Error(`Unknown exam code: ${code}`);
   return exam;
 }
+
+export const PAPER_LANGUAGES = ["english", "hindi", "bilingual"] as const;
+export type PaperLanguage = (typeof PAPER_LANGUAGES)[number];
+export const PAPER_LANGUAGE_LABELS: Record<PaperLanguage, string> = {
+  english: "English",
+  hindi: "Hindi",
+  bilingual: "Hindi and English",
+};
+
+export const CONTENT_LIMITS = {
+  paperMaxBytes: 20 * 1024 * 1024,
+  downloadsPerUserPerDay: 30,
+} as const;
+
+/**
+ * Reads the 11-character video ID from the usual YouTube link formats:
+ * watch?v=, youtu.be/, /shorts/, /embed/ and /live/.
+ */
+export function parseYouTubeId(input: string): string | null {
+  const value = input.trim();
+  if (/^[A-Za-z0-9_-]{11}$/.test(value)) return value;
+  let url: URL;
+  try {
+    url = new URL(value);
+  } catch {
+    return null;
+  }
+  const host = url.hostname.replace(/^www\.|^m\./, "");
+  let id: string | null = null;
+  if (host === "youtu.be") id = url.pathname.slice(1).split("/")[0] ?? null;
+  else if (host === "youtube.com" || host === "youtube-nocookie.com") {
+    if (url.pathname === "/watch") id = url.searchParams.get("v");
+    else {
+      const match = url.pathname.match(/^\/(shorts|embed|live)\/([^/?#]+)/);
+      id = match?.[2] ?? null;
+    }
+  }
+  return id && /^[A-Za-z0-9_-]{11}$/.test(id) ? id : null;
+}

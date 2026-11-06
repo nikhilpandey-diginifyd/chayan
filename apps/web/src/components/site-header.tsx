@@ -25,10 +25,16 @@ export function SiteHeader() {
             Find a mentor
           </Link>
           <Link
-            href="/#pricing"
+            href="/papers"
             className="text-ink-muted hover:text-ink hidden rounded-md px-3 py-2 sm:block"
           >
-            Pricing
+            Papers
+          </Link>
+          <Link
+            href="/videos"
+            className="text-ink-muted hover:text-ink hidden rounded-md px-3 py-2 sm:block"
+          >
+            Videos
           </Link>
           <HeaderAccount />
         </nav>

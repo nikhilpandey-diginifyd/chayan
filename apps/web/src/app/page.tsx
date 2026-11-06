@@ -104,21 +104,33 @@ export default function HomePage() {
         <div className="mx-auto grid max-w-6xl gap-10 px-4 py-16 sm:px-6 md:grid-cols-3">
           <div>
             <Video aria-hidden="true" className="text-pen size-7" />
-            <h3 className="mt-3 text-xl font-bold">Mentorship calls</h3>
+            <h3 className="mt-3 text-xl font-bold">
+              <Link href="/mentors" className="hover:text-pen">
+                Mentorship calls
+              </Link>
+            </h3>
             <p className="text-ink-muted mt-2">
               Strategy, answer writing, optional subject choice, DAF and interview preparation.
             </p>
           </div>
           <div>
             <FileText aria-hidden="true" className="text-pen size-7" />
-            <h3 className="mt-3 text-xl font-bold">Previous year papers</h3>
+            <h3 className="mt-3 text-xl font-bold">
+              <Link href="/papers" className="hover:text-pen">
+                Previous year papers
+              </Link>
+            </h3>
             <p className="text-ink-muted mt-2">
               UPSC and SSC question papers by year, shift and language, free to download.
             </p>
           </div>
           <div>
             <PlayCircle aria-hidden="true" className="text-pen size-7" />
-            <h3 className="mt-3 text-xl font-bold">Short prep videos</h3>
+            <h3 className="mt-3 text-xl font-bold">
+              <Link href="/videos" className="hover:text-pen">
+                Short prep videos
+              </Link>
+            </h3>
             <p className="text-ink-muted mt-2">
               Two to five minute lessons on topics that come up again and again.
             </p>

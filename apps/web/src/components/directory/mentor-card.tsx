@@ -2,6 +2,7 @@ import Link from "next/link";
 import { BadgeCheck, CalendarClock } from "lucide-react";
 import {
   FOCUS_AREA_LABELS,
+  formatRank,
   formatRupees,
   MENTOR_BADGE_INFO,
   PREP_LANGUAGE_LABELS,
@@ -49,7 +50,7 @@ export function MentorCard({ mentor }: { mentor: MentorCardData }) {
             </span>
             <span className="text-ink-muted">
               {mentor.examShortName} {mentor.examYear}
-              {mentor.rank ? `, ${mentor.rank}` : ""}
+              {mentor.rank ? `, ${formatRank(mentor.rank)}` : ""}
             </span>
           </p>
         </div>
