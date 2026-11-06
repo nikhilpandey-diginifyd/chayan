@@ -32,7 +32,7 @@ Working brand name: Chayan (change in `apps/web/src/config/site.ts`).
 - [x] Phase 7: Reviews (stars, tags, camera question, 7-day edit window, admin hide), mentor session notes, 24h/1h/10-min reminders, review/notes request emails, ratings on profiles and list, dashboard stats
 - [x] Phase 8: Previous year papers (admin upload with answer key, public SEO pages, sign-in to download, daily limit, download counts) and short prep videos (YouTube, privacy-friendly player); reviews/notes collapse after saving
 - [x] Phase 9: Mentor payout details (encrypted), weekly payouts with 48h hold and TDS (194-O), hold/release, mark paid with UTR + email, bank transfer and TDS CSV exports, mentor earnings page, admin finance totals
-- [ ] Phase 10: Testing + hardening
+- [x] Phase 10: Playwright suite (16 tests) in CI, Postgres rate limits, Content Security Policy and headers, optional Sentry, error pages, pre-hydration submit fix, dependency audit, SECURITY.md
 - [ ] Phase 11: Launch prep + soft launch
 
 ## Phase 2 details
@@ -124,6 +124,18 @@ Working brand name: Chayan (change in `apps/web/src/config/site.ts`).
 - Admin `/admin/payouts`: create the week's payouts, export the bank sheet, mark paid with the
   UTR; `/api/admin/payouts/export?type=tds&fy=2026-27` for TDS returns. Viewing bank details
   and exports are written to the audit log
+
+## Phase 10 details
+
+- `apps/web/e2e`: helpers create users through the real sign-up flow and read emails from
+  `e2e/.outbox.jsonl` (`EMAIL_LOG_FILE`, never in production); `global-setup.ts` compiles every
+  page and API route before tests so dev-server compiles don't cause timeouts
+- `src/lib/rate-limit.ts`: fixed-window limits in `app_rate_limits`, pruned by the scheduler
+- CSP and security headers in `next.config.ts`; `CSP_REPORT_ONLY=1` to soften temporarily
+- Forms that submit with JavaScript stay disabled until hydrated and use `method="post"`, so
+  passwords and bank details can never end up in a URL
+- Sentry is optional (`SENTRY_DSN`, `NEXT_PUBLIC_SENTRY_DSN`); source-map upload not set up
+- Real Razorpay Checkout and 100ms calls are not yet tested with the CSP on (see SECURITY.md)
 
 ## Notes
 

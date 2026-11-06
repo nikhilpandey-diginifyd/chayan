@@ -1,3 +1,4 @@
+import { consumeRateLimit, tooManyRequests } from "@/lib/rate-limit";
 import { getParticipant } from "@/lib/session-access";
 import { ensureVideoRoom, isJoinOpen, joinWindow, recordPresence } from "@/lib/sessions";
 import { createAuthToken, isVideoConfigured } from "@/lib/video/hms";
@@ -11,6 +12,8 @@ export async function POST(request: Request, { params }: { params: Promise<{ id:
   if (!participant) return Response.json({ error: "Not found" }, { status: 404 });
 
   const { booking, role, user } = participant;
+  const limited = await consumeRateLimit("joinCall", user.id);
+  if (!limited.allowed) return tooManyRequests(limited.retryAfterSeconds);
   if (!isJoinOpen(booking)) {
     return Response.json({ error: "The call isn't open right now." }, { status: 409 });
   }

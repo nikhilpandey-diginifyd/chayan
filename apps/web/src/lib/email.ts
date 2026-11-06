@@ -43,6 +43,14 @@ export async function sendEmail(email: Email): Promise<void> {
         "",
       ].join("\n"),
     );
+    const outbox = process.env.EMAIL_LOG_FILE;
+    if (outbox && env.NODE_ENV !== "production") {
+      const { appendFile } = await import("node:fs/promises");
+      await appendFile(
+        outbox,
+        JSON.stringify({ to: email.to, subject: email.subject, text: email.text }) + "\n",
+      );
+    }
     await record("logged", {});
     return;
   }

@@ -4,9 +4,11 @@ import { useState, type FormEvent } from "react";
 import { Button } from "@/components/ui/button";
 import { Field, FormMessage, Input } from "@/components/ui/field";
 import { authClient } from "@/lib/auth-client";
+import { useHydrated } from "@/lib/use-hydrated";
 import { authErrorMessage } from "@/lib/auth-errors";
 
 export function ForgotPasswordForm() {
+  const hydrated = useHydrated();
   const [pending, setPending] = useState(false);
   const [sent, setSent] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -40,12 +42,12 @@ export function ForgotPasswordForm() {
   }
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-5">
+    <form method="post" onSubmit={handleSubmit} className="space-y-5">
       {error ? <FormMessage tone="error">{error}</FormMessage> : null}
       <Field id="email" label="Email">
         <Input id="email" name="email" type="email" autoComplete="email" required />
       </Field>
-      <Button type="submit" className="w-full" disabled={pending}>
+      <Button type="submit" className="w-full" disabled={!hydrated || pending}>
         {pending ? "Sending…" : "Send reset link"}
       </Button>
     </form>

@@ -1,6 +1,7 @@
 import { randomUUID } from "node:crypto";
 import { asc, bookingAttachments, count, eq } from "@chayan/db";
 import { getDb } from "@/lib/db";
+import { consumeRateLimit, tooManyRequests } from "@/lib/rate-limit";
 import { getParticipant } from "@/lib/session-access";
 import { detectContentType, EXTENSION_FOR_TYPE, getStorage } from "@/lib/storage";
 
@@ -42,6 +43,8 @@ export async function POST(request: Request, { params }: { params: Promise<{ id:
       { status: 409 },
     );
   }
+  const limited = await consumeRateLimit("sessionFileUpload", participant.user.id);
+  if (!limited.allowed) return tooManyRequests(limited.retryAfterSeconds);
 
   let file: FormDataEntryValue | null;
   try {

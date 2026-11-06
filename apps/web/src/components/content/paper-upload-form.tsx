@@ -5,9 +5,11 @@ import { useRef, useState, type FormEvent } from "react";
 import { PAPER_LANGUAGE_LABELS, PAPER_LANGUAGES } from "@chayan/shared";
 import { Button } from "@/components/ui/button";
 import { Field, FormMessage, Input, Select, inputClassName } from "@/components/ui/field";
+import { useHydrated } from "@/lib/use-hydrated";
 import { cn } from "@/lib/utils";
 
 export function PaperUploadForm({ exams }: { exams: { id: string; shortName: string }[] }) {
+  const hydrated = useHydrated();
   const router = useRouter();
   const formRef = useRef<HTMLFormElement>(null);
   const [pending, setPending] = useState(false);
@@ -37,7 +39,7 @@ export function PaperUploadForm({ exams }: { exams: { id: string; shortName: str
   }
 
   return (
-    <form ref={formRef} onSubmit={handleSubmit} className="space-y-5">
+    <form ref={formRef} method="post" onSubmit={handleSubmit} className="space-y-5">
       {message ? <FormMessage tone={message.tone}>{message.text}</FormMessage> : null}
       <div className="grid gap-5 sm:grid-cols-3">
         <Field id="examId" label="Exam">
@@ -117,7 +119,7 @@ export function PaperUploadForm({ exams }: { exams: { id: string; shortName: str
           />
         </Field>
       </div>
-      <Button type="submit" disabled={pending}>
+      <Button type="submit" disabled={!hydrated || pending}>
         {pending ? "Uploading…" : "Add paper"}
       </Button>
     </form>

@@ -71,6 +71,13 @@
       "when": 1793947816624,
       "tag": "0009_payouts",
       "breakpoints": true
+    },
+    {
+      "idx": 10,
+      "version": "7",
+      "when": 1793951648874,
+      "tag": "0010_app_rate_limits",
+      "breakpoints": true
     }
   ]
 }

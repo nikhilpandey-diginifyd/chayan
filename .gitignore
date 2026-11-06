@@ -17,3 +17,9 @@ next-env.d.ts
 
 # Local file uploads (development only)
 .uploads
+
+# End-to-end test output
+apps/web/e2e/.outbox.jsonl
+apps/web/e2e/.tmp-*
+apps/web/test-results
+apps/web/playwright-report

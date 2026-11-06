@@ -4,6 +4,7 @@ import { MENTOR_DOCUMENT_LIMITS, mentorDocumentKindSchema } from "@chayan/shared
 import { getAuth } from "@/lib/auth";
 import { getDb } from "@/lib/db";
 import { EDITABLE_STATUSES } from "@/lib/mentor-applications";
+import { consumeRateLimit, tooManyRequests } from "@/lib/rate-limit";
 import { detectContentType, EXTENSION_FOR_TYPE, getStorage } from "@/lib/storage";
 
 export const runtime = "nodejs";
@@ -25,6 +26,8 @@ function cleanFileName(name: string) {
 export async function POST(request: Request) {
   const session = await getAuth().api.getSession({ headers: request.headers });
   if (!session) return fail(401, "Sign in to upload documents.");
+  const limited = await consumeRateLimit("mentorDocumentUpload", session.user.id);
+  if (!limited.allowed) return tooManyRequests(limited.retryAfterSeconds);
 
   const declaredLength = Number(request.headers.get("content-length") ?? 0);
   if (declaredLength > MENTOR_DOCUMENT_LIMITS.maxBytes + 64 * 1024) {

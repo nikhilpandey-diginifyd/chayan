@@ -5,9 +5,11 @@ import { useState, type FormEvent } from "react";
 import { Button } from "@/components/ui/button";
 import { Field, FormMessage, Input } from "@/components/ui/field";
 import { authClient } from "@/lib/auth-client";
+import { useHydrated } from "@/lib/use-hydrated";
 import { authErrorMessage } from "@/lib/auth-errors";
 
 export function ResetPasswordForm({ token }: { token: string }) {
+  const hydrated = useHydrated();
   const [pending, setPending] = useState(false);
   const [done, setDone] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -49,7 +51,7 @@ export function ResetPasswordForm({ token }: { token: string }) {
   }
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-5">
+    <form method="post" onSubmit={handleSubmit} className="space-y-5">
       {error ? <FormMessage tone="error">{error}</FormMessage> : null}
       <Field id="password" label="New password" hint="At least 8 characters.">
         <Input
@@ -73,7 +75,7 @@ export function ResetPasswordForm({ token }: { token: string }) {
           maxLength={128}
         />
       </Field>
-      <Button type="submit" className="w-full" disabled={pending}>
+      <Button type="submit" className="w-full" disabled={!hydrated || pending}>
         {pending ? "Saving…" : "Save new password"}
       </Button>
     </form>

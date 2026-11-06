@@ -6,6 +6,7 @@ import {
   type PayoutAccountState,
 } from "@/app/mentor/(dashboard)/earnings/actions";
 import { Button } from "@/components/ui/button";
+import { useHydrated } from "@/lib/use-hydrated";
 import { Field, FormMessage, Input } from "@/components/ui/field";
 
 type Saved = {
@@ -79,6 +80,7 @@ function PayoutAccountForm({
   onSaved: () => void;
   onCancel?: () => void;
 }) {
+  const hydrated = useHydrated();
   const [method, setMethod] = useState(initialMethod);
   const [state, setState] = useState<PayoutAccountState>({});
   const [pending, startTransition] = useTransition();
@@ -95,7 +97,7 @@ function PayoutAccountForm({
   }
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-5" autoComplete="off">
+    <form method="post" onSubmit={handleSubmit} className="space-y-5" autoComplete="off">
       {state.error ? <FormMessage tone="error">{state.error}</FormMessage> : null}
       <fieldset>
         <legend className="text-sm font-semibold">How should we pay you?</legend>
@@ -197,7 +199,7 @@ function PayoutAccountForm({
         your payouts and file tax returns.
       </p>
       <div className="flex flex-wrap gap-2">
-        <Button type="submit" disabled={pending}>
+        <Button type="submit" disabled={!hydrated || pending}>
           {pending ? "Saving…" : "Save payout details"}
         </Button>
         {onCancel ? (

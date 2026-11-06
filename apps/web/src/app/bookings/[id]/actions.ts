@@ -7,6 +7,7 @@ import { bookings } from "@chayan/db";
 import { REVIEW_POLICY } from "@chayan/shared";
 import { BookingError, cancelBooking, rescheduleBooking, type CancelActor } from "@/lib/bookings";
 import { getDb } from "@/lib/db";
+import { consumeRateLimit } from "@/lib/rate-limit";
 import { ReviewError, saveReview } from "@/lib/reviews";
 import { getBookingDetail } from "@/lib/booking-queries";
 import { requireUser } from "@/lib/session";
@@ -84,6 +85,8 @@ export async function saveReviewAction(
   const bookingId = z.uuid().safeParse(formData.get("bookingId"));
   if (!bookingId.success) return { error: "Booking not found." };
   const user = await requireUser(`/bookings/${bookingId.data}`);
+  const limited = await consumeRateLimit("saveReview", user.id);
+  if (!limited.allowed) return { error: "Too many attempts. Wait a few minutes and try again." };
   const camera = String(formData.get("mentorOnCamera") ?? "");
 
   try {

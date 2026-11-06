@@ -18,6 +18,7 @@ import { writeAuditLog } from "@/lib/audit";
 import { notifyNoShow, notifyReminder, notifyReviewRequest } from "@/lib/booking-emails";
 import { executeRefund } from "@/lib/bookings";
 import { getDb } from "@/lib/db";
+import { pruneRateLimits } from "@/lib/rate-limit";
 import { createRoom, endRoom, isVideoConfigured } from "@/lib/video/hms";
 
 const MINUTE = 60_000;
@@ -343,6 +344,7 @@ export async function runSessionHousekeeping(now = new Date()) {
 
   summary.reminders = await sendReminders(now);
   summary.reviewRequests = await sendReviewRequests(now);
+  await pruneRateLimits();
 
   return summary;
 }

@@ -6,3 +6,4 @@ export * from "./email";
 export * from "./bookings";
 export * from "./content";
 export * from "./payouts";
+export * from "./rate-limits";

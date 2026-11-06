@@ -95,6 +95,23 @@ Check the database connection at http://localhost:3000/api/health.
   refund to the aspirant and a strike; 3 strikes in 30 days pause the mentor. Aspirant
   absent: 50% refund.
 
+## Browser tests
+
+`apps/web/e2e` holds Playwright tests for every main flow: accounts, mentor applications,
+booking and payments, calls and no-shows, reviews, payouts, papers and videos, and access
+control. They start their own dev server on port 3000, so stop `pnpm dev` first.
+
+```bash
+pnpm --filter @chayan/web exec playwright install chromium   # once
+pnpm --filter @chayan/web e2e                                # all tests, about 10 minutes
+pnpm --filter @chayan/web e2e booking.spec.ts                # one file
+pnpm --filter @chayan/web e2e:report                         # open the last report
+```
+
+Tests use your local database and create their own uniquely named users, so they don't touch
+your data. Emails are written to `apps/web/e2e/.outbox.jsonl` instead of the terminal.
+GitHub runs the same tests on every push.
+
 ## Changing the database
 
 1. Edit or add files in `packages/db/src/schema/`.

@@ -5,6 +5,7 @@ import { z } from "zod";
 import { BOOKING_POLICY, SESSION_DURATIONS } from "@chayan/shared";
 import { BookingError, createPendingBooking } from "@/lib/bookings";
 import { getPublicMentor } from "@/lib/mentor-directory";
+import { consumeRateLimit } from "@/lib/rate-limit";
 import { requireUser } from "@/lib/session";
 
 export type BookState = { error?: string };
@@ -28,6 +29,9 @@ export async function bookSession(_prev: BookState, formData: FormData): Promise
   if (!parsed.success) return { error: "Choose a session length and time." };
 
   const user = await requireUser(`/mentors/${parsed.data.slug}`);
+  const limited = await consumeRateLimit("createBooking", user.id);
+  if (!limited.allowed)
+    return { error: "Too many booking attempts. Wait a few minutes and try again." };
   const mentor = await getPublicMentor(parsed.data.slug);
   if (!mentor) return { error: "This mentor isn't taking bookings right now." };
 

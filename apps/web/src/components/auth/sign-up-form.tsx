@@ -5,9 +5,11 @@ import { useState, type FormEvent } from "react";
 import { Button } from "@/components/ui/button";
 import { Field, FormMessage, Input } from "@/components/ui/field";
 import { authClient } from "@/lib/auth-client";
+import { useHydrated } from "@/lib/use-hydrated";
 import { authErrorMessage } from "@/lib/auth-errors";
 
 export function SignUpForm({ callbackPath }: { callbackPath: string }) {
+  const hydrated = useHydrated();
   const router = useRouter();
   const [pending, setPending] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -38,7 +40,7 @@ export function SignUpForm({ callbackPath }: { callbackPath: string }) {
   }
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-5">
+    <form method="post" onSubmit={handleSubmit} className="space-y-5">
       {error ? <FormMessage tone="error">{error}</FormMessage> : null}
       <Field id="name" label="Full name">
         <Input id="name" name="name" autoComplete="name" required minLength={2} maxLength={80} />
@@ -58,7 +60,7 @@ export function SignUpForm({ callbackPath }: { callbackPath: string }) {
           aria-describedby="password-hint"
         />
       </Field>
-      <Button type="submit" className="w-full" disabled={pending}>
+      <Button type="submit" className="w-full" disabled={!hydrated || pending}>
         {pending ? "Creating account…" : "Create account"}
       </Button>
     </form>

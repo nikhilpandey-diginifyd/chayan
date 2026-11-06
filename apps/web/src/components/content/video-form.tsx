@@ -4,9 +4,11 @@ import { useState, useTransition, type FormEvent } from "react";
 import { addVideo, type VideoFormState } from "@/app/admin/videos/actions";
 import { Button } from "@/components/ui/button";
 import { Field, FormMessage, Input, Select, inputClassName } from "@/components/ui/field";
+import { useHydrated } from "@/lib/use-hydrated";
 import { cn } from "@/lib/utils";
 
 export function VideoForm({ exams }: { exams: { id: string; shortName: string }[] }) {
+  const hydrated = useHydrated();
   const [state, setState] = useState<VideoFormState>({});
   const [pending, startTransition] = useTransition();
 
@@ -23,7 +25,7 @@ export function VideoForm({ exams }: { exams: { id: string; shortName: string }[
   }
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-5">
+    <form method="post" onSubmit={handleSubmit} className="space-y-5">
       {state.done ? <FormMessage tone="success">Video added and live.</FormMessage> : null}
       {state.error ? <FormMessage tone="error">{state.error}</FormMessage> : null}
       <Field
@@ -70,7 +72,7 @@ export function VideoForm({ exams }: { exams: { id: string; shortName: string }[
           className={cn(inputClassName, "h-auto py-2")}
         />
       </Field>
-      <Button type="submit" disabled={pending}>
+      <Button type="submit" disabled={!hydrated || pending}>
         {pending ? "Adding…" : "Add video"}
       </Button>
     </form>

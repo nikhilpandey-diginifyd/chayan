@@ -3,6 +3,7 @@ import sharp from "sharp";
 import { eq, mentorProfiles } from "@chayan/db";
 import { getAuth } from "@/lib/auth";
 import { getDb } from "@/lib/db";
+import { consumeRateLimit, tooManyRequests } from "@/lib/rate-limit";
 import { detectContentType, getStorage } from "@/lib/storage";
 
 export const runtime = "nodejs";
@@ -20,6 +21,8 @@ function fail(status: number, error: string) {
 export async function POST(request: Request) {
   const session = await getAuth().api.getSession({ headers: request.headers });
   if (!session) return fail(401, "Sign in to upload a photo.");
+  const limited = await consumeRateLimit("mentorPhotoUpload", session.user.id);
+  if (!limited.allowed) return tooManyRequests(limited.retryAfterSeconds);
 
   const db = getDb();
   const profile = await db.query.mentorProfiles.findFirst({
