@@ -64,6 +64,13 @@
       "when": 1793945157653,
       "tag": "0008_papers_and_videos",
       "breakpoints": true
+    },
+    {
+      "idx": 9,
+      "version": "7",
+      "when": 1793947816624,
+      "tag": "0009_payouts",
+      "breakpoints": true
     }
   ]
 }

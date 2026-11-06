@@ -10,6 +10,7 @@ const links = [
   { href: "/mentor/profile", label: "Profile" },
   { href: "/mentor/sessions", label: "Sessions and prices" },
   { href: "/mentor/availability", label: "Availability" },
+  { href: "/mentor/earnings", label: "Earnings" },
 ] as const;
 
 export function MentorNav() {

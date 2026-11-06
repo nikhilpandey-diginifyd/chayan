@@ -8,6 +8,8 @@ import { BookingList } from "@/components/bookings/booking-list";
 import { RatingBadge } from "@/components/rating";
 import { listBookingsFor } from "@/lib/booking-queries";
 import { getMentorStats } from "@/lib/dashboard-stats";
+import { getDb } from "@/lib/db";
+import { eq, mentorPayoutAccounts } from "@chayan/db";
 import { canPublish, publishChecklist, requireMentor } from "@/lib/mentor-profile";
 
 export const metadata: Metadata = { title: "Mentor dashboard", robots: { index: false } };
@@ -28,6 +30,12 @@ export default async function MentorOverviewPage() {
     }),
     getMentorStats(user.id),
   ]);
+  const hasPayoutAccount = Boolean(
+    await getDb().query.mentorPayoutAccounts.findFirst({
+      where: eq(mentorPayoutAccounts.mentorUserId, user.id),
+      columns: { mentorUserId: true },
+    }),
+  );
 
   return (
     <div className="py-10">
@@ -68,6 +76,14 @@ export default async function MentorOverviewPage() {
           <dd className="mt-1 text-2xl font-bold">{formatRupees(stats.earnedPaise)}</dd>
         </div>
       </dl>
+      {stats.completed > 0 && !hasPayoutAccount ? (
+        <p className="text-omr mt-4 text-sm font-semibold">
+          Add your payout details so we can pay your earnings.{" "}
+          <Link href="/mentor/earnings" className="text-pen">
+            Add payout details
+          </Link>
+        </p>
+      ) : null}
       {stats.notesPending > 0 ? (
         <p className="mt-4 text-sm">
           <strong>{stats.notesPending}</strong> completed session

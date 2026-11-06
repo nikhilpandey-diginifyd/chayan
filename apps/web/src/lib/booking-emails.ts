@@ -338,3 +338,29 @@ export async function notifyReviewRequest(bookingId: string) {
     "notes request (mentor)",
   );
 }
+
+export async function notifyPayoutPaid(input: {
+  mentorEmail: string;
+  mentorName: string;
+  netPaise: number;
+  tdsPaise: number;
+  periodLabel: string;
+  reference: string;
+}) {
+  await safely(
+    () =>
+      sendEmail({
+        to: input.mentorEmail,
+        subject: `Payout sent: ${formatRupees(input.netPaise)}`,
+        ...actionEmail({
+          brand: siteConfig.name,
+          greetingName: firstName(input.mentorName),
+          intro: `We've sent ${formatRupees(input.netPaise)} for your sessions from ${input.periodLabel}${input.tdsPaise > 0 ? `, after ${formatRupees(input.tdsPaise)} tax deducted at source` : ""}. Transfer reference: ${input.reference}. Bank transfers usually arrive within a day.`,
+          actionLabel: "View your earnings",
+          actionUrl: `${siteConfig.url}/mentor/earnings`,
+          footer: "Questions about a payout? Write to us from the contact page.",
+        }),
+      }),
+    "payout paid",
+  );
+}

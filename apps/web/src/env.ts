@@ -39,6 +39,7 @@ const serverSchema = z
     HMS_TEMPLATE_ID: optionalString,
     HMS_WEBHOOK_SECRET: optionalString,
     CRON_SECRET: optionalString,
+    PAYOUT_ENCRYPTION_KEY: optionalString,
   })
   .superRefine((env, ctx) => {
     if (Boolean(env.GOOGLE_CLIENT_ID) !== Boolean(env.GOOGLE_CLIENT_SECRET)) {
@@ -121,6 +122,24 @@ const serverSchema = z
         message: "100ms keys are required in production",
       });
     }
+    if (
+      env.PAYOUT_ENCRYPTION_KEY &&
+      Buffer.from(env.PAYOUT_ENCRYPTION_KEY, "base64").length !== 32
+    ) {
+      ctx.addIssue({
+        code: "custom",
+        path: ["PAYOUT_ENCRYPTION_KEY"],
+        message:
+          "PAYOUT_ENCRYPTION_KEY must be 32 bytes in base64. Generate one with: openssl rand -base64 32",
+      });
+    }
+    if (env.NODE_ENV === "production" && !env.PAYOUT_ENCRYPTION_KEY) {
+      ctx.addIssue({
+        code: "custom",
+        path: ["PAYOUT_ENCRYPTION_KEY"],
+        message: "PAYOUT_ENCRYPTION_KEY is required in production: openssl rand -base64 32",
+      });
+    }
     if (env.NODE_ENV === "production" && !env.CRON_SECRET) {
       ctx.addIssue({
         code: "custom",
@@ -198,6 +217,7 @@ export function getServerEnv(): ServerEnv {
     HMS_TEMPLATE_ID: process.env.HMS_TEMPLATE_ID,
     HMS_WEBHOOK_SECRET: process.env.HMS_WEBHOOK_SECRET,
     CRON_SECRET: process.env.CRON_SECRET,
+    PAYOUT_ENCRYPTION_KEY: process.env.PAYOUT_ENCRYPTION_KEY,
   });
   return cachedServerEnv;
 }

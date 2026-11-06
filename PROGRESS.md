@@ -31,7 +31,7 @@ Working brand name: Chayan (change in `apps/web/src/config/site.ts`).
 - [x] Phase 6: 100ms video calls (test-call fallback), join window, presence, session file sharing, scheduler for no-shows/completion/room closing, mentor no-show strikes, existing-account sign-up email, Razorpay live/test key guards
 - [x] Phase 7: Reviews (stars, tags, camera question, 7-day edit window, admin hide), mentor session notes, 24h/1h/10-min reminders, review/notes request emails, ratings on profiles and list, dashboard stats
 - [x] Phase 8: Previous year papers (admin upload with answer key, public SEO pages, sign-in to download, daily limit, download counts) and short prep videos (YouTube, privacy-friendly player); reviews/notes collapse after saving
-- [ ] Phase 9: Manual payouts + finance reports
+- [x] Phase 9: Mentor payout details (encrypted), weekly payouts with 48h hold and TDS (194-O), hold/release, mark paid with UTR + email, bank transfer and TDS CSV exports, mentor earnings page, admin finance totals
 - [ ] Phase 10: Testing + hardening
 - [ ] Phase 11: Launch prep + soft launch
 
@@ -111,6 +111,19 @@ Working brand name: Chayan (change in `apps/web/src/config/site.ts`).
 - Public: `/papers`, `/papers/[slug]`, `/videos`, `/videos/[slug]`; all in the sitemap
 - Admin: `/admin/papers` (upload via `/api/admin/papers`), `/admin/videos`
 - Downloads use plain links, not Next `<Link>`, so prefetching never triggers a download
+
+## Phase 9 details
+
+- Earnings per finished booking = 80% of (price − refunds): completed, aspirant no-show
+  (50% kept) and late aspirant cancellation (50% kept). Mentor no-shows earn nothing
+- `mentor_payout_accounts` (account number, UPI ID and PAN encrypted with AES-256-GCM via
+  `src/lib/crypto.ts`), `payouts` (one per mentor per week), `payout_items` (a booking can be
+  paid only once)
+- TDS rules in `packages/shared/src/payouts.ts`: 0.1% with PAN once the mentor's financial
+  year gross passes ₹5 lakh, 5% without PAN. **Confirm with a CA before the first payout**
+- Admin `/admin/payouts`: create the week's payouts, export the bank sheet, mark paid with the
+  UTR; `/api/admin/payouts/export?type=tds&fy=2026-27` for TDS returns. Viewing bank details
+  and exports are written to the audit log
 
 ## Notes
 
