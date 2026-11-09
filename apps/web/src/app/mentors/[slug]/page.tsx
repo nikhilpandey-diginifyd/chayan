@@ -90,9 +90,11 @@ export default async function MentorProfilePage({ params }: Props) {
       <div className="mt-6 grid gap-10 lg:grid-cols-[1.3fr_1fr]">
         <article className="min-w-0">
           <div className="flex flex-wrap items-center gap-5">
-            <Avatar name={mentor.user.name} url={photoUrl(mentor.photoKey)} size={112} />
+            <span className="ring-seal/25 rounded-full shadow-[var(--shadow-raised)] ring-[6px]">
+              <Avatar name={mentor.user.name} url={photoUrl(mentor.photoKey)} size={112} />
+            </span>
             <div>
-              <h1 className="text-3xl font-extrabold sm:text-4xl">{mentor.user.name}</h1>
+              <h1 className="text-4xl font-extrabold sm:text-5xl">{mentor.user.name}</h1>
               <p className="mt-2 flex flex-wrap items-center gap-2">
                 <span className="bg-seal-soft text-seal inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-sm font-semibold">
                   <BadgeCheck aria-hidden="true" className="size-4" />
@@ -149,7 +151,7 @@ export default async function MentorProfilePage({ params }: Props) {
               {recentReviews.map((review) => (
                 <li
                   key={review.id}
-                  className="border-line bg-surface rounded-[var(--radius-control)] border p-4"
+                  className="panel border-line bg-surface rounded-[var(--radius-card)] border p-4 sm:p-5"
                 >
                   <p className="flex flex-wrap items-center justify-between gap-2">
                     <span className="font-semibold">{publicReviewerName(review.reviewerName)}</span>
@@ -178,7 +180,7 @@ export default async function MentorProfilePage({ params }: Props) {
             </ul>
           )}
 
-          <div className="border-line bg-surface mt-10 flex gap-3 rounded-[var(--radius-panel)] border p-5">
+          <div className="border-line bg-surface panel mt-10 flex gap-3 rounded-[var(--radius-panel)] border p-5">
             <ShieldCheck aria-hidden="true" className="text-seal mt-0.5 size-6 shrink-0" />
             <p className="text-ink-muted text-sm">
               <strong className="text-ink">How we verified this mentor:</strong> our team checked
@@ -189,7 +191,11 @@ export default async function MentorProfilePage({ params }: Props) {
         </article>
 
         <aside className="min-w-0">
-          <div className="border-line bg-surface rounded-[var(--radius-panel)] border p-5 sm:p-6 lg:sticky lg:top-6">
+          <div className="border-line bg-surface panel relative overflow-hidden rounded-[var(--radius-feature)] border p-5 shadow-[var(--shadow-raised)] sm:p-7 lg:sticky lg:top-24">
+            <div
+              aria-hidden="true"
+              className="from-pen via-pen to-omr absolute inset-x-0 top-0 h-1 bg-gradient-to-r"
+            />
             <h2 className="text-xl font-bold">Book a session</h2>
             <SlotPicker
               options={slotsByDuration}

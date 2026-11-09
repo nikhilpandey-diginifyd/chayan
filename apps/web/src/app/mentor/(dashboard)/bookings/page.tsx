@@ -13,8 +13,8 @@ export default async function MentorBookingsPage() {
   ]);
   return (
     <div className="max-w-3xl py-10">
-      <h1 className="text-3xl font-extrabold">Bookings</h1>
-      <section className="border-line bg-surface mt-8 rounded-[var(--radius-panel)] border p-6">
+      <h1 className="text-3xl font-extrabold sm:text-4xl">Bookings</h1>
+      <section className="border-line bg-surface panel mt-8 rounded-[var(--radius-panel)] border p-6">
         <h2 className="text-xl font-bold">Upcoming</h2>
         <div className="mt-2">
           <BookingList
@@ -24,7 +24,7 @@ export default async function MentorBookingsPage() {
           />
         </div>
       </section>
-      <section className="border-line bg-surface mt-8 rounded-[var(--radius-panel)] border p-6">
+      <section className="border-line bg-surface panel mt-8 rounded-[var(--radius-panel)] border p-6">
         <h2 className="text-xl font-bold">Past and cancelled</h2>
         <div className="mt-2">
           <BookingList items={past} perspective="mentor" empty="Nothing here yet." />

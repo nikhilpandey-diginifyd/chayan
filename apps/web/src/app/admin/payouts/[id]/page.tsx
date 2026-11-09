@@ -57,7 +57,7 @@ export default async function AdminPayoutPage({ params }: Props) {
       </p>
 
       <div className="mt-8 grid gap-6 lg:grid-cols-2">
-        <section className="border-line bg-surface rounded-[var(--radius-panel)] border p-6">
+        <section className="border-line bg-surface panel rounded-[var(--radius-panel)] border p-6">
           <h2 className="text-xl font-bold">Amounts</h2>
           <dl className="mt-4 space-y-2">
             {[
@@ -127,7 +127,7 @@ export default async function AdminPayoutPage({ params }: Props) {
           ) : null}
         </section>
 
-        <section className="border-line bg-surface rounded-[var(--radius-panel)] border p-6">
+        <section className="border-line bg-surface panel rounded-[var(--radius-panel)] border p-6">
           <h2 className="text-xl font-bold">Pay to</h2>
           {account ? (
             <dl className="mt-4 space-y-2 text-sm">

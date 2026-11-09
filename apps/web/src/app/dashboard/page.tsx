@@ -37,7 +37,7 @@ export default async function DashboardPage() {
       <h1 className="text-3xl font-extrabold sm:text-4xl">Namaste, {firstName}</h1>
 
       {toReview.length > 0 ? (
-        <section className="border-pen/30 bg-surface mt-8 rounded-[var(--radius-panel)] border p-5">
+        <section className="border-pen/30 bg-surface panel mt-8 rounded-[var(--radius-panel)] border p-5">
           <h2 className="font-bold">Rate your recent sessions</h2>
           <ul className="mt-2 space-y-1">
             {toReview.map((item) => (
@@ -54,7 +54,7 @@ export default async function DashboardPage() {
       <div className="mt-10 grid gap-8 lg:grid-cols-[2fr_1fr]">
         <section
           aria-labelledby="sessions-heading"
-          className="border-line bg-surface rounded-[var(--radius-panel)] border p-6 sm:p-8"
+          className="border-line bg-surface panel rounded-[var(--radius-panel)] border p-6 sm:p-8"
         >
           <h2 id="sessions-heading" className="text-xl font-bold">
             Your sessions
@@ -78,7 +78,7 @@ export default async function DashboardPage() {
 
         <section
           aria-labelledby="prep-heading"
-          className="border-line bg-surface rounded-[var(--radius-panel)] border p-6 sm:p-8"
+          className="border-line bg-surface panel rounded-[var(--radius-panel)] border p-6 sm:p-8"
         >
           <h2 id="prep-heading" className="text-xl font-bold">
             Your preparation

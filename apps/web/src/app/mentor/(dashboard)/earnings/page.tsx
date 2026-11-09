@@ -45,13 +45,13 @@ export default async function MentorEarningsPage() {
 
   return (
     <div className="max-w-4xl py-10">
-      <h1 className="text-3xl font-extrabold">Earnings</h1>
+      <h1 className="text-3xl font-extrabold sm:text-4xl">Earnings</h1>
       <p className="text-ink-muted mt-2 max-w-prose">
         You receive 80% of what aspirants pay, minus any tax deducted at source. Payouts go out
         weekly for sessions that ended at least {PAYOUT_POLICY.holdHours} hours earlier.
       </p>
 
-      <section className="border-line bg-surface mt-8 rounded-[var(--radius-panel)] border p-6">
+      <section className="border-line bg-surface panel mt-8 rounded-[var(--radius-panel)] border p-6">
         <h2 className="text-xl font-bold">Payout details</h2>
         {!account ? (
           <p className="text-omr mt-2 text-sm font-semibold">
@@ -76,7 +76,7 @@ export default async function MentorEarningsPage() {
         </div>
       </section>
 
-      <section className="border-line bg-surface mt-8 rounded-[var(--radius-panel)] border p-6">
+      <section className="border-line bg-surface panel mt-8 rounded-[var(--radius-panel)] border p-6">
         <h2 className="text-xl font-bold">Not paid yet</h2>
         <p className="mt-1 text-3xl font-bold">{formatRupees(unpaidTotal)}</p>
         <p className="text-ink-muted text-sm">
@@ -100,7 +100,7 @@ export default async function MentorEarningsPage() {
         ) : null}
       </section>
 
-      <section className="border-line bg-surface mt-8 rounded-[var(--radius-panel)] border p-6">
+      <section className="border-line bg-surface panel mt-8 rounded-[var(--radius-panel)] border p-6">
         <h2 className="text-xl font-bold">Payouts</h2>
         {history.length === 0 ? (
           <p className="text-ink-muted mt-2">No payouts yet.</p>

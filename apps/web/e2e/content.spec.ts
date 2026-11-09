@@ -40,7 +40,7 @@ test("papers: admin upload, public page, sign-in to download", async ({ browser 
   void signOut;
 });
 
-test("videos: admin adds a YouTube link, it plays with the privacy-friendly player", async ({
+test("videos: admin adds a YouTube link; signed-in viewers watch it in the privacy-friendly player", async ({
   browser,
 }) => {
   const adminPage = await (await browser.newContext()).newPage();
@@ -58,6 +58,11 @@ test("videos: admin adds a YouTube link, it plays with the privacy-friendly play
 
   const [video] = await db()`select slug from prep_videos where title = ${title}`;
   const visitor = await (await browser.newContext()).newPage();
+  await visitor.goto(`/videos/${video!.slug}`);
+  await expect(visitor.getByText("Sign in to watch")).toBeVisible();
+  await expect(visitor.locator("iframe")).toHaveCount(0);
+
+  await createAspirant(visitor, "Video Watcher");
   await visitor.goto(`/videos/${video!.slug}`);
   await expect(visitor.locator("iframe")).toHaveAttribute(
     "src",

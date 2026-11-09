@@ -3,10 +3,18 @@ import { legalLinks, siteConfig } from "@/config/site";
 
 export function SiteFooter() {
   return (
-    <footer className="border-line bg-surface mt-24 border-t">
+    <footer className="border-line mt-24 border-t bg-white">
       <div className="mx-auto grid max-w-6xl gap-10 px-4 py-12 sm:px-6 md:grid-cols-[1.4fr_1fr_1fr_1fr]">
         <div>
-          <p className="font-display text-lg font-extrabold">{siteConfig.name}</p>
+          <p className="font-display flex items-center gap-2 text-lg font-extrabold">
+            <span
+              aria-hidden="true"
+              className="border-omr grid size-6 place-items-center rounded-full border-2"
+            >
+              <span className="bg-ink size-3 rounded-full" />
+            </span>
+            {siteConfig.name}
+          </p>
           <p className="text-ink-muted mt-2 max-w-sm">{siteConfig.description}</p>
         </div>
         <div>

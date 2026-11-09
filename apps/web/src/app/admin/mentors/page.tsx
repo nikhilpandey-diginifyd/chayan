@@ -76,7 +76,7 @@ export default async function MentorApplicationsPage({ searchParams }: Props) {
 
   return (
     <div className="py-10">
-      <h1 className="text-3xl font-extrabold">Mentor applications</h1>
+      <h1 className="text-3xl font-extrabold sm:text-4xl">Mentor applications</h1>
       {done ? (
         <div className="mt-6">
           <FormMessage tone="success">{done}</FormMessage>
@@ -111,7 +111,7 @@ export default async function MentorApplicationsPage({ searchParams }: Props) {
         </p>
       ) : (
         <div className="border-line bg-surface mt-6 overflow-x-auto rounded-[var(--radius-control)] border">
-          <table className="w-full min-w-[720px] text-left text-sm">
+          <table className="data-table w-full min-w-[720px] text-left text-sm">
             <thead className="border-line text-ink-muted border-b">
               <tr>
                 <th scope="col" className="px-4 py-3 font-semibold">

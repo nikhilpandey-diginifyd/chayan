@@ -34,13 +34,13 @@ export default async function AdminBookingsPage() {
 
   return (
     <div className="py-10">
-      <h1 className="text-3xl font-extrabold">Bookings</h1>
+      <h1 className="text-3xl font-extrabold sm:text-4xl">Bookings</h1>
       <p className="text-ink-muted mt-2">The latest 100 bookings, newest first.</p>
       {rows.length === 0 ? (
         <p className="text-ink-muted mt-8">No bookings yet.</p>
       ) : (
         <div className="border-line bg-surface mt-6 overflow-x-auto rounded-[var(--radius-control)] border">
-          <table className="w-full min-w-[820px] text-left text-sm">
+          <table className="data-table w-full min-w-[820px] text-left text-sm">
             <thead className="border-line text-ink-muted border-b">
               <tr>
                 <th scope="col" className="px-4 py-3 font-semibold">

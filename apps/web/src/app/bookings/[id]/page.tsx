@@ -126,7 +126,9 @@ export default async function BookingPage({ params, searchParams }: Props) {
       ) : null}
 
       <div className="mt-4 flex flex-wrap items-center gap-3">
-        <h1 className="text-3xl font-extrabold">{formatSessionTime(booking.startsAt)}</h1>
+        <h1 className="text-3xl font-extrabold sm:text-4xl">
+          {formatSessionTime(booking.startsAt)}
+        </h1>
         <BookingStatusBadge status={booking.status} />
       </div>
       <p className="text-ink-muted mt-2">
@@ -135,7 +137,7 @@ export default async function BookingPage({ params, searchParams }: Props) {
       </p>
 
       <div className="mt-8 grid gap-6 sm:grid-cols-[1.4fr_1fr]">
-        <section className="border-line bg-surface rounded-[var(--radius-panel)] border p-6">
+        <section className="border-line bg-surface panel rounded-[var(--radius-panel)] border p-6">
           <h2 className="text-xl font-bold">Session</h2>
           {isJoinOpen(booking) ? (
             <div className="mt-3 space-y-2">
@@ -193,7 +195,7 @@ export default async function BookingPage({ params, searchParams }: Props) {
           ) : null}
         </section>
 
-        <section className="border-line bg-surface rounded-[var(--radius-panel)] border p-6">
+        <section className="border-line bg-surface panel rounded-[var(--radius-panel)] border p-6">
           <h2 className="text-xl font-bold">Payment</h2>
           <dl className="mt-4 space-y-2 text-sm">
             <div className="flex justify-between gap-3">
@@ -239,7 +241,7 @@ export default async function BookingPage({ params, searchParams }: Props) {
       booking.startsAt.getTime() <= currentTime() ? (
         <section
           id="notes"
-          className="border-line bg-surface mt-6 scroll-mt-6 rounded-[var(--radius-panel)] border p-6"
+          className="border-line bg-surface panel mt-6 scroll-mt-6 rounded-[var(--radius-panel)] border p-6"
         >
           <h2 className="text-xl font-bold">Notes for {booking.aspirant.name}</h2>
           <p className="text-ink-muted mt-1 text-sm">
@@ -260,7 +262,7 @@ export default async function BookingPage({ params, searchParams }: Props) {
       {perspective === "aspirant" && booking.status === "completed" ? (
         <section
           id="notes"
-          className="border-line bg-surface mt-6 scroll-mt-6 rounded-[var(--radius-panel)] border p-6"
+          className="border-line bg-surface panel mt-6 scroll-mt-6 rounded-[var(--radius-panel)] border p-6"
         >
           <h2 className="text-xl font-bold">Notes from {booking.mentor.user.name}</h2>
           {booking.sessionSummary || booking.nextSteps ? (
@@ -291,7 +293,7 @@ export default async function BookingPage({ params, searchParams }: Props) {
       {perspective === "aspirant" && booking.status === "completed" ? (
         <section
           id="review"
-          className="border-line bg-surface mt-6 scroll-mt-6 rounded-[var(--radius-panel)] border p-6"
+          className="border-line bg-surface panel mt-6 scroll-mt-6 rounded-[var(--radius-panel)] border p-6"
         >
           <h2 className="text-xl font-bold">Your review</h2>
           {reviewWindowOpen(booking.endsAt) ? (
@@ -325,7 +327,7 @@ export default async function BookingPage({ params, searchParams }: Props) {
       ) : null}
 
       {perspective !== "aspirant" && booking.review && !booking.review.isHidden ? (
-        <section className="border-line bg-surface mt-6 rounded-[var(--radius-panel)] border p-6">
+        <section className="border-line bg-surface panel mt-6 rounded-[var(--radius-panel)] border p-6">
           <h2 className="text-xl font-bold">Aspirant&apos;s review</h2>
           <p className="mt-2 font-semibold">{booking.review.rating} out of 5</p>
           {booking.review.comment ? (

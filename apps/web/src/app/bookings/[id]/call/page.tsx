@@ -33,7 +33,7 @@ export default async function CallPage({ params }: Props) {
   if (!open) {
     return (
       <div className="mx-auto max-w-lg px-4 py-16">
-        <h1 className="text-3xl font-extrabold">Session with {otherName}</h1>
+        <h1 className="text-3xl font-extrabold sm:text-4xl">Session with {otherName}</h1>
         <p className="text-ink-muted mt-2">{formatSessionTime(booking.startsAt)}</p>
         <div className="mt-6">
           <FormMessage tone="info">

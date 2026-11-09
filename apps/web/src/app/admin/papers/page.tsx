@@ -40,13 +40,13 @@ export default async function AdminPapersPage() {
 
   return (
     <div className="py-10">
-      <h1 className="text-3xl font-extrabold">Previous year papers</h1>
+      <h1 className="text-3xl font-extrabold sm:text-4xl">Previous year papers</h1>
       <p className="text-ink-muted mt-2 max-w-prose">
         Upload official papers from upsc.gov.in and ssc.gov.in. Each paper gets its own public page
         for Google search; downloading needs a free account.
       </p>
 
-      <section className="border-line bg-surface mt-8 rounded-[var(--radius-panel)] border p-6">
+      <section className="border-line bg-surface panel mt-8 rounded-[var(--radius-panel)] border p-6">
         <h2 className="text-xl font-bold">Add a paper</h2>
         <div className="mt-4">
           <PaperUploadForm exams={examOptions} />
@@ -58,7 +58,7 @@ export default async function AdminPapersPage() {
         <p className="text-ink-muted mt-4">No papers yet.</p>
       ) : (
         <div className="border-line bg-surface mt-4 overflow-x-auto rounded-[var(--radius-control)] border">
-          <table className="w-full min-w-[820px] text-left text-sm">
+          <table className="data-table w-full min-w-[820px] text-left text-sm">
             <thead className="border-line text-ink-muted border-b">
               <tr>
                 <th scope="col" className="px-4 py-3 font-semibold">

@@ -140,7 +140,7 @@ export function AvailabilityEditor({
       {state.saved ? <FormMessage tone="success">Availability saved.</FormMessage> : null}
       {state.error ? <FormMessage tone="error">{state.error}</FormMessage> : null}
 
-      <section className="border-line bg-surface rounded-[var(--radius-panel)] border p-6 sm:p-8">
+      <section className="border-line bg-surface panel rounded-[var(--radius-panel)] border p-6 sm:p-8">
         <h2 className="text-xl font-bold">Weekly hours</h2>
         <ul className="divide-line mt-4 divide-y">
           {WEEKDAYS.map((day) => {
@@ -234,7 +234,7 @@ export function AvailabilityEditor({
         ) : null}
       </section>
 
-      <section className="border-line bg-surface rounded-[var(--radius-panel)] border p-6 sm:p-8">
+      <section className="border-line bg-surface panel rounded-[var(--radius-panel)] border p-6 sm:p-8">
         <h2 className="text-xl font-bold">Booking rules</h2>
         <div className="mt-5 grid gap-6 sm:grid-cols-3">
           <Field id="bufferMinutes" label="Break between sessions">
@@ -288,7 +288,7 @@ export function AvailabilityEditor({
         </div>
       </section>
 
-      <section className="border-line bg-surface rounded-[var(--radius-panel)] border p-6 sm:p-8">
+      <section className="border-line bg-surface panel rounded-[var(--radius-panel)] border p-6 sm:p-8">
         <h2 className="text-xl font-bold">Days off</h2>
         <p className="text-ink-muted mt-2">
           Block dates when you can&apos;t take sessions, like exam days or travel.

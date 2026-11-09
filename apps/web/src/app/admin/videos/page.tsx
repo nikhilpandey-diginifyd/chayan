@@ -36,12 +36,12 @@ export default async function AdminVideosPage() {
 
   return (
     <div className="py-10">
-      <h1 className="text-3xl font-extrabold">Short prep videos</h1>
+      <h1 className="text-3xl font-extrabold sm:text-4xl">Short prep videos</h1>
       <p className="text-ink-muted mt-2 max-w-prose">
         Upload videos to your YouTube channel (public or unlisted), then add the link here. They
         play on the site without sending viewers to YouTube.
       </p>
-      <section className="border-line bg-surface mt-8 rounded-[var(--radius-panel)] border p-6">
+      <section className="border-line bg-surface panel mt-8 rounded-[var(--radius-panel)] border p-6">
         <h2 className="text-xl font-bold">Add a video</h2>
         <div className="mt-4">
           <VideoForm exams={examOptions} />

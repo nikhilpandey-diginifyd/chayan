@@ -5,7 +5,9 @@ import { formatRank, formatRupees, MENTOR_BADGE_INFO } from "@chayan/shared";
 import { setProfilePublished } from "./actions";
 import { Button } from "@/components/ui/button";
 import { BookingList } from "@/components/bookings/booking-list";
+import { CalendarRange, Star, Wallet } from "lucide-react";
 import { RatingBadge } from "@/components/rating";
+import { StatCard } from "@/components/ui/stat-card";
 import { listBookingsFor } from "@/lib/booking-queries";
 import { getMentorStats } from "@/lib/dashboard-stats";
 import { getDb } from "@/lib/db";
@@ -56,25 +58,21 @@ export default async function MentorOverviewPage() {
         </p>
       ) : null}
 
-      <dl className="mt-8 grid grid-cols-2 gap-4 md:grid-cols-4">
-        <div className="border-line bg-surface rounded-[var(--radius-control)] border p-4">
-          <dt className="text-ink-muted text-sm">Rating</dt>
-          <dd className="mt-1">
+      <dl className="stagger mt-8 grid grid-cols-2 gap-4 md:grid-cols-4">
+        <StatCard icon={Star} label="Rating">
+          <span className="text-base font-normal">
             <RatingBadge sum={mentor.ratingSum} count={mentor.ratingCount} />
-          </dd>
-        </div>
-        <div className="border-line bg-surface rounded-[var(--radius-control)] border p-4">
-          <dt className="text-ink-muted text-sm">Completed sessions</dt>
-          <dd className="mt-1 text-2xl font-bold">{stats.completed}</dd>
-        </div>
-        <div className="border-line bg-surface rounded-[var(--radius-control)] border p-4">
-          <dt className="text-ink-muted text-sm">Earned this month</dt>
-          <dd className="mt-1 text-2xl font-bold">{formatRupees(stats.earnedThisMonthPaise)}</dd>
-        </div>
-        <div className="border-line bg-surface rounded-[var(--radius-control)] border p-4">
-          <dt className="text-ink-muted text-sm">Earned in total</dt>
-          <dd className="mt-1 text-2xl font-bold">{formatRupees(stats.earnedPaise)}</dd>
-        </div>
+          </span>
+        </StatCard>
+        <StatCard icon={CheckCircle2} label="Completed sessions">
+          {stats.completed}
+        </StatCard>
+        <StatCard icon={CalendarRange} label="Earned this month">
+          {formatRupees(stats.earnedThisMonthPaise)}
+        </StatCard>
+        <StatCard icon={Wallet} label="Earned in total">
+          {formatRupees(stats.earnedPaise)}
+        </StatCard>
       </dl>
       {stats.completed > 0 && !hasPayoutAccount ? (
         <p className="text-omr mt-4 text-sm font-semibold">
@@ -96,7 +94,7 @@ export default async function MentorOverviewPage() {
       ) : null}
 
       <div className="mt-10 grid gap-8 lg:grid-cols-[1.4fr_1fr]">
-        <section className="border-line bg-surface rounded-[var(--radius-panel)] border p-6 sm:p-8">
+        <section className="border-line bg-surface panel rounded-[var(--radius-panel)] border p-6 sm:p-8">
           <h2 className="text-xl font-bold">
             {mentor.isPublished ? "Your profile is live" : "Get ready for bookings"}
           </h2>
@@ -148,7 +146,7 @@ export default async function MentorOverviewPage() {
           </form>
         </section>
 
-        <section className="border-line bg-surface rounded-[var(--radius-panel)] border p-6 sm:p-8">
+        <section className="border-line bg-surface panel rounded-[var(--radius-panel)] border p-6 sm:p-8">
           <h2 className="text-xl font-bold">Your sessions</h2>
           {activeServices.length === 0 ? (
             <p className="text-ink-muted mt-3">No session lengths set yet.</p>

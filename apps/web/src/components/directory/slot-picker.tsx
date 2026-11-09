@@ -11,6 +11,7 @@ import {
 import { bookSession, type BookState } from "@/app/mentors/[slug]/actions";
 import { Button, ButtonLink } from "@/components/ui/button";
 import { FormMessage, inputClassName } from "@/components/ui/field";
+import * as m from "motion/react-m";
 import { cn } from "@/lib/utils";
 import { formatIstDay, minuteOfIstDay } from "./format";
 
@@ -56,10 +57,20 @@ export function SlotPicker({
               <label
                 key={option.durationMinutes}
                 className={cn(
-                  "relative cursor-pointer rounded-[var(--radius-control)] border px-3 py-2 text-center",
-                  checked ? "border-pen bg-pen text-white" : "border-line hover:border-ink-muted",
+                  "has-[:focus-visible]:ring-pen relative cursor-pointer rounded-[var(--radius-control)] border px-3 py-2.5 text-center transition-colors duration-150 has-[:focus-visible]:ring-2 has-[:focus-visible]:ring-offset-2",
+                  checked
+                    ? "border-pen text-white"
+                    : "border-line hover:border-pen/40 hover:bg-pen-soft/40",
                 )}
               >
+                {checked ? (
+                  <m.span
+                    layoutId="duration-pill"
+                    aria-hidden="true"
+                    className="bg-pen absolute inset-0 rounded-[calc(var(--radius-control)-1px)] shadow-[var(--shadow-pen)]"
+                    transition={{ type: "spring", stiffness: 520, damping: 38 }}
+                  />
+                ) : null}
                 <input
                   type="radio"
                   name="duration"
@@ -71,8 +82,13 @@ export function SlotPicker({
                     setSlot(null);
                   }}
                 />
-                <span className="block font-semibold">{option.durationMinutes} min</span>
-                <span className={cn("block text-sm", checked ? "text-white/90" : "text-ink-muted")}>
+                <span className="relative block font-semibold">{option.durationMinutes} min</span>
+                <span
+                  className={cn(
+                    "relative block text-sm",
+                    checked ? "text-white/90" : "text-ink-muted",
+                  )}
+                >
                   {formatRupees(option.pricePaise)}
                 </span>
               </label>
@@ -94,8 +110,10 @@ export function SlotPicker({
                   <label
                     key={day.dateKey}
                     className={cn(
-                      "relative shrink-0 cursor-pointer rounded-[var(--radius-control)] border px-3 py-2 text-sm whitespace-nowrap",
-                      checked ? "border-pen ring-pen ring-1" : "border-line hover:border-ink-muted",
+                      "has-[:focus-visible]:ring-pen relative shrink-0 cursor-pointer rounded-[var(--radius-control)] border px-3 py-2 text-sm whitespace-nowrap transition-colors duration-150 has-[:focus-visible]:ring-2",
+                      checked
+                        ? "border-pen bg-pen-soft/60 ring-pen ring-1"
+                        : "border-line hover:border-pen/40",
                     )}
                   >
                     <input
@@ -118,18 +136,19 @@ export function SlotPicker({
 
           <fieldset className="min-w-0">
             <legend className="text-sm font-semibold">Start time</legend>
-            <div className="mt-2 grid grid-cols-3 gap-2">
-              {activeDay?.slots.map((instant) => {
+            <div key={activeDay?.dateKey} className="stagger mt-2 grid grid-cols-3 gap-2">
+              {activeDay?.slots.map((instant, index) => {
                 const iso = instant.toISOString();
                 const checked = slot === iso;
                 return (
                   <label
                     key={iso}
+                    style={{ "--i": index } as React.CSSProperties}
                     className={cn(
-                      "relative cursor-pointer rounded-[var(--radius-control)] border px-2 py-2 text-center text-sm",
+                      "has-[:focus-visible]:ring-pen relative cursor-pointer rounded-[var(--radius-control)] border px-2 py-2 text-center text-sm transition-colors duration-150 has-[:focus-visible]:ring-2",
                       checked
-                        ? "border-pen bg-pen font-semibold text-white"
-                        : "border-line hover:border-ink-muted",
+                        ? "border-pen bg-pen font-semibold text-white shadow-[var(--shadow-pen)]"
+                        : "border-line hover:border-pen/40 hover:bg-pen-soft/40",
                     )}
                   >
                     <input

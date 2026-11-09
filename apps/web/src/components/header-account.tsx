@@ -16,12 +16,12 @@ export function HeaderAccount() {
   const [signingOut, setSigningOut] = useState(false);
 
   if (isPending) {
-    return <span className="inline-block h-9 w-24" aria-hidden="true" />;
+    return <span className="skeleton inline-block h-9 w-24" aria-hidden="true" />;
   }
 
   if (!session) {
     return (
-      <ButtonLink href="/sign-in" variant="secondary" size="sm">
+      <ButtonLink href="/sign-in" variant="secondary" size="sm" className="whitespace-nowrap">
         Sign in
       </ButtonLink>
     );
@@ -36,10 +36,19 @@ export function HeaderAccount() {
 
   return (
     <div className="flex items-center gap-1 sm:gap-2">
-      <Link href="/dashboard" className="text-ink rounded-md px-3 py-2 font-semibold">
+      <Link
+        href="/dashboard"
+        className="text-ink hover:text-pen hidden rounded-full px-3 py-1.5 font-semibold transition-colors sm:block"
+      >
         Dashboard
       </Link>
-      <Button variant="secondary" size="sm" onClick={signOut} disabled={signingOut}>
+      <Button
+        variant="secondary"
+        size="sm"
+        className="whitespace-nowrap"
+        onClick={signOut}
+        disabled={signingOut}
+      >
         {signingOut ? "Signing out…" : "Sign out"}
       </Button>
     </div>

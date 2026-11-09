@@ -2,7 +2,7 @@ import type { ComponentProps, ReactNode } from "react";
 import { cn } from "@/lib/utils";
 
 export const inputClassName =
-  "block h-11 w-full rounded-[var(--radius-control)] border border-line bg-surface px-3 text-base text-ink placeholder:text-ink-muted/70 focus-visible:border-pen aria-invalid:border-omr";
+  "block h-11 w-full rounded-[var(--radius-control)] border border-line bg-surface px-3 text-base text-ink shadow-[inset_0_1px_2px_rgb(17_26_54/0.04)] transition-[border-color,box-shadow] duration-150 placeholder:text-ink-muted/70 hover:border-ink-muted/40 focus-visible:border-pen focus-visible:shadow-[0_0_0_4px_rgb(43_79_199/0.14)] focus-visible:outline-none aria-invalid:border-omr aria-invalid:focus-visible:shadow-[0_0_0_4px_rgb(204_54_81/0.14)]";
 
 export function Input({ className, ...props }: ComponentProps<"input">) {
   return <input className={cn(inputClassName, className)} {...props} />;
@@ -60,7 +60,10 @@ export function FormMessage({
   return (
     <div
       role={tone === "error" ? "alert" : "status"}
-      className={cn("rounded-[var(--radius-control)] border px-4 py-3 text-sm", styles[tone])}
+      className={cn(
+        "animate-[rise-in_320ms_var(--ease-out-soft)_both] rounded-[var(--radius-control)] border px-4 py-3 text-sm motion-reduce:animate-none",
+        styles[tone],
+      )}
     >
       {children}
     </div>

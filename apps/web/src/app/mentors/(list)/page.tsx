@@ -59,7 +59,7 @@ export default async function MentorsPage({ searchParams }: Props) {
 
   return (
     <div className="mx-auto max-w-6xl px-4 py-12 sm:px-6">
-      <h1 className="text-3xl font-extrabold sm:text-4xl">Find a mentor</h1>
+      <h1 className="text-4xl font-extrabold sm:text-5xl">Find a mentor</h1>
       <p className="text-ink-muted mt-3 max-w-prose">
         Every mentor here proved their result with official documents before their profile went
         live.
@@ -67,7 +67,7 @@ export default async function MentorsPage({ searchParams }: Props) {
 
       <form
         method="get"
-        className="border-line bg-surface mt-8 rounded-[var(--radius-panel)] border p-4 sm:p-5"
+        className="border-line bg-surface panel mt-8 rounded-[var(--radius-panel)] border p-4 sm:p-5"
       >
         <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
           <div className="sm:col-span-2 lg:col-span-2">
@@ -195,13 +195,13 @@ export default async function MentorsPage({ searchParams }: Props) {
       </p>
 
       {mentors.length > 0 ? (
-        <ul className="mt-4 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
-          {mentors.map((mentor) => (
-            <MentorCard key={mentor.userId} mentor={mentor} />
+        <ul className="stagger mt-4 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+          {mentors.map((mentor, index) => (
+            <MentorCard key={mentor.userId} mentor={mentor} index={index} />
           ))}
         </ul>
       ) : (
-        <div className="border-line mt-4 rounded-[var(--radius-panel)] border border-dashed p-8 text-center">
+        <div className="border-line mt-4 rounded-[var(--radius-panel)] border border-dashed bg-white/60 p-10 text-center">
           <p className="font-semibold">
             {hasFilters ? "Try removing a filter." : "Our first mentors are being verified."}
           </p>

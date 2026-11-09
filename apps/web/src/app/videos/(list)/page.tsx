@@ -1,10 +1,12 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import Image from "next/image";
-import { PlayCircle } from "lucide-react";
+import { Clapperboard, PlayCircle } from "lucide-react";
+import { EmptyState } from "@/components/ui/empty-state";
 import { EXAM_CODES, EXAMS, type ExamCode } from "@chayan/shared";
 import { youtubeThumbnail } from "@/components/content/youtube-embed";
 import { listVideos } from "@/lib/content";
+import { getSession } from "@/lib/session";
 import { cn } from "@/lib/utils";
 
 export const metadata: Metadata = {
@@ -21,13 +23,14 @@ export default async function VideosPage({ searchParams }: Props) {
     typeof params.exam === "string" && (EXAM_CODES as readonly string[]).includes(params.exam)
       ? (params.exam as ExamCode)
       : undefined;
-  const videos = await listVideos(exam);
+  const [videos, session] = await Promise.all([listVideos(exam), getSession()]);
 
   return (
     <div className="mx-auto max-w-6xl px-4 py-12 sm:px-6">
-      <h1 className="text-3xl font-extrabold sm:text-4xl">Short prep videos</h1>
+      <h1 className="text-4xl font-extrabold sm:text-5xl">Short prep videos</h1>
       <p className="text-ink-muted mt-3 max-w-prose">
-        Two to five minute lessons from people who cleared the exam. Free to watch.
+        Two to five minute lessons from people who cleared the exam.{" "}
+        {session ? "Free to watch." : "Free to watch with an account."}
       </p>
       <nav aria-label="Filter by exam" className="mt-6 flex flex-wrap gap-2">
         <Link
@@ -60,15 +63,18 @@ export default async function VideosPage({ searchParams }: Props) {
       </nav>
 
       {videos.length === 0 ? (
-        <p className="text-ink-muted mt-10">
-          No videos here yet. New lessons are added every week.
-        </p>
+        <div className="mt-10">
+          <EmptyState icon={Clapperboard} title="No videos here yet.">
+            New lessons are added every week.
+          </EmptyState>
+        </div>
       ) : (
-        <ul className="mt-8 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-          {videos.map((video) => (
+        <ul className="stagger mt-8 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+          {videos.map((video, index) => (
             <li
               key={video.id}
-              className="border-line bg-surface hover:border-ink-muted relative overflow-hidden rounded-[var(--radius-panel)] border"
+              style={{ "--i": index } as React.CSSProperties}
+              className="card-link group border-line bg-surface relative overflow-hidden rounded-[var(--radius-panel)] border"
             >
               <div className="bg-ink relative aspect-video">
                 <Image
@@ -76,12 +82,12 @@ export default async function VideosPage({ searchParams }: Props) {
                   alt=""
                   fill
                   unoptimized
-                  className="object-cover"
+                  className="object-cover transition-transform duration-500 ease-[var(--ease-out-soft)] group-hover:scale-105 motion-reduce:transition-none"
                   sizes="(min-width: 1024px) 33vw, (min-width: 640px) 50vw, 100vw"
                 />
                 <PlayCircle
                   aria-hidden="true"
-                  className="absolute top-1/2 left-1/2 size-12 -translate-x-1/2 -translate-y-1/2 text-white drop-shadow"
+                  className="absolute top-1/2 left-1/2 size-14 -translate-x-1/2 -translate-y-1/2 text-white drop-shadow-lg transition-transform duration-300 group-hover:scale-110 motion-reduce:transition-none"
                 />
               </div>
               <div className="p-4">

@@ -38,7 +38,7 @@ export default async function AdminReviewsPage() {
 
   return (
     <div className="py-10">
-      <h1 className="text-3xl font-extrabold">Reviews</h1>
+      <h1 className="text-3xl font-extrabold sm:text-4xl">Reviews</h1>
       <p className="text-ink-muted mt-2 max-w-prose">
         Hide reviews that are abusive, share personal contact details or aren&apos;t about the
         session. Hidden reviews don&apos;t count towards the mentor&apos;s rating.

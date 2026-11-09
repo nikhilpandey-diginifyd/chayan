@@ -141,7 +141,7 @@ export function CallExperience(props: CallProps) {
           ) : joinState === "in_call" && join?.mode === "test" ? (
             <TestCall otherName={props.otherName} startWithCamera={cameraOn} onLeave={leave} />
           ) : (
-            <div className="border-line bg-surface rounded-[var(--radius-panel)] border p-5 sm:p-6">
+            <div className="border-line bg-surface panel rounded-[var(--radius-panel)] border p-5 sm:p-6">
               <div className="bg-ink relative aspect-video overflow-hidden rounded-[var(--radius-control)]">
                 {cameraOn ? (
                   <video
@@ -194,7 +194,7 @@ export function CallExperience(props: CallProps) {
 
         <aside className="space-y-5">
           {props.note ? (
-            <section className="border-line bg-surface rounded-[var(--radius-panel)] border p-4">
+            <section className="border-line bg-surface panel rounded-[var(--radius-panel)] border p-4">
               <h2 className="text-sm font-semibold">
                 {props.role === "mentor" ? "What they want help with" : "Your note"}
               </h2>

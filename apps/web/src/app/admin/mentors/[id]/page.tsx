@@ -96,7 +96,7 @@ export default async function ReviewApplicationPage({ params }: Props) {
         All applications
       </Link>
       <div className="mt-3 flex flex-wrap items-baseline gap-3">
-        <h1 className="text-3xl font-extrabold">{application.user.name}</h1>
+        <h1 className="text-3xl font-extrabold sm:text-4xl">{application.user.name}</h1>
         <span className="border-line bg-surface rounded-full border px-3 py-1 text-sm font-semibold">
           {MENTOR_APPLICATION_STATUS_LABELS[application.status]}
         </span>
@@ -104,7 +104,7 @@ export default async function ReviewApplicationPage({ params }: Props) {
 
       <div className="mt-8 grid gap-8 lg:grid-cols-[1.4fr_1fr]">
         <div className="space-y-8">
-          <section className="border-line bg-surface rounded-[var(--radius-panel)] border p-6">
+          <section className="border-line bg-surface panel rounded-[var(--radius-panel)] border p-6">
             <h2 className="text-xl font-bold">Details</h2>
             <dl className="mt-4 grid gap-x-8 gap-y-3 sm:grid-cols-2">
               {details.map(([label, value]) => (
@@ -130,7 +130,7 @@ export default async function ReviewApplicationPage({ params }: Props) {
             <p className="text-ink-muted mt-2 whitespace-pre-line">{application.bio ?? "—"}</p>
           </section>
 
-          <section className="border-line bg-surface rounded-[var(--radius-panel)] border p-6">
+          <section className="border-line bg-surface panel rounded-[var(--radius-panel)] border p-6">
             <h2 className="text-xl font-bold">Documents</h2>
             {claimed ? (
               <p className="text-ink-muted mt-2 text-sm">Expected proof: {claimed.proof}</p>
@@ -165,7 +165,7 @@ export default async function ReviewApplicationPage({ params }: Props) {
         </div>
 
         <aside>
-          <section className="border-line bg-surface rounded-[var(--radius-panel)] border p-6 lg:sticky lg:top-6">
+          <section className="border-line bg-surface panel rounded-[var(--radius-panel)] border p-6 lg:sticky lg:top-6">
             <h2 className="text-xl font-bold">Decision</h2>
             {canReview && application.claimedBadge ? (
               <>

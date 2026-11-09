@@ -16,7 +16,7 @@ export default async function MentorAvailabilityPage() {
 
   return (
     <div className="max-w-4xl py-10">
-      <h1 className="text-3xl font-extrabold">Availability</h1>
+      <h1 className="text-3xl font-extrabold sm:text-4xl">Availability</h1>
       <p className="text-ink-muted mt-2 max-w-prose">
         Set the hours you&apos;re usually free each week, in Indian Standard Time. Aspirants can
         only book inside these hours.

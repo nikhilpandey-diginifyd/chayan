@@ -6,23 +6,35 @@
  * the red of OMR sheet guides (used sparingly) and a green "verified" seal.
  */
 @theme {
-  --color-paper: #fafbfd;
+  --color-paper: #f6f7fb;
   --color-surface: #ffffff;
-  --color-ink: #18233f;
-  --color-ink-muted: #4b5675;
+  --color-ink: #111a36;
+  --color-ink-muted: #4a5574;
+  --color-night: #0e1530;
   --color-pen: #2b4fc7;
-  --color-pen-dark: #1f3a99;
+  --color-pen-dark: #1d368f;
+  --color-pen-soft: #eaeefc;
   --color-omr: #cc3651;
   --color-omr-soft: #fbe9ed;
   --color-seal: #1f7a50;
   --color-seal-soft: #e5f3ec;
-  --color-line: #d9deea;
+  --color-line: #dde2ee;
 
   --font-display: "Martel", "Noto Serif Devanagari", Georgia, serif;
   --font-sans: "Mukta", "Noto Sans Devanagari", system-ui, -apple-system, "Segoe UI", sans-serif;
 
-  --radius-control: 0.5rem;
-  --radius-panel: 1rem;
+  /* Radius grows with the size of the thing: controls < cards < panels < feature blocks */
+  --radius-control: 0.625rem;
+  --radius-card: 1rem;
+  --radius-panel: 1.25rem;
+  --radius-feature: 1.75rem;
+
+  /* Ink-tinted elevation, never plain grey */
+  --shadow-card: 0 1px 2px rgb(17 26 54 / 0.04), 0 6px 18px -8px rgb(17 26 54 / 0.1);
+  --shadow-raised: 0 2px 4px rgb(17 26 54 / 0.04), 0 18px 40px -16px rgb(17 26 54 / 0.22);
+  --shadow-pen: 0 8px 20px -8px rgb(43 79 199 / 0.55);
+
+  --ease-out-soft: cubic-bezier(0.22, 1, 0.36, 1);
 }
 
 @layer base {
@@ -50,6 +62,10 @@
 
   p {
     text-wrap: pretty;
+  }
+
+  h1 {
+    letter-spacing: -0.02em;
   }
 
   :focus-visible {
@@ -122,7 +138,128 @@
   }
 }
 
-/* The single animated moment: the chosen OMR bubble fills in on load */
+/* ------------------------------------------------------------------ */
+/* Surfaces                                                            */
+/* ------------------------------------------------------------------ */
+@layer components {
+  /* Every boxed section of a page: soft ink shadow over a hairline border */
+  .panel {
+    border-color: color-mix(in oklab, var(--color-line) 85%, transparent);
+    box-shadow: var(--shadow-card);
+  }
+
+  /* Cards that open something: lift on hover, settle on press */
+  .card-link {
+    box-shadow: var(--shadow-card);
+    transition:
+      transform 220ms var(--ease-out-soft),
+      box-shadow 220ms var(--ease-out-soft),
+      border-color 220ms var(--ease-out-soft);
+  }
+  @media (hover: hover) {
+    .card-link:hover {
+      transform: translateY(-3px);
+      box-shadow: var(--shadow-raised);
+      border-color: color-mix(in oklab, var(--color-pen) 35%, var(--color-line));
+    }
+  }
+  .card-link:active {
+    transform: translateY(-1px);
+  }
+
+  /* Ruled answer-sheet paper with the red margin line: the brand's backdrop */
+  .ruled-paper {
+    background-color: var(--color-paper);
+    background-image:
+      linear-gradient(
+        90deg,
+        transparent 47px,
+        rgb(204 54 81 / 0.22) 47px,
+        rgb(204 54 81 / 0.22) 48px,
+        transparent 48px
+      ),
+      repeating-linear-gradient(180deg, transparent 0 31px, rgb(43 79 199 / 0.07) 31px 32px);
+  }
+
+  /* Tables in dashboards and admin */
+  .data-table thead {
+    background: color-mix(in oklab, var(--color-paper) 70%, white);
+  }
+  .data-table th {
+    font-size: 0.8125rem;
+    letter-spacing: 0.01em;
+  }
+  .data-table tbody tr {
+    transition: background-color 150ms ease;
+  }
+  .data-table tbody tr:hover {
+    background: color-mix(in oklab, var(--color-pen-soft) 45%, white);
+  }
+
+  /* Loading placeholders */
+  .skeleton {
+    border-radius: var(--radius-control);
+    background: linear-gradient(90deg, #e9ecf4 0%, #f4f6fb 40%, #e9ecf4 80%);
+    background-size: 220% 100%;
+    animation: skeleton-shimmer 1.4s ease-in-out infinite;
+  }
+}
+
+@keyframes skeleton-shimmer {
+  from {
+    background-position: 120% 0;
+  }
+  to {
+    background-position: -100% 0;
+  }
+}
+
+/* ------------------------------------------------------------------ */
+/* Motion. Everything here works without JavaScript and switches off   */
+/* for people who ask their device to reduce motion.                   */
+/* ------------------------------------------------------------------ */
+
+/* Page arrival (app/template.tsx wraps every page in .page-enter) */
+@keyframes page-enter {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+}
+.page-enter {
+  animation: page-enter 360ms var(--ease-out-soft) both;
+}
+
+/* Lists that arrive one item after another: give each child style="--i: n" */
+@keyframes rise-in {
+  from {
+    opacity: 0;
+    transform: translateY(14px);
+  }
+}
+.stagger > * {
+  animation: rise-in 520ms var(--ease-out-soft) both;
+  animation-delay: calc(min(var(--i, 0), 10) * 55ms + 60ms);
+}
+
+/* Sections that settle in as they scroll into view (browsers without
+   scroll-driven animations simply show them) */
+/* Movement only, never opacity: content is always readable, even for
+   crawlers, print and full-page screenshots that never "scroll". */
+@keyframes settle-in {
+  from {
+    transform: translateY(28px);
+  }
+}
+@supports (animation-timeline: view()) {
+  .reveal {
+    animation: settle-in linear both;
+    animation-timeline: view();
+    animation-range: entry 0% entry 35%;
+  }
+}
+
+/* The chosen OMR bubble fills in on load */
 @keyframes bubble-fill {
   from {
     transform: scale(0);
@@ -134,8 +271,25 @@
 .animate-bubble-fill {
   animation: bubble-fill 420ms cubic-bezier(0.2, 0.8, 0.2, 1) 500ms both;
 }
+
 @media (prefers-reduced-motion: reduce) {
-  .animate-bubble-fill {
-    animation: none;
+  .page-enter,
+  .stagger > *,
+  .reveal,
+  .animate-bubble-fill,
+  .skeleton {
+    animation: none !important;
   }
+  .card-link,
+  .card-link:hover {
+    transition: none;
+    transform: none;
+  }
+  html {
+    scroll-behavior: auto;
+  }
+}
+
+html {
+  scroll-behavior: smooth;
 }

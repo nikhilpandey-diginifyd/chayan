@@ -56,7 +56,7 @@ export default async function PaperPage({ params }: Props) {
         <p className="mt-6 max-w-prose whitespace-pre-line">{paper.description}</p>
       ) : null}
 
-      <section className="border-line bg-surface mt-8 rounded-[var(--radius-panel)] border p-6">
+      <section className="border-line bg-surface panel mt-8 rounded-[var(--radius-panel)] border p-6">
         {session ? (
           <div className="flex flex-wrap gap-3">
             <a href={downloadHref} className={buttonVariants({ size: "lg" })}>
@@ -130,7 +130,7 @@ export default async function PaperPage({ params }: Props) {
               <li key={item.id}>
                 <Link
                   href={`/papers/${item.slug}`}
-                  className="border-line bg-surface hover:border-ink-muted block rounded-[var(--radius-control)] border p-4 font-semibold"
+                  className="border-line bg-surface card-link block rounded-[var(--radius-control)] border p-4 font-semibold"
                 >
                   {item.year}: {item.title}
                   <span className="text-ink-muted block text-sm font-normal">

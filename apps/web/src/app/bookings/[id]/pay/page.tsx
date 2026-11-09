@@ -40,9 +40,9 @@ export default async function PayPage({ params }: Props) {
 
   return (
     <div className="mx-auto max-w-lg px-4 py-12 sm:py-16">
-      <h1 className="text-3xl font-extrabold">Pay for your session</h1>
+      <h1 className="text-3xl font-extrabold sm:text-4xl">Pay for your session</h1>
 
-      <div className="border-line bg-surface mt-8 rounded-[var(--radius-panel)] border p-6">
+      <div className="border-line bg-surface panel mt-8 rounded-[var(--radius-panel)] border p-6">
         <dl className="space-y-3">
           <div className="flex justify-between gap-4">
             <dt className="text-ink-muted">Mentor</dt>

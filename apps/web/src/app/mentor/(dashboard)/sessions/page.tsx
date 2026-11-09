@@ -10,13 +10,13 @@ export default async function MentorSessionsPage() {
 
   return (
     <div className="max-w-3xl py-10">
-      <h1 className="text-3xl font-extrabold">Sessions and prices</h1>
+      <h1 className="text-3xl font-extrabold sm:text-4xl">Sessions and prices</h1>
       <p className="text-ink-muted mt-2 max-w-prose">
         Choose which session lengths you offer and what each costs. Aspirants pay exactly this
         price. You receive {100 - PLATFORM_FEE_PERCENT}% after our {PLATFORM_FEE_PERCENT}% platform
         fee, before any tax deducted at source.
       </p>
-      <section className="border-line bg-surface mt-8 rounded-[var(--radius-panel)] border p-6 sm:p-8">
+      <section className="border-line bg-surface panel mt-8 rounded-[var(--radius-panel)] border p-6 sm:p-8">
         <ServicesForm
           initial={mentor.services.map((service) => ({
             durationMinutes: service.durationMinutes,

@@ -52,7 +52,7 @@ export function SessionFiles({ bookingId }: { bookingId: string }) {
   }
 
   return (
-    <section className="border-line bg-surface rounded-[var(--radius-panel)] border p-4">
+    <section className="border-line bg-surface panel rounded-[var(--radius-panel)] border p-4">
       <h2 className="font-semibold">Shared files</h2>
       <p className="text-ink-muted mt-1 text-sm">
         Share a photo of your answer copy or a PDF. Only the two of you can open it.

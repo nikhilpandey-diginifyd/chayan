@@ -6,6 +6,7 @@ import "@fontsource/mukta/600.css";
 import "@fontsource/martel/700.css";
 import "@fontsource/martel/800.css";
 import "./globals.css";
+import { MotionProvider } from "@/components/motion-provider";
 import { SiteFooter } from "@/components/site-footer";
 import { SiteHeader } from "@/components/site-header";
 import { siteConfig } from "@/config/site";
@@ -28,14 +29,14 @@ export const metadata: Metadata = {
 };
 
 export const viewport: Viewport = {
-  themeColor: "#fafbfd",
+  themeColor: "#f6f7fb",
   width: "device-width",
   initialScale: 1,
 };
 
 export default function RootLayout({ children }: { children: ReactNode }) {
   return (
-    <html lang="en-IN">
+    <html lang="en-IN" data-scroll-behavior="smooth">
       <body className="flex min-h-dvh flex-col antialiased">
         <a
           href="#main"
@@ -43,11 +44,13 @@ export default function RootLayout({ children }: { children: ReactNode }) {
         >
           Skip to content
         </a>
-        <SiteHeader />
-        <main id="main" className="flex-1">
-          {children}
-        </main>
-        <SiteFooter />
+        <MotionProvider>
+          <SiteHeader />
+          <main id="main" className="flex-1">
+            {children}
+          </main>
+          <SiteFooter />
+        </MotionProvider>
       </body>
     </html>
   );

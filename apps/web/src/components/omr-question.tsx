@@ -12,7 +12,7 @@ const options = [
 export function OmrQuestion() {
   return (
     <figure
-      className="border-line bg-surface relative rounded-[var(--radius-panel)] border p-6 shadow-[0_1px_0_var(--color-line)] sm:p-8"
+      className="border-line bg-surface panel relative rounded-[var(--radius-panel)] border p-6 shadow-[0_1px_0_var(--color-line)] sm:p-8"
       aria-label="An exam-style question: who should guide your preparation? Option D, someone who actually cleared the exam, is marked."
     >
       <div

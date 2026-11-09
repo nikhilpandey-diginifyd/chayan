@@ -28,7 +28,7 @@ export default async function AdminPayoutsPage({ searchParams }: Props) {
 
   return (
     <div className="py-10">
-      <h1 className="text-3xl font-extrabold">Payouts</h1>
+      <h1 className="text-3xl font-extrabold sm:text-4xl">Payouts</h1>
 
       <dl className="mt-6 grid grid-cols-2 gap-4 md:grid-cols-5">
         {[
@@ -40,7 +40,7 @@ export default async function AdminPayoutsPage({ searchParams }: Props) {
         ].map(([label, value]) => (
           <div
             key={label as string}
-            className="border-line bg-surface rounded-[var(--radius-control)] border p-4"
+            className="panel border-line bg-surface rounded-[var(--radius-card)] border p-4 sm:p-5"
           >
             <dt className="text-ink-muted text-sm">{label}</dt>
             <dd className="mt-1 text-xl font-bold">{formatRupees(value as number)}</dd>
@@ -48,7 +48,7 @@ export default async function AdminPayoutsPage({ searchParams }: Props) {
         ))}
       </dl>
 
-      <section className="border-line bg-surface mt-8 rounded-[var(--radius-panel)] border p-6">
+      <section className="border-line bg-surface panel mt-8 rounded-[var(--radius-panel)] border p-6">
         <h2 className="text-xl font-bold">Create this week&apos;s payouts</h2>
         <p className="text-ink-muted mt-1 max-w-prose text-sm">
           Includes every unpaid session that ended before the end of that week and at least{" "}
@@ -95,7 +95,7 @@ export default async function AdminPayoutsPage({ searchParams }: Props) {
         <p className="text-ink-muted mt-6">No payouts here.</p>
       ) : (
         <div className="border-line bg-surface mt-4 overflow-x-auto rounded-[var(--radius-control)] border">
-          <table className="w-full min-w-[960px] text-left text-sm">
+          <table className="data-table w-full min-w-[960px] text-left text-sm">
             <thead className="border-line text-ink-muted border-b">
               <tr>
                 <th scope="col" className="px-4 py-3 font-semibold">

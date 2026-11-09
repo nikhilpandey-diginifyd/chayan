@@ -66,7 +66,7 @@ export default async function AdminPage() {
 
   return (
     <div className="py-10">
-      <h1 className="text-3xl font-extrabold">Admin</h1>
+      <h1 className="text-3xl font-extrabold sm:text-4xl">Admin</h1>
 
       {(pending?.total ?? 0) > 0 ? (
         <p className="border-pen/30 bg-surface mt-6 rounded-[var(--radius-control)] border px-4 py-3">
@@ -90,7 +90,7 @@ export default async function AdminPage() {
         {stats.map((stat) => (
           <div
             key={stat.label}
-            className="border-line bg-surface rounded-[var(--radius-control)] border p-4"
+            className="panel border-line bg-surface rounded-[var(--radius-card)] border p-4 sm:p-5"
           >
             <dt className="text-ink-muted text-sm">{stat.label}</dt>
             <dd className="mt-1 text-2xl font-bold">{stat.value}</dd>
@@ -100,7 +100,7 @@ export default async function AdminPage() {
 
       <h2 className="mt-12 text-xl font-bold">Latest sign-ups</h2>
       <div className="border-line bg-surface mt-4 overflow-x-auto rounded-[var(--radius-control)] border">
-        <table className="w-full min-w-[640px] text-left text-sm">
+        <table className="data-table w-full min-w-[640px] text-left text-sm">
           <thead className="border-line text-ink-muted border-b">
             <tr>
               <th scope="col" className="px-4 py-3 font-semibold">

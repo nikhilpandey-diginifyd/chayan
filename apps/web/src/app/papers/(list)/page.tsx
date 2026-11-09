@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { FileText } from "lucide-react";
+import { FileSearch, FileText } from "lucide-react";
+import { EmptyState } from "@/components/ui/empty-state";
 import { EXAMS, PAPER_LANGUAGE_LABELS, PAPER_LANGUAGES } from "@chayan/shared";
 import { Button } from "@/components/ui/button";
 import { Select } from "@/components/ui/field";
@@ -25,7 +26,7 @@ export default async function PapersPage({ searchParams }: Props) {
 
   return (
     <div className="mx-auto max-w-6xl px-4 py-12 sm:px-6">
-      <h1 className="text-3xl font-extrabold sm:text-4xl">Previous year papers</h1>
+      <h1 className="text-4xl font-extrabold sm:text-5xl">Previous year papers</h1>
       <p className="text-ink-muted mt-3 max-w-prose">
         Official UPSC and SSC question papers, free to download with an account. Solving past papers
         is the fastest way to learn what each exam really asks.
@@ -33,7 +34,7 @@ export default async function PapersPage({ searchParams }: Props) {
 
       <form
         method="get"
-        className="border-line bg-surface mt-8 flex flex-wrap items-end gap-3 rounded-[var(--radius-panel)] border p-4"
+        className="border-line bg-surface panel mt-8 flex flex-wrap items-end gap-3 rounded-[var(--radius-panel)] border p-4"
       >
         <div className="min-w-40 flex-1">
           <label htmlFor="exam" className="text-sm font-semibold">
@@ -93,19 +94,22 @@ export default async function PapersPage({ searchParams }: Props) {
       </form>
 
       {groups.length === 0 ? (
-        <p className="text-ink-muted mt-10">
-          No papers match these filters yet. New papers are added regularly.
-        </p>
+        <div className="mt-10">
+          <EmptyState icon={FileSearch} title="No papers match these filters yet.">
+            New papers are added regularly. Try another year or language.
+          </EmptyState>
+        </div>
       ) : (
         <div className="mt-10 space-y-10">
           {groups.map((group) => (
             <section key={group.exam.code}>
               <h2 className="text-2xl font-bold">{group.exam.shortName}</h2>
-              <ul className="mt-4 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
-                {group.papers.map((paper) => (
+              <ul className="stagger mt-4 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+                {group.papers.map((paper, index) => (
                   <li
                     key={paper.id}
-                    className="border-line bg-surface hover:border-ink-muted relative flex gap-3 rounded-[var(--radius-control)] border p-4"
+                    style={{ "--i": index } as React.CSSProperties}
+                    className="card-link group border-line bg-surface relative flex gap-3 rounded-[var(--radius-card)] border p-4"
                   >
                     <FileText aria-hidden="true" className="text-pen mt-0.5 size-5 shrink-0" />
                     <div className="min-w-0">
