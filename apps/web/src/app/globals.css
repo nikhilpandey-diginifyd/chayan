@@ -6,21 +6,23 @@
  * the red of OMR sheet guides (used sparingly) and a green "verified" seal.
  */
 @theme {
-  --color-paper: #f6f7fb;
+  --color-paper: #fff9f4;
   --color-surface: #ffffff;
-  --color-ink: #111a36;
-  --color-ink-muted: #4a5574;
-  --color-night: #0e1530;
-  --color-pen: #2b4fc7;
-  --color-pen-dark: #1d368f;
-  --color-pen-soft: #eaeefc;
-  --color-omr: #cc3651;
-  --color-omr-soft: #fbe9ed;
-  --color-seal: #1f7a50;
-  --color-seal-soft: #e5f3ec;
-  --color-line: #dde2ee;
+  --color-ink: #282c3f;
+  --color-ink-muted: #5f6272;
+  --color-night: #1c1f2e;
+  --color-pen: #c24e08;
+  --color-saffron: #fc8019;
+  --color-saffron-soft: #fff3e8;
+  --color-pen-dark: #a14105;
+  --color-pen-soft: #fff0e4;
+  --color-omr: #e23744;
+  --color-omr-soft: #fdecee;
+  --color-seal: #138a5e;
+  --color-seal-soft: #e5f6ee;
+  --color-line: #eee3d8;
 
-  --font-display: "Martel", "Noto Serif Devanagari", Georgia, serif;
+  --font-display: "Baloo 2", "Mukta", system-ui, sans-serif;
   --font-sans: "Mukta", "Noto Sans Devanagari", system-ui, -apple-system, "Segoe UI", sans-serif;
 
   /* Radius grows with the size of the thing: controls < cards < panels < feature blocks */
@@ -30,9 +32,9 @@
   --radius-feature: 1.75rem;
 
   /* Ink-tinted elevation, never plain grey */
-  --shadow-card: 0 1px 2px rgb(17 26 54 / 0.04), 0 6px 18px -8px rgb(17 26 54 / 0.1);
-  --shadow-raised: 0 2px 4px rgb(17 26 54 / 0.04), 0 18px 40px -16px rgb(17 26 54 / 0.22);
-  --shadow-pen: 0 8px 20px -8px rgb(43 79 199 / 0.55);
+  --shadow-card: 0 1px 2px rgb(40 44 63 / 0.04), 0 6px 18px -8px rgb(40 44 63 / 0.1);
+  --shadow-raised: 0 2px 4px rgb(40 44 63 / 0.04), 0 18px 40px -16px rgb(40 44 63 / 0.22);
+  --shadow-pen: 0 8px 20px -8px rgb(232 90 12 / 0.55);
 
   --ease-out-soft: cubic-bezier(0.22, 1, 0.36, 1);
 }
@@ -65,7 +67,7 @@
   }
 
   h1 {
-    letter-spacing: -0.02em;
+    letter-spacing: -0.01em;
   }
 
   :focus-visible {
@@ -174,11 +176,11 @@
       linear-gradient(
         90deg,
         transparent 47px,
-        rgb(204 54 81 / 0.22) 47px,
-        rgb(204 54 81 / 0.22) 48px,
+        rgb(226 55 68 / 0.22) 47px,
+        rgb(226 55 68 / 0.22) 48px,
         transparent 48px
       ),
-      repeating-linear-gradient(180deg, transparent 0 31px, rgb(43 79 199 / 0.07) 31px 32px);
+      repeating-linear-gradient(180deg, transparent 0 31px, rgb(239 99 17 / 0.07) 31px 32px);
   }
 
   /* Tables in dashboards and admin */
@@ -199,7 +201,7 @@
   /* Loading placeholders */
   .skeleton {
     border-radius: var(--radius-control);
-    background: linear-gradient(90deg, #e9ecf4 0%, #f4f6fb 40%, #e9ecf4 80%);
+    background: linear-gradient(90deg, #f3ebe3 0%, #fbf6f1 40%, #f3ebe3 80%);
     background-size: 220% 100%;
     animation: skeleton-shimmer 1.4s ease-in-out infinite;
   }

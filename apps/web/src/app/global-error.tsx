@@ -23,11 +23,11 @@ export default function GlobalError({
           padding: "4rem 1rem",
           maxWidth: 520,
           margin: "0 auto",
-          color: "#18233f",
+          color: "#282c3f",
         }}
       >
         <h1 style={{ fontSize: 28 }}>Something went wrong</h1>
-        <p style={{ color: "#4b5675" }}>
+        <p style={{ color: "#5f6272" }}>
           Please try again. If it keeps happening, write to us
           {error.digest ? ` with this code: ${error.digest}` : ""}.
         </p>
@@ -37,7 +37,7 @@ export default function GlobalError({
           style={{
             marginTop: 16,
             padding: "10px 18px",
-            background: "#2b4fc7",
+            background: "#ef6311",
             color: "#fff",
             border: 0,
             borderRadius: 8,

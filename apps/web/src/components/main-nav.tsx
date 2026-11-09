@@ -21,26 +21,38 @@ function useActive() {
 
 export function MainNav() {
   const isActive = useActive();
+  const [hovered, setHovered] = useState<string | null>(null);
   return (
-    <nav aria-label="Main" className="flex items-center gap-0.5">
+    <nav
+      aria-label="Main"
+      className="hidden items-center gap-0.5 sm:flex"
+      onMouseLeave={() => setHovered(null)}
+    >
       {links.map((link) => {
         const active = isActive(link.href);
+        const showPill = hovered ? hovered === link.href : active;
         return (
           <Link
             key={link.href}
             href={link.href}
             aria-current={active ? "page" : undefined}
+            onMouseEnter={() => setHovered(link.href)}
+            onFocus={() => setHovered(link.href)}
             className={cn(
-              "relative rounded-full px-3 py-1.5 whitespace-nowrap transition-colors duration-150",
-              "primary" in link ? "hidden font-semibold sm:block" : "hidden sm:block",
-              active
-                ? "text-pen bg-pen-soft"
-                : "primary" in link
-                  ? "text-ink hover:text-pen"
-                  : "text-ink-muted hover:text-ink",
+              "relative flex items-center gap-1.5 rounded-full px-3.5 py-2 font-semibold whitespace-nowrap transition-colors duration-150",
+              active ? "text-pen" : "text-ink hover:text-pen",
             )}
           >
-            {link.label}
+            {showPill ? (
+              <m.span
+                layoutId="main-nav-pill"
+                aria-hidden="true"
+                className="bg-pen-soft absolute inset-0 rounded-full"
+                transition={{ type: "spring", stiffness: 500, damping: 36 }}
+              />
+            ) : null}
+            <link.icon aria-hidden="true" className="relative size-4" />
+            <span className="relative">{link.label}</span>
           </Link>
         );
       })}

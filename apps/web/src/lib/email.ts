@@ -137,22 +137,22 @@ export function actionEmail(options: {
 
   const html = `<!doctype html>
 <html lang="en">
-  <body style="margin:0;background:#fafbfd;font-family:Arial,Helvetica,sans-serif;color:#18233f;">
+  <body style="margin:0;background:#fafbfd;font-family:Arial,Helvetica,sans-serif;color:#282c3f;">
     <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="padding:24px 12px;">
       <tr>
         <td align="center">
           <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="max-width:520px;background:#ffffff;border:1px solid #d9deea;border-radius:12px;padding:32px;">
             <tr><td style="font-size:20px;font-weight:bold;padding-bottom:24px;">${escapeHtml(brand)}</td></tr>
             <tr><td style="font-size:16px;line-height:1.6;padding-bottom:8px;">Hi ${escapeHtml(greetingName)},</td></tr>
-            <tr><td style="font-size:16px;line-height:1.6;padding-bottom:24px;color:#4b5675;">${escapeHtml(intro)}</td></tr>
+            <tr><td style="font-size:16px;line-height:1.6;padding-bottom:24px;color:#5f6272;">${escapeHtml(intro)}</td></tr>
             <tr>
               <td style="padding-bottom:24px;">
-                <a href="${escapeHtml(actionUrl)}" style="display:inline-block;background:#2b4fc7;color:#ffffff;text-decoration:none;font-weight:bold;padding:12px 20px;border-radius:8px;">${escapeHtml(actionLabel)}</a>
+                <a href="${escapeHtml(actionUrl)}" style="display:inline-block;background:#ef6311;color:#ffffff;text-decoration:none;font-weight:bold;padding:12px 20px;border-radius:8px;">${escapeHtml(actionLabel)}</a>
               </td>
             </tr>
-            <tr><td style="font-size:13px;line-height:1.6;color:#4b5675;padding-bottom:8px;">If the button doesn't work, copy this link into your browser:</td></tr>
-            <tr><td style="font-size:13px;line-height:1.6;word-break:break-all;padding-bottom:24px;"><a href="${escapeHtml(actionUrl)}" style="color:#2b4fc7;">${escapeHtml(actionUrl)}</a></td></tr>
-            <tr><td style="font-size:13px;line-height:1.6;color:#4b5675;">${escapeHtml(footer)}</td></tr>
+            <tr><td style="font-size:13px;line-height:1.6;color:#5f6272;padding-bottom:8px;">If the button doesn't work, copy this link into your browser:</td></tr>
+            <tr><td style="font-size:13px;line-height:1.6;word-break:break-all;padding-bottom:24px;"><a href="${escapeHtml(actionUrl)}" style="color:#ef6311;">${escapeHtml(actionUrl)}</a></td></tr>
+            <tr><td style="font-size:13px;line-height:1.6;color:#5f6272;">${escapeHtml(footer)}</td></tr>
           </table>
         </td>
       </tr>

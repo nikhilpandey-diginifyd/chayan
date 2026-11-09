@@ -3,8 +3,9 @@ import type { ReactNode } from "react";
 import "@fontsource/mukta/400.css";
 import "@fontsource/mukta/500.css";
 import "@fontsource/mukta/600.css";
-import "@fontsource/martel/700.css";
-import "@fontsource/martel/800.css";
+import "@fontsource/baloo-2/600.css";
+import "@fontsource/baloo-2/700.css";
+import "@fontsource/baloo-2/800.css";
 import "./globals.css";
 import { MotionProvider } from "@/components/motion-provider";
 import { SiteFooter } from "@/components/site-footer";
@@ -29,7 +30,7 @@ export const metadata: Metadata = {
 };
 
 export const viewport: Viewport = {
-  themeColor: "#f6f7fb",
+  themeColor: "#fff9f4",
   width: "device-width",
   initialScale: 1,
 };

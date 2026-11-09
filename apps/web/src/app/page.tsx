@@ -9,15 +9,15 @@ import {
   Video,
   Wallet,
 } from "lucide-react";
-import { AnswerSheetHero } from "@/components/home/answer-sheet-hero";
+import { AspirantStory } from "@/components/home/aspirant-story";
 import { ExamExplorer } from "@/components/home/exam-explorer";
 import { ExamMarquee } from "@/components/home/exam-marquee";
 import { Faq } from "@/components/home/faq";
-import { RotatingHeadline } from "@/components/home/rotating-headline";
+import { HeroBanner } from "@/components/home/hero-banner";
+import { ProblemCards } from "@/components/home/problem-cards";
 import { SessionJourney } from "@/components/home/session-journey";
 import { SessionLengthPicker } from "@/components/home/session-length-picker";
 import { VerifyChecklist } from "@/components/home/verify-checklist";
-import { ButtonLink } from "@/components/ui/button";
 
 const resources = [
   {
@@ -60,48 +60,27 @@ const promises = [
 export default function HomePage() {
   return (
     <>
-      {/* Hero */}
-      <section className="relative overflow-hidden">
-        <div
-          aria-hidden="true"
-          className="pointer-events-none absolute inset-0 -z-10 bg-[radial-gradient(60rem_32rem_at_85%_-10%,rgb(43_79_199/0.14),transparent_70%),radial-gradient(30rem_20rem_at_0%_100%,rgb(204_54_81/0.07),transparent_70%)]"
-        />
-        <div className="mx-auto grid max-w-6xl items-center gap-16 px-4 pt-10 pb-24 sm:px-6 md:pt-20 lg:grid-cols-[1.05fr_1fr] lg:pb-28">
-          <div>
-            <p className="border-seal/25 bg-seal-soft text-seal inline-flex items-center gap-2 rounded-full border px-3 py-1 text-sm font-semibold">
-              <BadgeCheck aria-hidden="true" className="size-4" />
-              Mentors verified against official results
-            </p>
-            <RotatingHeadline />
-            <p className="text-ink-muted mt-6 max-w-lg text-lg sm:text-xl">
-              One-to-one video sessions with verified UPSC and SSC selected candidates, in Hindi,
-              English or Hinglish. Book in minutes, join from your browser.
-            </p>
-            <div className="mt-9 flex flex-wrap gap-3">
-              <ButtonLink href="/mentors" size="lg">
-                Find a mentor
-                <ArrowUpRight aria-hidden="true" className="size-5" />
-              </ButtonLink>
-              <ButtonLink href="/mentor/apply" variant="secondary" size="lg">
-                Become a mentor
-              </ButtonLink>
-            </div>
-            <ul className="text-ink-muted mt-9 flex flex-wrap gap-x-5 gap-y-2 text-sm">
-              <li className="flex items-center gap-1.5">
-                <ShieldCheck aria-hidden="true" className="text-seal size-4" />
-                Full refund if your mentor doesn&apos;t join
-              </li>
-              <li className="flex items-center gap-1.5">
-                <Wallet aria-hidden="true" className="text-pen size-4" />
-                UPI, cards and net banking
-              </li>
-            </ul>
-          </div>
-          <AnswerSheetHero />
+      <HeroBanner />
+
+      <ExamMarquee />
+
+      {/* Problems aspirants recognise */}
+      <section className="mx-auto max-w-6xl px-4 pt-20 pb-8 sm:px-6 md:pt-24">
+        <div className="reveal max-w-2xl">
+          <p className="text-pen font-semibold">Does this sound like you?</p>
+          <h2 className="mt-2 text-4xl font-extrabold sm:text-5xl">
+            Kya aapke saath bhi aisa hota hai?
+          </h2>
+          <p className="text-ink-muted mt-3 text-lg">
+            Every mentor on Chayan went through these exact problems, and got past them.
+          </p>
+        </div>
+        <div className="mt-10">
+          <ProblemCards />
         </div>
       </section>
 
-      <ExamMarquee />
+      <AspirantStory />
 
       {/* Exam explorer */}
       <section className="mx-auto max-w-6xl px-4 py-20 sm:px-6 md:py-24">
@@ -131,7 +110,7 @@ export default function HomePage() {
       <section className="bg-night relative overflow-hidden text-white">
         <div
           aria-hidden="true"
-          className="pointer-events-none absolute inset-0 bg-[radial-gradient(40rem_24rem_at_15%_0%,rgb(43_79_199/0.4),transparent_70%)]"
+          className="pointer-events-none absolute inset-0 bg-[radial-gradient(40rem_24rem_at_15%_0%,rgb(239_99_17/0.4),transparent_70%)]"
         />
         <div
           aria-hidden="true"

@@ -80,7 +80,7 @@ export function RazorpayButton({
       name: siteConfig.name,
       description,
       prefill,
-      theme: { color: "#2b4fc7" },
+      theme: { color: "#ef6311" },
       handler: async (response: RazorpaySuccess) => {
         setState("verifying");
         const result = await fetch("/api/payments/razorpay/verify", {
