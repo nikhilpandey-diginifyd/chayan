@@ -28,7 +28,7 @@ export function BookingList({
       {items.map((item) => (
         <li
           key={item.id}
-          className="group hover:bg-pen-soft/40 relative flex items-center gap-4 rounded-[var(--radius-control)] px-2 py-3.5 transition-colors"
+          className="group hover:bg-pen-soft/40 relative flex flex-wrap items-center gap-x-4 gap-y-2 rounded-[var(--radius-control)] px-2 py-3.5 transition-colors sm:flex-nowrap"
         >
           <span
             aria-hidden="true"
@@ -55,10 +55,12 @@ export function BookingList({
                 : ""}
             </p>
           </div>
-          <BookingStatusBadge status={item.status} />
+          <span className="max-sm:basis-full max-sm:pl-16">
+            <BookingStatusBadge status={item.status} />
+          </span>
           <ChevronRight
             aria-hidden="true"
-            className="text-ink-muted size-4 shrink-0 transition-transform duration-200 group-hover:translate-x-0.5"
+            className="text-ink-muted hidden size-4 shrink-0 transition-transform duration-200 group-hover:translate-x-0.5 sm:block"
           />
         </li>
       ))}
