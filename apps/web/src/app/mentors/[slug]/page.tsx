@@ -18,6 +18,7 @@ import { FormMessage } from "@/components/ui/field";
 import { getPublicMentor } from "@/lib/mentor-directory";
 import { photoUrl } from "@/lib/mentor-profile";
 import { RatingBadge } from "@/components/rating";
+import { ProfileCover } from "@/components/page/profile-cover";
 import { listMentorReviews } from "@/lib/reviews";
 import { getSession } from "@/lib/session";
 
@@ -89,22 +90,27 @@ export default async function MentorProfilePage({ params }: Props) {
 
       <div className="mt-6 grid gap-10 lg:grid-cols-[1.3fr_1fr]">
         <article className="min-w-0">
-          <div className="flex flex-wrap items-center gap-5">
-            <span className="ring-seal/25 rounded-full shadow-[var(--shadow-raised)] ring-[6px]">
-              <Avatar name={mentor.user.name} url={photoUrl(mentor.photoKey)} size={112} />
-            </span>
-            <div>
-              <h1 className="text-4xl font-extrabold sm:text-5xl">{mentor.user.name}</h1>
-              <p className="mt-2 flex flex-wrap items-center gap-2">
-                <span className="bg-seal-soft text-seal inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-sm font-semibold">
-                  <BadgeCheck aria-hidden="true" className="size-4" />
-                  {badge.label}
+          <div className="panel border-line relative overflow-hidden rounded-[var(--radius-feature)] border bg-white">
+            <ProfileCover />
+            <div className="relative -mt-16 px-5 pb-6 sm:px-7">
+              <div className="flex flex-wrap items-start gap-x-5 gap-y-3">
+                <span className="rounded-full bg-white p-1.5 shadow-[var(--shadow-raised)]">
+                  <Avatar name={mentor.user.name} url={photoUrl(mentor.photoKey)} size={112} />
                 </span>
-                <span className="text-ink-muted">
-                  {mentor.exam.shortName} {mentor.examYear}
-                  {mentor.rank ? `, ${formatRank(mentor.rank)}` : ""}
-                </span>
-              </p>
+                <div className="sm:pt-[4.5rem]">
+                  <h1 className="text-4xl font-extrabold sm:text-5xl">{mentor.user.name}</h1>
+                  <p className="mt-2 flex flex-wrap items-center gap-2">
+                    <span className="bg-seal-soft text-seal inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-sm font-semibold">
+                      <BadgeCheck aria-hidden="true" className="size-4" />
+                      {badge.label}
+                    </span>
+                    <span className="text-ink-muted">
+                      {mentor.exam.shortName} {mentor.examYear}
+                      {mentor.rank ? `, ${formatRank(mentor.rank)}` : ""}
+                    </span>
+                  </p>
+                </div>
+              </div>
             </div>
           </div>
 
