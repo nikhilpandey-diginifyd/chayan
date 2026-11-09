@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { useActionState, useState } from "react";
+import { OnboardingProgress } from "@/components/onboarding/onboarding-progress";
 import { MAX_ATTEMPT_NUMBER, PREP_LANGUAGE_LABELS, PREP_LANGUAGES } from "@chayan/shared";
 import { saveOnboarding } from "@/app/onboarding/actions";
 import type { OnboardingState } from "@/app/onboarding/schema";
@@ -68,6 +69,18 @@ export function OnboardingForm({
 
   return (
     <form action={formAction} className="space-y-10">
+      <OnboardingProgress
+        done={
+          [
+            values.examId,
+            values.examStageId,
+            values.targetYear,
+            values.attemptNumber,
+            values.language,
+          ].filter(Boolean).length + (isFirstTime ? Number(consent) : 0)
+        }
+        total={isFirstTime ? 6 : 5}
+      />
       {state.formError ? <FormMessage tone="error">{state.formError}</FormMessage> : null}
 
       <fieldset aria-describedby={errors.examId ? "examId-error" : undefined}>
