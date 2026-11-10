@@ -1,4 +1,4 @@
-import { expect, test } from "@playwright/test";
+import { expect, test } from "./fixtures";
 import { createAspirant, createPublishedMentor, insertBooking } from "./helpers";
 
 test("security headers are sent on every page", async ({ request }) => {

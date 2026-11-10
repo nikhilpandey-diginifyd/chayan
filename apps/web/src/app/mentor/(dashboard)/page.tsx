@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button";
 import { BookingList } from "@/components/bookings/booking-list";
 import { CalendarRange, Star, Wallet } from "lucide-react";
 import { RatingBadge } from "@/components/rating";
+import { CountUp } from "@/components/ui/count-up";
 import { StatCard } from "@/components/ui/stat-card";
 import { listBookingsFor } from "@/lib/booking-queries";
 import { getMentorStats } from "@/lib/dashboard-stats";
@@ -65,13 +66,13 @@ export default async function MentorOverviewPage() {
           </span>
         </StatCard>
         <StatCard icon={CheckCircle2} label="Completed sessions">
-          {stats.completed}
+          <CountUp value={stats.completed} />
         </StatCard>
         <StatCard icon={CalendarRange} label="Earned this month">
-          {formatRupees(stats.earnedThisMonthPaise)}
+          <CountUp value={stats.earnedThisMonthPaise} format="rupees" />
         </StatCard>
         <StatCard icon={Wallet} label="Earned in total">
-          {formatRupees(stats.earnedPaise)}
+          <CountUp value={stats.earnedPaise} format="rupees" />
         </StatCard>
       </dl>
       {stats.completed > 0 && !hasPayoutAccount ? (

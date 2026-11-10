@@ -1,13 +1,13 @@
 import path from "node:path";
-import { fileURLToPath } from "node:url";
 import { writeFileSync } from "node:fs";
-import { expect, test } from "@playwright/test";
+import { expect, test } from "./fixtures";
+import { E2E_TMP_DIR } from "../playwright.config";
 import { createAdmin, signIn, signUpAndVerify, unique, waitForEmail } from "./helpers";
 
-const here = path.dirname(fileURLToPath(import.meta.url));
+const here = E2E_TMP_DIR;
 
-const pdf = path.join(here, ".tmp-result.pdf");
-const png = path.join(here, ".tmp-id.png");
+const pdf = path.join(here, "result.pdf");
+const png = path.join(here, "id.png");
 test.beforeAll(() => {
   writeFileSync(pdf, "%PDF-1.4\n1 0 obj<</Type/Catalog>>endobj\ntrailer<</Root 1 0 R>>\n%%EOF\n");
   // 1x1 PNG
@@ -21,6 +21,8 @@ test.beforeAll(() => {
 });
 
 test("apply as a mentor, get reviewed and approved", async ({ browser }) => {
+  // Two sign-ups, uploads and an admin review: the longest flow in the suite.
+  test.setTimeout(240_000);
   const adminPage = await (await browser.newContext()).newPage();
   const adminEmail = await createAdmin(adminPage);
 
@@ -72,7 +74,8 @@ test("apply as a mentor, get reviewed and approved", async ({ browser }) => {
 
   await page.goto("/dashboard");
   await expect(page).toHaveURL(/\/mentor$/);
-  await expect(page.getByText("Interview appeared")).toBeVisible();
+  // The badge shows twice now: in the orange mentor banner and on the overview.
+  await expect(page.getByText("Interview appeared").first()).toBeVisible();
 });
 
 test.beforeAll(() => {

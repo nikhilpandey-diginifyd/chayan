@@ -13,6 +13,8 @@ import {
   emptyDetails,
   type DetailsValues,
 } from "@/components/mentor/application-details-form";
+import { ApplyStepper } from "@/components/mentor/apply-stepper";
+import { PageHero } from "@/components/page/page-hero";
 import { DocumentUploader } from "@/components/mentor/document-uploader";
 import { SubmitApplication } from "@/components/mentor/submit-application";
 import { FormMessage } from "@/components/ui/field";
@@ -106,96 +108,114 @@ export default async function MentorApplyPage() {
     : emptyDetails;
 
   return (
-    <div className="mx-auto max-w-3xl px-4 py-12 sm:px-6 sm:py-16">
-      <h1 className="text-3xl font-extrabold sm:text-4xl">Apply to mentor</h1>
-      <p className="text-ink-muted mt-3 max-w-prose">
-        We verify every mentor&apos;s result against official documents before their profile goes
-        live. It takes about 10 minutes to apply.
-      </p>
+    <>
+      <PageHero
+        eyebrow="For selected and interview-appeared candidates"
+        title="Apply to mentor"
+        lines={[
+          "Aapne clear kiya, ab doosron ko clear karwao.",
+          "Apne time pe, apni fees pe.",
+          "Har hafte payout, seedha bank mein.",
+        ]}
+        description="We verify every mentor's result against official documents before their profile goes live. It takes about 10 minutes to apply."
+      />
+      <div className="relative mx-auto -mt-10 max-w-3xl px-4 pb-16 sm:px-6">
+        <ApplyStepper
+          done={
+            !application
+              ? 0
+              : status === "submitted" || status === "approved"
+                ? 3
+                : documents.length >= 2
+                  ? 2
+                  : 1
+          }
+        />
 
-      <div className="mt-8 space-y-4">
-        {status === "submitted" && application?.submittedAt ? (
-          <FormMessage tone="info">
-            <strong>Under review</strong> since {dateFormat.format(application.submittedAt)}. We
-            usually finish within 3 working days and will email you at {user.email}.
-          </FormMessage>
-        ) : null}
-        {status === "changes_requested" ? (
-          <FormMessage tone="error">
-            <strong>We need a change before we can approve you:</strong> {application?.reviewNote}
-          </FormMessage>
-        ) : null}
-        {status === "rejected" ? (
-          <FormMessage tone="error">
-            <strong>Your last application wasn&apos;t approved:</strong> {application?.reviewNote}{" "}
-            You can update it and apply again.
-          </FormMessage>
-        ) : null}
-      </div>
+        <div className="mt-8 space-y-4">
+          {status === "submitted" && application?.submittedAt ? (
+            <FormMessage tone="info">
+              <strong>Under review</strong> since {dateFormat.format(application.submittedAt)}. We
+              usually finish within 3 working days and will email you at {user.email}.
+            </FormMessage>
+          ) : null}
+          {status === "changes_requested" ? (
+            <FormMessage tone="error">
+              <strong>We need a change before we can approve you:</strong> {application?.reviewNote}
+            </FormMessage>
+          ) : null}
+          {status === "rejected" ? (
+            <FormMessage tone="error">
+              <strong>Your last application wasn&apos;t approved:</strong> {application?.reviewNote}{" "}
+              You can update it and apply again.
+            </FormMessage>
+          ) : null}
+        </div>
 
-      <div className="mt-8 space-y-8">
-        {editable ? (
-          <>
-            <Section title="Your details">
-              <ApplicationDetailsForm exams={examOptions} years={years} initial={initial} />
-            </Section>
-
-            {application ? (
-              <Section
-                title="Documents"
-                description="Upload proof of the result you chose above and a photo ID."
-              >
-                <DocumentUploader documents={documents} editable />
+        <div className="mt-8 space-y-8">
+          {editable ? (
+            <>
+              <Section title="Your details">
+                <ApplicationDetailsForm exams={examOptions} years={years} initial={initial} />
               </Section>
-            ) : (
-              <Section title="Documents" muted>
-                <p className="text-ink-muted">
-                  Save your details first, then upload documents here.
-                </p>
-              </Section>
-            )}
 
-            <Section title="Submit for review">
-              <SubmitApplication ready={blockers.length === 0} blockers={blockers} />
-            </Section>
-          </>
-        ) : application ? (
-          <>
-            <Section title="Your details">
-              <dl className="grid gap-x-8 gap-y-4 sm:grid-cols-2">
-                <SummaryItem label="Exam" value={application.exam?.shortName} />
-                <SummaryItem
-                  label="Result"
-                  value={
-                    application.claimedBadge
-                      ? MENTOR_BADGE_INFO[application.claimedBadge].label
-                      : undefined
-                  }
-                />
-                <SummaryItem label="Exam year" value={application.examYear?.toString()} />
-                <SummaryItem label="Roll number" value={application.rollNumber} />
-                <SummaryItem label="Rank" value={application.rank} />
-                <SummaryItem
-                  label="Languages"
-                  value={application.languages
-                    .map((language: PrepLanguage) => PREP_LANGUAGE_LABELS[language])
-                    .join(", ")}
-                />
-                <SummaryItem
-                  label="Location"
-                  value={[application.city, application.state].filter(Boolean).join(", ")}
-                />
-                <SummaryItem label="Mobile" value={application.phone} />
-              </dl>
-              <p className="text-ink-muted mt-6 whitespace-pre-line">{application.bio}</p>
-            </Section>
-            <Section title="Documents">
-              <DocumentUploader documents={documents} editable={false} />
-            </Section>
-          </>
-        ) : null}
+              {application ? (
+                <Section
+                  title="Documents"
+                  description="Upload proof of the result you chose above and a photo ID."
+                >
+                  <DocumentUploader documents={documents} editable />
+                </Section>
+              ) : (
+                <Section title="Documents" muted>
+                  <p className="text-ink-muted">
+                    Save your details first, then upload documents here.
+                  </p>
+                </Section>
+              )}
+
+              <Section title="Submit for review">
+                <SubmitApplication ready={blockers.length === 0} blockers={blockers} />
+              </Section>
+            </>
+          ) : application ? (
+            <>
+              <Section title="Your details">
+                <dl className="grid gap-x-8 gap-y-4 sm:grid-cols-2">
+                  <SummaryItem label="Exam" value={application.exam?.shortName} />
+                  <SummaryItem
+                    label="Result"
+                    value={
+                      application.claimedBadge
+                        ? MENTOR_BADGE_INFO[application.claimedBadge].label
+                        : undefined
+                    }
+                  />
+                  <SummaryItem label="Exam year" value={application.examYear?.toString()} />
+                  <SummaryItem label="Roll number" value={application.rollNumber} />
+                  <SummaryItem label="Rank" value={application.rank} />
+                  <SummaryItem
+                    label="Languages"
+                    value={application.languages
+                      .map((language: PrepLanguage) => PREP_LANGUAGE_LABELS[language])
+                      .join(", ")}
+                  />
+                  <SummaryItem
+                    label="Location"
+                    value={[application.city, application.state].filter(Boolean).join(", ")}
+                  />
+                  <SummaryItem label="Mobile" value={application.phone} />
+                </dl>
+                <p className="text-ink-muted mt-6 whitespace-pre-line">{application.bio}</p>
+              </Section>
+              <Section title="Documents">
+                <DocumentUploader documents={documents} editable={false} />
+              </Section>
+            </>
+          ) : null}
+        </div>
       </div>
-    </div>
+    </>
   );
 }
 

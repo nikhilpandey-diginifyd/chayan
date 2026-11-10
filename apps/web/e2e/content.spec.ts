@@ -1,12 +1,12 @@
 import path from "node:path";
-import { fileURLToPath } from "node:url";
 import { writeFileSync } from "node:fs";
-import { expect, test } from "@playwright/test";
+import { expect, test } from "./fixtures";
+import { E2E_TMP_DIR } from "../playwright.config";
 import { createAdmin, createAspirant, db, signIn, signOut } from "./helpers";
 
-const here = path.dirname(fileURLToPath(import.meta.url));
+const here = E2E_TMP_DIR;
 
-const pdf = path.join(here, ".tmp-paper.pdf");
+const pdf = path.join(here, "paper.pdf");
 test.beforeAll(() =>
   writeFileSync(pdf, "%PDF-1.4\n1 0 obj<</Type/Catalog>>endobj\ntrailer<</Root 1 0 R>>\n%%EOF\n"),
 );

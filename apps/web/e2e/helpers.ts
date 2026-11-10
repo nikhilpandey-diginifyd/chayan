@@ -51,11 +51,23 @@ export function linkIn(email: OutboxEmail, pattern: RegExp): string {
   return url;
 }
 
+/**
+ * Waits until the form's submit button is enabled, which happens once React
+ * has hydrated the page. Typing before that can be lost if the dev server is
+ * still compiling and reloads the page, which is common right after it starts.
+ */
+async function waitUntilReady(page: Page, buttonName: string) {
+  await expect(page.getByRole("button", { name: buttonName, exact: true })).toBeEnabled({
+    timeout: 60_000,
+  });
+}
+
 export async function signUpAndVerify(
   page: Page,
   options: { name: string; email: string; next?: string },
 ) {
   await page.goto(options.next ? `/sign-up?next=${encodeURIComponent(options.next)}` : "/sign-up");
+  await waitUntilReady(page, "Create account");
   await page.fill("#name", options.name);
   await page.fill("#email", options.email);
   await page.fill("#password", PASSWORD);
@@ -67,6 +79,7 @@ export async function signUpAndVerify(
 
 export async function signIn(page: Page, email: string, next: string, password = PASSWORD) {
   await page.goto(`/sign-in?next=${encodeURIComponent(next)}`);
+  await waitUntilReady(page, "Sign in");
   await page.fill("#email", email);
   await page.fill("#password", password);
   await page.getByRole("button", { name: "Sign in" }).click();

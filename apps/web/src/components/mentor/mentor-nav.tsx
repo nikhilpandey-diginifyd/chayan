@@ -11,6 +11,6 @@ const links = [
   { href: "/mentor/earnings", label: "Earnings" },
 ] as const;
 
-export function MentorNav() {
-  return <NavTabs label="Mentor" tabs={links} id="mentor-nav" />;
+export function MentorNav({ tone = "light" }: { tone?: "light" | "dark" }) {
+  return <NavTabs label="Mentor" tabs={links} id="mentor-nav" tone={tone} />;
 }

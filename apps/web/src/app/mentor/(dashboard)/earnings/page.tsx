@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { desc, eq, mentorPayoutAccounts, payouts } from "@chayan/db";
 import { formatRupees, PAYOUT_POLICY } from "@chayan/shared";
+import { CountUp } from "@/components/ui/count-up";
 import { PayoutAccountSection } from "@/components/mentor/payout-account-form";
 import { formatSessionTime } from "@/lib/booking-emails";
 import { getDb } from "@/lib/db";
@@ -78,7 +79,9 @@ export default async function MentorEarningsPage() {
 
       <section className="border-line bg-surface panel mt-8 rounded-[var(--radius-panel)] border p-6">
         <h2 className="text-xl font-bold">Not paid yet</h2>
-        <p className="mt-1 text-3xl font-bold">{formatRupees(unpaidTotal)}</p>
+        <p className="font-display text-pen mt-1 text-5xl font-extrabold">
+          <CountUp value={unpaidTotal} format="rupees" />
+        </p>
         <p className="text-ink-muted text-sm">
           From {unpaid.length} session{unpaid.length === 1 ? "" : "s"}, before tax deducted at
           source.

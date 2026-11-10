@@ -15,18 +15,23 @@ export function NavTabs({
   label,
   tabs,
   id,
+  tone = "light",
 }: {
   label: string;
   tabs: readonly NavTab[];
   id: string;
+  tone?: "light" | "dark";
 }) {
+  const dark = tone === "dark";
   const pathname = usePathname();
   return (
     <nav
       aria-label={label}
       className="-mx-4 [scrollbar-width:none] overflow-x-auto px-4 sm:mx-0 sm:px-0"
     >
-      <div className="border-line flex min-w-max gap-1 border-b">
+      <div
+        className={cn("flex min-w-max gap-1 border-b", dark ? "border-white/20" : "border-line")}
+      >
         {tabs.map((tab) => {
           const active =
             tab.exact === false ? pathname.startsWith(tab.href) : pathname === tab.href;
@@ -37,7 +42,13 @@ export function NavTabs({
               aria-current={active ? "page" : undefined}
               className={cn(
                 "relative px-3 py-2.5 font-semibold whitespace-nowrap transition-colors duration-150",
-                active ? "text-ink" : "text-ink-muted hover:text-ink",
+                dark
+                  ? active
+                    ? "text-white"
+                    : "text-white/75 hover:text-white"
+                  : active
+                    ? "text-ink"
+                    : "text-ink-muted hover:text-ink",
               )}
             >
               <span className="relative z-10">{tab.label}</span>
@@ -45,7 +56,10 @@ export function NavTabs({
                 <m.span
                   layoutId={`${id}-active`}
                   aria-hidden="true"
-                  className="bg-pen absolute inset-x-2 -bottom-px h-[3px] rounded-full"
+                  className={cn(
+                    "absolute inset-x-2 -bottom-px h-[3px] rounded-full",
+                    dark ? "bg-white" : "bg-pen",
+                  )}
                   transition={{ type: "spring", stiffness: 500, damping: 40 }}
                 />
               ) : null}

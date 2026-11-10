@@ -1,4 +1,6 @@
+import { mkdirSync, writeFileSync } from "node:fs";
 import { request } from "@playwright/test";
+import { E2E_TMP_DIR, OUTBOX_FILE } from "../playwright.config";
 
 /**
  * Warms up the dev server: compiles every page once before the tests start,
@@ -53,6 +55,8 @@ const ROUTES = [
 ];
 
 export default async function globalSetup() {
+  mkdirSync(E2E_TMP_DIR, { recursive: true });
+  writeFileSync(OUTBOX_FILE, "");
   const context = await request.newContext({ baseURL: "http://localhost:3000" });
   for (const route of ROUTES) {
     await context.get(route, { timeout: 120_000, maxRedirects: 0 }).catch(() => {});

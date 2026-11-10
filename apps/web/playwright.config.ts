@@ -1,3 +1,4 @@
+import os from "node:os";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { defineConfig, devices } from "@playwright/test";
@@ -7,7 +8,13 @@ const here = path.dirname(fileURLToPath(import.meta.url));
 
 config({ path: path.join(here, ".env.local"), quiet: true });
 
-export const OUTBOX_FILE = path.join(here, "e2e", ".outbox.jsonl");
+/**
+ * Files the tests write (the email outbox, sample uploads) live outside the
+ * app folder, so the dev server's file watcher never sees them and never
+ * reloads pages in the middle of a test.
+ */
+export const E2E_TMP_DIR = path.join(os.tmpdir(), "chayan-e2e");
+export const OUTBOX_FILE = path.join(E2E_TMP_DIR, "outbox.jsonl");
 
 /**
  * End-to-end tests. They start their own dev server with the scheduler off
