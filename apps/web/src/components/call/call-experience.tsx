@@ -6,6 +6,7 @@ import { HMSRoomProvider } from "@100mslive/react-sdk";
 import { Button } from "@/components/ui/button";
 import { FormMessage } from "@/components/ui/field";
 import { CallClock } from "./call-clock";
+import { PrejoinChecklist } from "./prejoin-checklist";
 import { HmsCall } from "./hms-call";
 import { SessionFiles } from "./session-files";
 import { TestCall } from "./test-call";
@@ -188,6 +189,7 @@ export function CallExperience(props: CallProps) {
                   <FormMessage tone="error">{error}</FormMessage>
                 </div>
               ) : null}
+              <PrejoinChecklist />
             </div>
           )}
         </div>

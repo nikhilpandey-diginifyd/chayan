@@ -9,7 +9,9 @@ import {
   type ReviewTag,
 } from "@chayan/shared";
 import { CancelBookingForm, RescheduleForm } from "@/components/bookings/booking-actions";
+import { BookingTimeline } from "@/components/bookings/booking-timeline";
 import { NotesSection } from "@/components/bookings/notes-form";
+import { PaymentCelebration } from "@/components/bookings/payment-celebration";
 import { ReviewSection } from "@/components/bookings/review-form";
 import { BookingStatusBadge } from "@/components/bookings/status-badge";
 import { ButtonLink } from "@/components/ui/button";
@@ -111,9 +113,9 @@ export default async function BookingPage({ params, searchParams }: Props) {
 
       {query.paid && isConfirmed ? (
         <div className="mt-6">
-          <FormMessage tone="success">
+          <PaymentCelebration>
             Payment received. Your session is booked and we&apos;ve emailed you the details.
-          </FormMessage>
+          </PaymentCelebration>
         </div>
       ) : null}
       {query.paid && booking.status === "pending_payment" ? (
@@ -135,6 +137,22 @@ export default async function BookingPage({ params, searchParams }: Props) {
         {booking.durationMinutes}-minute session with {otherPerson}
         {perspective === "admin" ? ` and ${booking.aspirant.name}` : ""}
       </p>
+
+      {["confirmed", "completed"].includes(booking.status) ? (
+        <div className="mt-8">
+          <BookingTimeline
+            current={
+              booking.status === "confirmed"
+                ? 1
+                : !booking.sessionSummary && !booking.nextSteps
+                  ? 2
+                  : booking.review
+                    ? 4
+                    : 3
+            }
+          />
+        </div>
+      ) : null}
 
       <div className="mt-8 grid gap-6 sm:grid-cols-[1.4fr_1fr]">
         <section className="border-line bg-surface panel rounded-[var(--radius-panel)] border p-6">
