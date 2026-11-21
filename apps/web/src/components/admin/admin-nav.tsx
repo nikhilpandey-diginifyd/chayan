@@ -12,6 +12,6 @@ const links = [
   { href: "/admin/videos", label: "Videos", exact: false },
 ] as const;
 
-export function AdminNav() {
-  return <NavTabs label="Admin" tabs={links} id="admin-nav" />;
+export function AdminNav({ tone = "light" }: { tone?: "light" | "dark" }) {
+  return <NavTabs label="Admin" tabs={links} id="admin-nav" tone={tone} />;
 }
