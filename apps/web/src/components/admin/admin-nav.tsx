@@ -4,6 +4,7 @@ import { NavTabs } from "@/components/ui/nav-tabs";
 
 const links = [
   { href: "/admin", label: "Overview", exact: true },
+  { href: "/admin/metrics", label: "Metrics", exact: false },
   { href: "/admin/mentors", label: "Mentor applications", exact: false },
   { href: "/admin/bookings", label: "Bookings", exact: false },
   { href: "/admin/payouts", label: "Payouts", exact: false },

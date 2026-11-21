@@ -47,7 +47,7 @@ To report a vulnerability, email the address on the Contact page with steps to r
 **Browser protections**
 
 - Content Security Policy limits scripts, frames and connections to this site, Razorpay,
-  100ms, YouTube (privacy mode) and Sentry. `frame-ancestors 'none'` and `X-Frame-Options:
+  100ms, YouTube (privacy mode), Sentry and PostHog. `frame-ancestors 'none'` and `X-Frame-Options:
 DENY` stop clickjacking.
 - HSTS, `nosniff`, a strict referrer policy and a permissions policy that only allows camera,
   microphone and screen sharing for this site.
@@ -82,4 +82,6 @@ DENY` stop clickjacking.
 - [ ] Admin accounts: strong unique passwords, as few admins as possible.
 - [ ] Legal pages reviewed by a lawyer; TDS/GST handling confirmed by a CA.
 - [ ] Sentry project created and a test error seen in it.
+- [ ] PostHog project: turn on "Discard client IP data" and turn off session replay in project
+      settings (the app already disables both, this is a second lock).
 - [ ] `pnpm audit --prod` clean of high and critical issues.

@@ -60,7 +60,8 @@ export default function PrivacyPage() {
         <li>
           <strong>Service providers</strong> who process data for us under contract: payments
           (Razorpay), video calls (100ms), email delivery, cloud hosting and storage, error
-          monitoring and product analytics. Some of these providers may process data outside India.
+          monitoring and product analytics (PostHog). Some of these providers may process data
+          outside India.
         </li>
         <li>
           <strong>Authorities</strong>, when required by law, such as tax authorities or law
@@ -108,10 +109,19 @@ export default function PrivacyPage() {
         inform you and the Data Protection Board as the law requires.
       </p>
 
-      <h2>Cookies</h2>
+      <h2>Cookies and analytics</h2>
       <p>
         We use essential cookies to keep you signed in and secure. We use analytics to understand
         how the platform is used, without selling or sharing this data for advertising.
+      </p>
+      <p>
+        Our analytics provider is PostHog. It stores a random ID in a cookie and in your
+        browser&apos;s local storage so repeat visits can be counted. It records which pages you
+        open and which buttons or links you click, along with your browser, device type and rough
+        location. It does not record your screen or sessions, does not capture anything you type
+        into forms, does not read the text on the page, and we remove link details such as search
+        terms and sign-in codes before anything is sent. We do not link analytics to your name or
+        email. If your browser sends a &quot;Do Not Track&quot; signal, analytics stays off.
       </p>
 
       <h2>Changes</h2>

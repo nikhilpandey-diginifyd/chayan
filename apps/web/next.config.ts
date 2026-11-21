@@ -15,15 +15,27 @@ function sentryOrigin(): string | null {
   }
 }
 
+/** PostHog only receives events; it loads no scripts (see src/lib/analytics.ts). */
+function posthogOrigin(): string | null {
+  if (!process.env.NEXT_PUBLIC_POSTHOG_KEY) return null;
+  try {
+    // Keep in sync with DEFAULT_POSTHOG_HOST in src/lib/analytics.ts
+    return new URL(process.env.NEXT_PUBLIC_POSTHOG_HOST || "https://us.i.posthog.com").origin;
+  } catch {
+    return null;
+  }
+}
+
 /**
  * Content Security Policy. Only the services the app actually uses may load
  * scripts, open frames or receive data: Razorpay Checkout, 100ms video,
- * YouTube's privacy-friendly player and (optionally) Sentry.
+ * YouTube's privacy-friendly player and (optionally) Sentry and PostHog.
  * Set CSP_REPORT_ONLY=1 to log violations in the browser console instead of
  * blocking, if a provider changes its domains.
  */
 function contentSecurityPolicy() {
   const sentry = sentryOrigin();
+  const posthog = posthogOrigin();
   const directives: Record<string, string[]> = {
     "default-src": ["'self'"],
     "script-src": [
@@ -42,6 +54,7 @@ function contentSecurityPolicy() {
       "https://*.100ms.live",
       "wss://*.100ms.live",
       ...(sentry ? [sentry] : []),
+      ...(posthog ? [posthog] : []),
       ...(isDev ? ["ws:", "wss:"] : []),
     ],
     "frame-src": ["https://*.razorpay.com", "https://www.youtube-nocookie.com"],

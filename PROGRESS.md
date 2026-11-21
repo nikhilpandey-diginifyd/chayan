@@ -33,7 +33,38 @@ Working brand name: Chayan (change in `apps/web/src/config/site.ts`).
 - [x] Phase 8: Previous year papers (admin upload with answer key, public SEO pages, sign-in to download, daily limit, download counts) and short prep videos (YouTube, privacy-friendly player); reviews/notes collapse after saving
 - [x] Phase 9: Mentor payout details (encrypted), weekly payouts with 48h hold and TDS (194-O), hold/release, mark paid with UTR + email, bank transfer and TDS CSV exports, mentor earnings page, admin finance totals
 - [x] Phase 10: Playwright suite (16 tests) in CI, Postgres rate limits, Content Security Policy and headers, optional Sentry, error pages, pre-hydration submit fix, dependency audit, SECURITY.md
-- [ ] Phase 11: Launch prep + soft launch
+- [ ] Phase 11: Launch prep + soft launch (in progress, see below)
+
+## Phase 11 checklist
+
+Code and docs (assistant):
+
+- [x] Coolify guide lists every variable production requires, plus webhooks and backups
+- [x] Production Docker image builds and boots locally (migrations, seed, health, CSP checked)
+- [x] PostHog analytics: off without a key, no recordings, inputs/text masked, query strings
+      stripped, Do Not Track respected; in the privacy policy (`src/lib/analytics.ts`)
+- [x] `/admin/metrics`: sign-ups, mentor applications, bookings, paid and repeat sessions per
+      day (14) and week (12), straight from Postgres (`src/lib/metrics.ts`)
+- [ ] Sentry source-map upload (optional)
+
+Accounts and setup (owner):
+
+- [ ] Domain on Cloudflare; Coolify on the VPS; staging app first, then production
+- [ ] Resend domain verified (SPF, DKIM, DMARC)
+- [ ] R2 bucket (private) and a token limited to it
+- [ ] Razorpay: test keys on staging, then live keys + webhook; one real ₹1 payment and refund
+- [ ] 100ms: card on file, template with `mentor` and `aspirant` roles, webhook; one real
+      two-person call with the CSP on
+- [ ] Google OAuth redirect URI for the production domain
+- [ ] Sentry project, and a test error seen in it
+- [ ] Nightly Postgres backups and one restore tested
+- [ ] Lawyer reviews legal pages; CA confirms TDS/GST
+- [ ] Rest of the "Before launch" list in `SECURITY.md`
+
+Soft launch:
+
+- [ ] Onboard the first verified mentors and publish their profiles
+- [ ] Start the 1-month market test
 
 ## Phase 2 details
 

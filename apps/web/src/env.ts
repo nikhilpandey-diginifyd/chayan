@@ -168,6 +168,9 @@ const serverSchema = z
 
 const clientSchema = z.object({
   NEXT_PUBLIC_SITE_URL: z.url(),
+  // PostHog analytics: off when the key is empty
+  NEXT_PUBLIC_POSTHOG_KEY: optionalString,
+  NEXT_PUBLIC_POSTHOG_HOST: optionalString.pipe(z.url().optional()),
 });
 
 const skip = process.env.SKIP_ENV_VALIDATION === "1";
@@ -185,6 +188,8 @@ function parse<T extends z.ZodType>(schema: T, values: Record<string, unknown>):
 // NEXT_PUBLIC_* must be referenced explicitly so Next.js can inline them.
 export const clientEnv = parse(clientSchema, {
   NEXT_PUBLIC_SITE_URL: process.env.NEXT_PUBLIC_SITE_URL,
+  NEXT_PUBLIC_POSTHOG_KEY: process.env.NEXT_PUBLIC_POSTHOG_KEY,
+  NEXT_PUBLIC_POSTHOG_HOST: process.env.NEXT_PUBLIC_POSTHOG_HOST,
 });
 
 export type ServerEnv = z.infer<typeof serverSchema>;

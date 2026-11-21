@@ -133,12 +133,29 @@ Dockerfile         Production image (runs migrations, then starts the app)
 1. In Coolify, create a PostgreSQL 16 database and copy its internal connection URL.
 2. Create an application from this GitHub repository with build pack **Dockerfile**
    (path `/Dockerfile`, port `3000`).
-3. Build variable: `NEXT_PUBLIC_SITE_URL=https://your-domain`.
-4. Runtime variables: `DATABASE_URL=<internal Postgres URL>`, `BETTER_AUTH_SECRET` (new value
-   from `openssl rand -base64 32`), `RESEND_API_KEY`, `EMAIL_FROM` (an address on a domain
-   verified in Resend), `GOOGLE_CLIENT_ID` / `GOOGLE_CLIENT_SECRET`, the four `R2_*` values
-   and optionally `ADMIN_NOTIFY_EMAIL`.
+3. Build variables: `NEXT_PUBLIC_SITE_URL=https://your-domain`, and for analytics
+   `NEXT_PUBLIC_POSTHOG_KEY` / `NEXT_PUBLIC_POSTHOG_HOST` (leave empty to keep analytics off).
+   These are baked in at build time, so redeploy after changing them.
+4. Runtime variables. The app refuses to start in production if a required one is missing.
+   Generate every secret fresh; never reuse development values.
+   - Required: `DATABASE_URL=<internal Postgres URL>`, `BETTER_AUTH_SECRET`
+     (`openssl rand -base64 32`), `RESEND_API_KEY`, `EMAIL_FROM` (an address on a domain
+     verified in Resend), the four `R2_*` values, `RAZORPAY_KEY_ID` / `RAZORPAY_KEY_SECRET` /
+     `RAZORPAY_WEBHOOK_SECRET`, `HMS_ACCESS_KEY` / `HMS_SECRET` / `HMS_TEMPLATE_ID`,
+     `CRON_SECRET` (`openssl rand -hex 32`) and `PAYOUT_ENCRYPTION_KEY`
+     (`openssl rand -base64 32`, back it up separately: without it saved bank details can't
+     be read).
+   - Recommended: `HMS_WEBHOOK_SECRET`, `SENTRY_DSN` / `NEXT_PUBLIC_SENTRY_DSN`,
+     `GOOGLE_CLIENT_ID` / `GOOGLE_CLIENT_SECRET`, `ADMIN_NOTIFY_EMAIL`.
+   - Staging only: `RAZORPAY_ALLOW_TEST_KEYS=1` to run with `rzp_test_` keys.
 5. Health check path: `/api/health`.
 6. Deploy. Each container start applies migrations and refreshes reference data.
+7. Webhooks: in Razorpay add `<site>/api/webhooks/razorpay` (events listed under "Bookings
+   and payments"); in 100ms add `<site>/api/webhooks/100ms` with header
+   `x-webhook-secret: <HMS_WEBHOOK_SECRET>`.
+8. Backups: in Coolify, turn on scheduled backups for the Postgres database (daily, sent to
+   S3-compatible storage such as a separate private R2 bucket), then restore one into a
+   scratch database to check it works.
 
-Set up a staging app the same way with its own database before production.
+Set up a staging app the same way with its own database before production. Then work through
+the "Before launch" list in `SECURITY.md`.

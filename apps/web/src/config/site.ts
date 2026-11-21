@@ -32,7 +32,7 @@ export const siteConfig = {
     typicalSessionRange: "₹199 to ₹999",
   },
 
-  policyLastUpdated: "4 November 2026",
+  policyLastUpdated: "21 November 2026",
 } as const;
 
 export const legalLinks = [
