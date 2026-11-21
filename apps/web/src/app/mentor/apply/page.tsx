@@ -8,11 +8,8 @@ import {
   PREP_LANGUAGE_LABELS,
   type PrepLanguage,
 } from "@chayan/shared";
-import {
-  ApplicationDetailsForm,
-  emptyDetails,
-  type DetailsValues,
-} from "@/components/mentor/application-details-form";
+import { emptyDetails, type DetailsValues } from "@/components/mentor/application-details-form";
+import { ApplicationDetailsSection } from "@/components/mentor/application-details-section";
 import { ApplyStepper } from "@/components/mentor/apply-stepper";
 import { PageHero } from "@/components/page/page-hero";
 import { DocumentUploader } from "@/components/mentor/document-uploader";
@@ -35,11 +32,13 @@ const dateFormat = new Intl.DateTimeFormat("en-IN", {
 });
 
 function Section({
+  id,
   title,
   description,
   children,
   muted,
 }: {
+  id?: string;
   title: string;
   description?: string;
   children: ReactNode;
@@ -47,10 +46,11 @@ function Section({
 }) {
   return (
     <section
+      id={id}
       className={
         muted
-          ? "border-line rounded-[var(--radius-panel)] border border-dashed p-6 sm:p-8"
-          : "border-line bg-surface rounded-[var(--radius-panel)] border p-6 sm:p-8"
+          ? "border-line scroll-mt-24 rounded-[var(--radius-panel)] border border-dashed p-6 sm:p-8"
+          : "border-line bg-surface scroll-mt-24 rounded-[var(--radius-panel)] border p-6 sm:p-8"
       }
     >
       <h2 className="text-xl font-bold">{title}</h2>
@@ -156,18 +156,24 @@ export default async function MentorApplyPage() {
           {editable ? (
             <>
               <Section title="Your details">
-                <ApplicationDetailsForm exams={examOptions} years={years} initial={initial} />
+                <ApplicationDetailsSection
+                  exams={examOptions}
+                  years={years}
+                  initial={initial}
+                  hasSaved={Boolean(application)}
+                />
               </Section>
 
               {application ? (
                 <Section
+                  id="documents"
                   title="Documents"
                   description="Upload proof of the result you chose above and a photo ID."
                 >
                   <DocumentUploader documents={documents} editable />
                 </Section>
               ) : (
-                <Section title="Documents" muted>
+                <Section id="documents" title="Documents" muted>
                   <p className="text-ink-muted">
                     Save your details first, then upload documents here.
                   </p>

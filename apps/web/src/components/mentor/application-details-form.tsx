@@ -46,7 +46,7 @@ export const emptyDetails: DetailsValues = {
   inGovernmentService: "",
 };
 
-type ExamOption = { id: string; shortName: string; body: ExamBody };
+export type ExamOption = { id: string; shortName: string; body: ExamBody };
 
 function ErrorText({ id, message }: { id: string; message?: string }) {
   if (!message) return null;
@@ -61,13 +61,21 @@ export function ApplicationDetailsForm({
   exams,
   years,
   initial,
+  onSaved,
+  onCancel,
 }: {
   exams: ExamOption[];
   years: number[];
   initial: DetailsValues;
+  onSaved?: () => void;
+  onCancel?: () => void;
 }) {
   const [state, formAction, pending] = useActionState<DetailsState, FormData>(
-    saveApplicationDetails,
+    async (previous, formData) => {
+      const result = await saveApplicationDetails(previous, formData);
+      if (result.saved) onSaved?.();
+      return result;
+    },
     {},
   );
   const [values, setValues] = useState<DetailsValues>(initial);
@@ -374,9 +382,16 @@ export function ApplicationDetailsForm({
         </fieldset>
       </div>
 
-      <Button type="submit" disabled={pending}>
-        {pending ? "Saving…" : "Save details"}
-      </Button>
+      <div className="flex flex-wrap gap-2">
+        <Button type="submit" disabled={pending}>
+          {pending ? "Saving…" : "Save details"}
+        </Button>
+        {onCancel ? (
+          <Button type="button" variant="ghost" onClick={onCancel}>
+            Cancel
+          </Button>
+        ) : null}
+      </div>
     </form>
   );
 }
