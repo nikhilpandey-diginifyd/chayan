@@ -28,7 +28,7 @@ const faqs = [
   },
   {
     q: "Are sessions recorded?",
-    a: "No. Chayan doesn't record calls. Your mentor can leave written notes and next steps on the booking page after the session.",
+    a: "No. PrepAnyExam doesn't record calls. Your mentor can leave written notes and next steps on the booking page after the session.",
   },
 ];
 

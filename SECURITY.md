@@ -1,6 +1,6 @@
 # Security
 
-How Chayan protects accounts, money and personal data, and what to check before launch.
+How PrepAnyExam protects accounts, money and personal data, and what to check before launch.
 To report a vulnerability, email the address on the Contact page with steps to reproduce.
 
 ## What's in place

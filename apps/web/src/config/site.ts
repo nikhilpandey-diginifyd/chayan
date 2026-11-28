@@ -5,7 +5,7 @@ import { clientEnv } from "@/env";
  * Replace every value marked TODO before submitting the site to Razorpay.
  */
 export const siteConfig = {
-  name: "Chayan", // TODO: final brand name
+  name: "PrepAnyExam",
   tagline: "Talk to people who actually cleared UPSC and SSC",
   description:
     "Book one-to-one video sessions with verified UPSC and SSC selected candidates. Download previous year papers and watch short prep videos.",
@@ -15,7 +15,7 @@ export const siteConfig = {
   business: {
     legalName: "Nikhil Pandey (Proprietor)", // TODO: legal entity name as registered with Razorpay
     address: "TODO: full registered address, New Delhi, India",
-    email: "support@example.com", // TODO
+    email: "support@prepanyexam.io", // TODO: confirm this mailbox exists
     phone: "+91 00000 00000", // TODO
     supportHours: "Monday to Saturday, 10:00 to 18:00 IST",
     gstin: "", // optional until registered
@@ -23,7 +23,7 @@ export const siteConfig = {
 
   grievanceOfficer: {
     name: "TODO: Grievance Officer name",
-    email: "grievance@example.com", // TODO
+    email: "grievance@prepanyexam.io", // TODO: confirm this mailbox exists
     responseTime: "We acknowledge complaints within 48 hours and resolve them within 30 days.",
   },
 

@@ -1,8 +1,13 @@
-# Chayan
+# PrepAnyExam
 
 Verified UPSC/SSC mentorship marketplace: paid 1:1 video sessions with selected candidates,
 prep videos, and previous-year papers (PYQs). Read `PROGRESS.md` for the current phase and
 `README.md` for setup and how each feature behaves locally.
+
+Brand: PrepAnyExam (prepanyexam.io), set in `apps/web/src/config/site.ts`. The project was
+first called "Chayan": keep the internal `@chayan/*` package names, the `chayan` auth cookie
+prefix and the `chayan` database name as they are (renaming them logs everyone out and breaks
+migrations).
 
 ## Current focus
 

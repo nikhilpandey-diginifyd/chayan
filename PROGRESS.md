@@ -6,7 +6,9 @@ Paste this file at the start of every new chat so the assistant knows the curren
 
 Marketplace for UPSC and SSC aspirants: one-to-one paid video sessions with verified
 selected candidates (Topmate-style), short prep videos, downloadable previous year papers.
-Working brand name: Chayan (change in `apps/web/src/config/site.ts`).
+Brand: PrepAnyExam (prepanyexam.io), set in `apps/web/src/config/site.ts`. Formerly "Chayan":
+internal package names (`@chayan/*`), the auth cookie prefix (`chayan`) and the database name
+stay unchanged on purpose (renaming them would log everyone out and break migrations).
 
 ## Decisions
 

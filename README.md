@@ -1,4 +1,4 @@
-# Chayan
+# PrepAnyExam
 
 Verified UPSC and SSC mentorship marketplace.
 
@@ -133,7 +133,7 @@ Dockerfile         Production image (runs migrations, then starts the app)
 1. In Coolify, create a PostgreSQL 16 database and copy its internal connection URL.
 2. Create an application from this GitHub repository with build pack **Dockerfile**
    (path `/Dockerfile`, port `3000`).
-3. Build variables: `NEXT_PUBLIC_SITE_URL=https://your-domain`, and for analytics
+3. Build variables: `NEXT_PUBLIC_SITE_URL=https://prepanyexam.io`, and for analytics
    `NEXT_PUBLIC_POSTHOG_KEY` / `NEXT_PUBLIC_POSTHOG_HOST` (leave empty to keep analytics off).
    These are baked in at build time, so redeploy after changing them.
 4. Runtime variables. The app refuses to start in production if a required one is missing.

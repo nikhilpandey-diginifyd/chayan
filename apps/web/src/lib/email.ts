@@ -112,6 +112,14 @@ function escapeHtml(value: string): string {
     .replaceAll("'", "&#39;");
 }
 
+/** Email version of the site wordmark: lowercase, with "any" in brand orange. */
+function wordmarkHtml(brand: string): string {
+  const lower = brand.toLowerCase();
+  const at = lower.indexOf("any");
+  if (at === -1) return escapeHtml(brand);
+  return `${escapeHtml(lower.slice(0, at))}<span style="color:#e8680c;">any</span>${escapeHtml(lower.slice(at + 3))}`;
+}
+
 /** Plain, single-column layout that renders well in Gmail on phones. */
 export function actionEmail(options: {
   brand: string;
@@ -142,7 +150,7 @@ export function actionEmail(options: {
       <tr>
         <td align="center">
           <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="max-width:520px;background:#ffffff;border:1px solid #d9deea;border-radius:12px;padding:32px;">
-            <tr><td style="font-size:20px;font-weight:bold;padding-bottom:24px;">${escapeHtml(brand)}</td></tr>
+            <tr><td style="font-family:'Baloo 2',Arial,Helvetica,sans-serif;font-size:22px;font-weight:800;letter-spacing:-0.3px;padding-bottom:24px;">${wordmarkHtml(brand)}</td></tr>
             <tr><td style="font-size:16px;line-height:1.6;padding-bottom:8px;">Hi ${escapeHtml(greetingName)},</td></tr>
             <tr><td style="font-size:16px;line-height:1.6;padding-bottom:24px;color:#5f6272;">${escapeHtml(intro)}</td></tr>
             <tr>

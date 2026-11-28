@@ -18,6 +18,7 @@ export const metadata: Metadata = {
     default: `${siteConfig.name}: ${siteConfig.tagline}`,
     template: `%s | ${siteConfig.name}`,
   },
+  applicationName: siteConfig.name,
   description: siteConfig.description,
   openGraph: {
     type: "website",

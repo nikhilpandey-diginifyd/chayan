@@ -30,7 +30,7 @@ const chapters = [
     tone: "#e23744",
   },
   {
-    label: "With Chayan",
+    label: "With PrepAnyExam",
     title: "30 minutes with someone who cleared it.",
     text: "Pata chala galti kahan thi. Agle 90 din ka clear plan, aur wapas wahi energy.",
     emoji: "🚀",

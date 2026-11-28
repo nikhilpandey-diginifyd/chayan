@@ -32,7 +32,7 @@ const options: { letter: Letter; text: string; feedback: string }[] = [
   {
     letter: "D",
     text: "Someone who actually cleared the exam",
-    feedback: "Correct. That's who you'll find on Chayan.",
+    feedback: "Correct. That's who you'll find on PrepAnyExam.",
   },
 ];
 

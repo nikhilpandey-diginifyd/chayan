@@ -24,7 +24,7 @@ const serverSchema = z
     GOOGLE_CLIENT_ID: optionalString,
     GOOGLE_CLIENT_SECRET: optionalString,
     RESEND_API_KEY: optionalString,
-    EMAIL_FROM: z.string().min(3).default("Chayan <onboarding@resend.dev>"),
+    EMAIL_FROM: z.string().min(3).default("PrepAnyExam <onboarding@resend.dev>"),
     ADMIN_NOTIFY_EMAIL: optionalString.pipe(z.email().optional()),
     R2_ACCOUNT_ID: optionalString,
     R2_ACCESS_KEY_ID: optionalString,

@@ -1,6 +1,6 @@
 # syntax=docker/dockerfile:1.7
 # Production image for apps/web. Build from the repository root:
-#   docker build -t chayan-web --build-arg NEXT_PUBLIC_SITE_URL=https://yourdomain.com .
+#   docker build -t prepanyexam-web --build-arg NEXT_PUBLIC_SITE_URL=https://prepanyexam.io .
 
 FROM node:22-alpine AS base
 RUN corepack enable && corepack prepare pnpm@9.15.9 --activate

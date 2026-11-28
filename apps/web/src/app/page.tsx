@@ -72,7 +72,7 @@ export default function HomePage() {
             Kya aapke saath bhi aisa hota hai?
           </h2>
           <p className="text-ink-muted mt-3 text-lg">
-            Every mentor on Chayan went through these exact problems, and got past them.
+            Every mentor on PrepAnyExam went through these exact problems, and got past them.
           </p>
         </div>
         <div className="mt-10">
